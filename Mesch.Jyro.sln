@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36408.4 d17.14
+VisualStudioVersion = 17.14.36408.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mesch.Jyro.Runtime", "Mesch.Jyro.Runtime\Mesch.Jyro.Runtime.csproj", "{51D82479-A533-40FD-841D-1633B85A4582}"
 EndProject
@@ -9,7 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mesch.Jyro.Core", "Mesch.Jy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mesch.Jyro.CodeAnalysis", "Mesch.Jyro.CodeAnalysis\Mesch.Jyro.CodeAnalysis.csproj", "{8A0B9F70-A843-4173-A91B-8FF7FCF58459}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mesch.Jyro.Cli", "Mesch.Jyro.Cli\Mesch.Jyro.Cli.csproj", "{4351C774-BEFB-4F1A-BCC1-314738D90477}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mesch.Jyro.CliInterpreter", "Mesch.Jyro.CliInterpreter\Mesch.Jyro.CliInterpreter.csproj", "{4351C774-BEFB-4F1A-BCC1-314738D90477}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mesch.Jyro.Runtime.Tests", "Mesch.Jyro.Runtime.Tests\Mesch.Jyro.Runtime.Tests.csproj", "{BB3CB66C-A90B-4D5B-BAA0-D5AF3BF81FF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mesch.Jyro.CodeAnalysis.Tests", "Mesch.Jyro.CodeAnalysis.Tests\Mesch.Jyro.CodeAnalysis.Tests.csproj", "{EFE2FE3D-CC91-4E21-B276-973689427548}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{4351C774-BEFB-4F1A-BCC1-314738D90477}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4351C774-BEFB-4F1A-BCC1-314738D90477}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4351C774-BEFB-4F1A-BCC1-314738D90477}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB3CB66C-A90B-4D5B-BAA0-D5AF3BF81FF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB3CB66C-A90B-4D5B-BAA0-D5AF3BF81FF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB3CB66C-A90B-4D5B-BAA0-D5AF3BF81FF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB3CB66C-A90B-4D5B-BAA0-D5AF3BF81FF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFE2FE3D-CC91-4E21-B276-973689427548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFE2FE3D-CC91-4E21-B276-973689427548}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFE2FE3D-CC91-4E21-B276-973689427548}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFE2FE3D-CC91-4E21-B276-973689427548}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

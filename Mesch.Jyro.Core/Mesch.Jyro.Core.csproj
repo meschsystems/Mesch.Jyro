@@ -15,7 +15,7 @@
 		<Company>Mesch Systems</Company>
 		<Summary>Core language definition for Jyro.</Summary>
 		<Product>Jyro</Product>
-		<Description>Jyro is an imperative data manipulation language designed specifically for secure, sandboxed processing of JSON-like data structures.</Description>
+		<Description>Jyro is an imperative language for securely executing arbitrary client scripts in a fully isolated sandbox. This package specifies the core language. To run Jyro scripts in a .NET application, install the Mesch.Jyro.Runtime package instead.</Description>
 		<PackageProjectUrl>https://github.com/meschsystems/Mesch.Jyro</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/meschsystems/Mesch.Jyro</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
@@ -23,6 +23,10 @@
 		<PackageTags>scripting;json;language;data-manipulation;isolated;sandboxed</PackageTags>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
+	
 	<PropertyGroup>
 		<!-- Documentation Generation -->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>

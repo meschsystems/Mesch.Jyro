@@ -6,17 +6,22 @@
 
 		<!-- Package Information -->
 		<PackageId>Mesch.Jyro.CodeAnalysis</PackageId>
+		<namespace>Mesch.Jyro.CodeAnalysis;</namespace>
 		<Version>0.0.1</Version>
 		<Authors>Mesch Systems</Authors>
 		<Company>Mesch Systems</Company>
 		<Summary>Code analysis tooling for the Jyro language.</Summary>
 		<Product>Jyro</Product>
-		<Description>Jyro is an imperative data manipulation language designed specifically for secure, sandboxed processing of JSON-like data structures.</Description>
-		<PackageProjectUrl>https://github.com/meschsystems/Mesch.Jyro.CodeAnalysis</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/meschsystems/Mesch.Jyro.CodeAnalysis</RepositoryUrl>
+		<Description>Jyro is an imperative language for securely executing arbitrary client scripts in a fully isolated sandbox. This package provides optional metrics and static analysis for Jyro scripting. To run Jyro scripts in a .NET application, install the Mesch.Jyro.Runtime package.</Description>
+		<PackageProjectUrl>https://github.com/meschsystems/Mesch.Jyro</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/meschsystems/Mesch.Jyro</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Copyright>Copyright © 2025 Mesch Systems. All Rights Reserved.</Copyright>
 		<PackageTags>scripting;json;language;sandbox;analysis</PackageTags>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -48,8 +53,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="../Mesch.Jyro.Core/Mesch.Jyro.Core.csproj" />
-		<ProjectReference Include="../Mesch.Jyro.Runtime/Mesch.Jyro.Runtime.csproj" />
+		<ProjectReference Include="..\Mesch.Jyro.Core\Mesch.Jyro.Core.csproj" />
+		<ProjectReference Include="..\Mesch.Jyro.Runtime\Mesch.Jyro.Runtime.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

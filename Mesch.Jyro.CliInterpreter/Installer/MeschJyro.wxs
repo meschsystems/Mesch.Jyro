@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+
+  <Package Name="Mesch Jyro"
+           Manufacturer="Mesch"
+           Version="0.0.1"
+           UpgradeCode="1691d170-6956-4764-9ec4-0a14a5849cce"
+           InstallerVersion="500">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
+
+    <!-- Component group for all application files -->
+    <ComponentGroup Id="MeschJyroComponents" Directory="INSTALLFOLDER">
+      <Files Include="C:\GitHub\MeschSystems\Mesch.Jyro\Mesch.Jyro.CliInterpreter\bin\Release\net8.0\win-x64\*.*" />
+    </ComponentGroup>
+
+    <!-- Start Menu shortcut -->
+    <Component Id="StartMenuShortcut" Directory="ProgramMenuFolder">
+      <Shortcut Id="MeschJyroShortcut"
+                Name="Mesch Jyro"
+                Target="[INSTALLFOLDER]Mesch.Jyro.exe"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RegistryValue Root="HKCU"
+                     Key="Software\Mesch\Mesch Jyro"
+                     Name="installed"
+                     Type="integer"
+                     Value="1"
+                     KeyPath="yes" />
+    </Component>
+
+    <!-- Add install folder to system PATH -->
+    <Component Id="AddToPath" Guid="afca5863-15e2-4f95-9d16-8c32113b72a4">
+      <Environment Id="AddMeschJyroToPath"
+                        Name="Path"
+                        Value="[INSTALLFOLDER]"
+                        Action="set"
+                        Part="last"
+                        System="yes"
+                        Permanent="no" />
+    </Component>
+
+    <!-- Feature -->
+    <Feature Id="Main">
+      <ComponentGroupRef Id="MeschJyroComponents" />
+      <ComponentRef Id="StartMenuShortcut" />
+      <ComponentRef Id="AddToPath" />
+    </Feature>
+
+    <!-- Program Files install path -->
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="DIR_MESCH" Name="Mesch">
+        <Directory Id="INSTALLFOLDER" Name="Mesch Jyro" />
+      </Directory>
+    </StandardDirectory>
+
+  </Package>
+</Wix>

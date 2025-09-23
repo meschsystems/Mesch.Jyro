@@ -1,0 +1,85 @@
+(* Program Structure *)
+Program          = { Statement } ;
+
+Comment			 = "#" { Character } EndOfLine ;
+
+Statement        = VariableDecl
+                 | Assignment
+                 | ExpressionStmt
+                 | IfStmt
+                 | SwitchStmt
+                 | WhileStmt
+                 | ForEachStmt
+                 | ReturnStmt
+                 | BreakStmt
+                 | ContinueStmt ;
+
+(* Variable Declarations *)
+VariableDecl     = "var" Identifier [ ":" Type ] [ "=" Expression ] ;
+Type             = "number" | "string" | "boolean" | "object" | "array" ;
+
+(* Assignments and Expressions *)
+Assignment       = AssignmentTarget "=" Expression ;
+AssignmentTarget = Identifier { ( "." Identifier | "[" Expression "]" ) } ;
+ExpressionStmt   = Expression ;
+
+Expression       = Ternary ;
+
+Ternary          = LogicalOr [ "?" Ternary ":" Ternary ] ;
+LogicalOr        = LogicalAnd { "or" LogicalAnd } ;
+LogicalAnd       = Equality { "and" Equality } ;
+Equality         = Relational { ("==" | "!=") Relational } ;
+Relational       = Additive { ("<" | "<=" | ">" | ">=" | "is") Additive } ;
+Additive         = Multiplicative { ("+" | "-") Multiplicative } ;
+Multiplicative   = Unary { ("*" | "/" | "%") Unary } ;
+Unary            = [ "not" | "-" ] Primary ;
+Primary          = Literal
+                 | Identifier { ( "." Identifier | "[" Expression "]" ) }
+                 | FunctionCall
+                 | "(" Expression ")"
+                 | ObjectLiteral
+                 | ArrayLiteral ;
+
+(* Literals *)
+Literal          = NumberLiteral
+                 | StringLiteral
+                 | "true"
+                 | "false"
+                 | "null" ;
+
+ObjectLiteral    = "{" [ ObjectEntry { "," ObjectEntry } ] "}" ;
+ObjectEntry      = (StringLiteral | InterpolatedKey) ":" Expression ;
+InterpolatedKey  = "[" Expression "]" ;
+
+ArrayLiteral     = "[" [ Expression { "," Expression } ] "]" ;
+
+(* Control Flow *)
+IfStmt           = "if" Expression "then" { Statement }
+                   { "else" "if" Expression "then" { Statement } }
+                   [ "else" { Statement } ] "end" ;
+
+SwitchStmt       = "switch" Expression "do"
+                   { "case" Expression "then" { Statement } }
+                   [ "default" { Statement } ]
+                   "end" ;
+
+WhileStmt        = "while" Expression "do" { Statement } "end" ;
+
+ForEachStmt      = "foreach" Identifier "in" Expression "do"
+                     { Statement }
+                   "end" ;
+
+ReturnStmt       = "return" ;
+BreakStmt        = "break" ;
+ContinueStmt     = "continue" ;
+
+(* Function Calls *)
+FunctionCall     = Identifier "(" [ Expression { "," Expression } ] ")" ;
+
+(* Identifiers and Tokens *)
+Identifier       = Letter { Letter | Digit | "_" } ;
+NumberLiteral    = Digit { Digit } [ "." Digit { Digit } ] ;
+StringLiteral    = '"' { Character } '"' ;
+Letter           = "A"…"Z" | "a"…"z" ;
+Digit            = "0"…"9" ;
+Character        = ? any character except " or newline ? ;
