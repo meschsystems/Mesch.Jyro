@@ -134,50 +134,52 @@ public sealed partial class JyroBuilder
         var standardFunctions = new IJyroFunction[]
         {
             // String manipulation functions
-            new UpperFunction(),
-            new LowerFunction(),
-            new TrimFunction(),
-            new ReplaceFunction(),
             new ContainsFunction(),
-            new StartsWithFunction(),
             new EndsWithFunction(),
-            new SplitFunction(),
             new JoinFunction(),
+            new LowerFunction(),
+            new ReplaceFunction(),
+            new SplitFunction(),
+            new StartsWithFunction(),
+            new TrimFunction(),
+            new UpperFunction(),
             
             // Array manipulation functions
-            new LengthFunction(),
             new AppendFunction(),
-            new RemoveLastFunction(),
-            new MergeArraysFunction(),
-            new SortFunction(),
-            new SortByFieldFunction(),
-            new ReverseFunction(),
-            new InsertFunction(),
-            new RemoveAtFunction(),
             new ClearFunction(),
+            new InsertFunction(),
+            new LengthFunction(),
+            new MergeArraysFunction(),
+            new RemoveAtFunction(),
+            new RemoveLastFunction(),
+            new ReverseFunction(),
+            new SortByFieldFunction(),
+            new SortFunction(),
             
             // Mathematical functions
-            new MinFunction(),
-            new MaxFunction(),
-            new SumFunction(),
             new AbsFunction(),
+            new MaxFunction(),
+            new MinFunction(),
             new RoundFunction(),
+            new SumFunction(),
             
             // Utility functions
+            new CallScriptFunction(),
             new EqualFunction(),
-            new NotEqualFunction(),
-            new TypeOfFunction(),
             new ExistsFunction(),
             new IsNullFunction(),
+            new NewGuidFunction(),
+            new NotEqualFunction(),
+            new TypeOfFunction(),
             
             // Date and time functions
-            new NowFunction(),
-            new TodayFunction(),
-            new ParseDateFunction(),
-            new FormatDateFunction(),
             new DateAddFunction(),
             new DateDiffFunction(),
-            new DatePartFunction()
+            new DatePartFunction(),
+            new FormatDateFunction(),
+            new NowFunction(),
+            new ParseDateFunction(),
+            new TodayFunction()
         };
 
         foreach (var function in standardFunctions)
