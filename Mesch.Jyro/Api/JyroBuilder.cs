@@ -22,25 +22,13 @@ public sealed partial class JyroBuilder
     private readonly List<IJyroFunction> _hostFunctions = [];
     private readonly ILoggerFactory _loggerFactory;
 
-    // Add these properties to expose intermediate compilation results
+    // Parsing result from the last Parse() operation
     private JyroParsingResult? _lastParsingResult;
-    private JyroValidationResult? _lastValidationResult;
-    private JyroLinkingResult? _lastLinkingResult;
 
     /// <summary>
     /// Gets the parsing result from the last parsing operation, if available.
     /// </summary>
     public JyroParsingResult? LastParsingResult => _lastParsingResult;
-
-    /// <summary>
-    /// Gets the validation result from the last validation operation, if available.
-    /// </summary>
-    public JyroValidationResult? LastValidationResult => _lastValidationResult;
-
-    /// <summary>
-    /// Gets the linking result from the last linking operation, if available.
-    /// </summary>
-    public JyroLinkingResult? LastLinkingResult => _lastLinkingResult;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JyroBuilder"/> class with the specified logger factory.
