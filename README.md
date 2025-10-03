@@ -63,6 +63,87 @@ else
 }
 ```
 
+### Working with JSON
+
+Jyro provides seamless JSON integration for real-world scenarios:
+
+```csharp
+using System.Text.Json;
+
+// Parse JSON input directly
+var inputJson = @"{
+    ""customer"": {
+        ""name"": ""Alice"",
+        ""age"": 25,
+        ""orders"": [
+            { ""id"": 1, ""total"": 150.00 },
+            { ""id"": 2, ""total"": 75.50 }
+        ]
+    }
+}";
+
+var data = JyroValue.FromJson(inputJson);
+
+var script = @"
+    var totalSpent = 0
+    foreach order in Data.customer.orders do
+        totalSpent = totalSpent + order.total
+    end
+    Data.customer.totalSpent = totalSpent
+";
+
+var result = JyroBuilder
+    .Create()
+    .WithScript(script)
+    .WithData(data)
+    .WithStandardLibrary()
+    .Run();
+
+// Serialize result back to JSON
+var outputJson = result.Data.ToJson(new JsonSerializerOptions
+{
+    WriteIndented = true
+});
+Console.WriteLine(outputJson);
+// {
+//   "customer": {
+//     "name": "Alice",
+//     "age": 25,
+//     "orders": [...],
+//     "totalSpent": 225.5
+//   }
+// }
+```
+
+### Working with .NET Objects
+
+Convert .NET objects to JyroValue and back:
+
+```csharp
+// From .NET object to JyroValue
+var customer = new
+{
+    Name = "Bob",
+    Age = 30,
+    IsActive = true,
+    Tags = new[] { "premium", "verified" }
+};
+
+var data = JyroValue.FromObject(customer);
+
+// Execute script
+var result = JyroBuilder
+    .Create()
+    .WithScript("Data.displayName = Upper(Data.Name)")
+    .WithData(data)
+    .WithStandardLibrary()
+    .Run();
+
+// Convert back to .NET object
+var outputObject = result.Data.ToObjectValue();
+// outputObject is a Dictionary<string, object?> with all properties
+```
+
 ## Supported Scenarios
 
 ### 1. Data Transformation & ETL
@@ -226,6 +307,63 @@ var configScript = @"
         Data.errors = ['API URL is required']
     end
 ";
+```
+
+### 5. REST API Integration
+
+Use Jyro in ASP.NET Core API endpoints:
+
+```csharp
+[ApiController]
+[Route("api/[controller]")]
+public class ScriptController : ControllerBase
+{
+    private readonly IJyroScriptService _scriptService;
+
+    public ScriptController(IJyroScriptService scriptService)
+    {
+        _scriptService = scriptService;
+    }
+
+    [HttpPost("execute")]
+    public IActionResult ExecuteScript([FromBody] ScriptRequest request)
+    {
+        try
+        {
+            // Parse JSON input
+            var inputData = JyroValue.FromJson(request.Data);
+
+            // Execute script
+            var result = _scriptService.ExecuteScript(request.Script, inputData);
+
+            if (!result.IsSuccessful)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Messages
+                        .Where(m => m.Severity == MessageSeverity.Error)
+                        .Select(m => new { m.Code, Line = m.LineNumber, Column = m.ColumnPosition })
+                });
+            }
+
+            // Return JSON output
+            var outputJson = result.Data.ToJson();
+            return Ok(new
+            {
+                success = true,
+                data = JsonDocument.Parse(outputJson),
+                executionTime = result.Metadata.ExecutionTime
+            });
+        }
+        catch (JsonException ex)
+        {
+            return BadRequest(new { success = false, error = "Invalid JSON: " + ex.Message });
+        }
+    }
+}
+
+public record ScriptRequest(string Script, string Data);
 ```
 
 ## Dependency Injection Integration
