@@ -1,0 +1,7 @@
+/.vs
+/nupkg
+/Mesch.Jyro/bin
+/Mesch.Jyro/obj
+/.claude
+/Mesch.Jyro.Tests/obj
+/Mesch.Jyro.Tests/bin
