@@ -60,7 +60,7 @@ public abstract class JyroValue : IEquatable<JyroValue>
     /// <returns>An enumerable sequence of JyroValue instances.</returns>
     public virtual IEnumerable<JyroValue> ToIterable()
     {
-        return Enumerable.Empty<JyroValue>();
+        return [];
     }
 
     #endregion
@@ -131,7 +131,7 @@ public abstract class JyroValue : IEquatable<JyroValue>
     /// Converts this value to a <see cref="JyroArray"/> or returns an empty array if conversion fails.
     /// </summary>
     /// <returns>This value as a JyroArray, or a new empty JyroArray.</returns>
-    public JyroArray AsArrayOrEmpty() => this is JyroArray arrayValue ? arrayValue : new JyroArray();
+    public JyroArray AsArrayOrEmpty() => this is JyroArray arrayValue ? arrayValue : [];
 
     /// <summary>
     /// Converts this value to a <see cref="JyroObject"/> or returns a new empty object if conversion fails.
@@ -240,11 +240,12 @@ public abstract class JyroValue : IEquatable<JyroValue>
     /// <exception cref="JsonException">Thrown when the JSON string is malformed.</exception>
     public static JyroValue FromJson(string json, JsonSerializerOptions? options = null)
     {
-        using var document = JsonDocument.Parse(json, new JsonDocumentOptions
+        var documentOptions = new JsonDocumentOptions
         {
-            CommentHandling = JsonCommentHandling.Skip,
-            AllowTrailingCommas = true
-        });
+            CommentHandling = options?.ReadCommentHandling ?? JsonCommentHandling.Skip,
+            AllowTrailingCommas = options?.AllowTrailingCommas ?? true
+        };
+        using var document = JsonDocument.Parse(json, documentOptions);
         return FromJsonElement(document.RootElement);
     }
 
