@@ -192,6 +192,99 @@ public sealed partial class JyroBuilder
     }
 
     /// <summary>
+    /// Enables REST API functionality in Jyro scripts, providing the InvokeRestMethod() function.
+    /// This is an opt-in feature for security reasons, as it allows scripts to make outbound HTTP requests.
+    /// </summary>
+    /// <param name="options">
+    /// Optional security configuration for REST API calls. If not provided, default safe settings are used.
+    /// Configure URL allow/deny lists, size limits, timeouts, and allowed HTTP methods.
+    /// </param>
+    /// <returns>This builder instance for method chaining.</returns>
+    /// <remarks>
+    /// <para>
+    /// The InvokeRestMethod() function is inspired by PowerShell's Invoke-RestMethod cmdlet and provides
+    /// the following capabilities:
+    /// </para>
+    /// <list type="bullet">
+    /// <item><description>Execute HTTP requests (GET, POST, PUT, PATCH, DELETE, etc.)</description></item>
+    /// <item><description>Send custom headers and request bodies</description></item>
+    /// <item><description>Automatic JSON serialization/deserialization</description></item>
+    /// <item><description>Response status codes, headers, and content</description></item>
+    /// </list>
+    /// <para>
+    /// Security controls include:
+    /// </para>
+    /// <list type="bullet">
+    /// <item><description>URL allowlist/denylist using regex patterns</description></item>
+    /// <item><description>Maximum request/response size limits</description></item>
+    /// <item><description>Concurrent request limits</description></item>
+    /// <item><description>Request timeout controls</description></item>
+    /// <item><description>HTTP method restrictions</description></item>
+    /// </list>
+    /// <para>
+    /// Example usage in Jyro:
+    /// <code>
+    /// var result = InvokeRestMethod("https://api.example.com/data", "GET");
+    /// if (result.isSuccessStatusCode) {
+    ///     Data = result.content;
+    /// }
+    ///
+    /// var postResult = InvokeRestMethod(
+    ///     "https://api.example.com/items",
+    ///     "POST",
+    ///     { "Content-Type": "application/json", "Authorization": "Bearer token123" },
+    ///     { "name": "New Item", "value": 42 }
+    /// );
+    /// </code>
+    /// </para>
+    /// </remarks>
+    /// <example>
+    /// Enable REST API with default settings:
+    /// <code>
+    /// var result = JyroBuilder.Create()
+    ///     .WithScript("var response = InvokeRestMethod('https://api.example.com/data', 'GET');")
+    ///     .WithData(new JyroObject())
+    ///     .WithRestApi()
+    ///     .Run();
+    /// </code>
+    ///
+    /// Enable REST API with custom security settings:
+    /// <code>
+    /// var restOptions = new RestApiOptions
+    /// {
+    ///     AllowedUrlPatterns = new List&lt;Regex&gt;
+    ///     {
+    ///         new Regex(@"^https://api\.example\.com/", RegexOptions.IgnoreCase)
+    ///     },
+    ///     MaxRequestBodySize = 512_000, // 500KB
+    ///     MaxResponseSize = 5_242_880,  // 5MB
+    ///     RequestTimeout = TimeSpan.FromSeconds(15)
+    /// };
+    ///
+    /// var result = JyroBuilder.Create()
+    ///     .WithScript(script)
+    ///     .WithData(data)
+    ///     .WithRestApi(restOptions)
+    ///     .Run();
+    /// </code>
+    ///
+    /// Enable for local development only:
+    /// <code>
+    /// var result = JyroBuilder.Create()
+    ///     .WithScript(script)
+    ///     .WithData(data)
+    ///     .WithRestApi(RestApiOptions.CreateForLocalDevelopment())
+    ///     .Run();
+    /// </code>
+    /// </example>
+    public JyroBuilder WithRestApi(RestApiOptions? options = null)
+    {
+        options ??= RestApiOptions.CreateDefault();
+        _hostFunctions.Add(new InvokeRestMethodFunction(options));
+        return this;
+    }
+
+    /// <summary>
     /// Executes the configured script through the complete compilation and execution pipeline.
     /// This method performs parsing, validation, linking, and execution in sequence using ANTLR.
     /// </summary>

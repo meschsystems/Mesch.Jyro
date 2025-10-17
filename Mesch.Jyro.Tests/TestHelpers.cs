@@ -11,16 +11,27 @@ public static class TestHelpers
     /// <summary>
     /// Executes a Jyro script and returns the result
     /// </summary>
-    public static JyroExecutionResult Execute(string script, JyroValue? data = null, ITestOutputHelper? output = null)
+    public static JyroExecutionResult Execute(
+        string script,
+        JyroValue? data = null,
+        ITestOutputHelper? output = null,
+        bool withRestApi = false,
+        RestApiOptions? restApiOptions = null)
     {
         data ??= new JyroObject();
 
-        var result = JyroBuilder
+        var builder = JyroBuilder
             .Create(NullLoggerFactory.Instance)
             .WithScript(script)
             .WithData(data)
-            .WithStandardLibrary()
-            .Run();
+            .WithStandardLibrary();
+
+        if (withRestApi)
+        {
+            builder = builder.WithRestApi(restApiOptions);
+        }
+
+        var result = builder.Run();
 
         if (output != null)
         {
@@ -41,9 +52,14 @@ public static class TestHelpers
     /// <summary>
     /// Executes a script and asserts it succeeds
     /// </summary>
-    public static JyroExecutionResult ExecuteSuccessfully(string script, JyroValue? data = null, ITestOutputHelper? output = null)
+    public static JyroExecutionResult ExecuteSuccessfully(
+        string script,
+        JyroValue? data = null,
+        ITestOutputHelper? output = null,
+        bool withRestApi = false,
+        RestApiOptions? restApiOptions = null)
     {
-        var result = Execute(script, data, output);
+        var result = Execute(script, data, output, withRestApi, restApiOptions);
 
         if (!result.IsSuccessful)
         {
