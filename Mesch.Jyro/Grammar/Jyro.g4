@@ -253,7 +253,7 @@ LBRACK     : '[';
 RBRACK     : ']';
 
 // Identifiers
-Identifier : Letter (Letter | Digit | '_')* ;
+Identifier : (Letter | '_') (Letter | Digit | '_')* ;
 
 // Numbers: integers and decimals
 Number     : Digit+ ('.' Digit+)? ;
