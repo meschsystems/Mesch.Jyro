@@ -275,6 +275,151 @@ public class StandardLibraryTests
         Assert.Equal(4.0, ((JyroNumber)arr[3]).Value);
     }
 
+    [Fact]
+    public void IndexOf_FindsElementInArray()
+    {
+        var script = @"
+            var arr = [1, 2, 3, 4, 5]
+            Data.result = IndexOf(arr, 3)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void IndexOf_ReturnsNegativeOneWhenNotFound()
+    {
+        var script = @"
+            var arr = [1, 2, 3]
+            Data.result = IndexOf(arr, 10)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(-1.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void IndexOf_FindsFirstElement()
+    {
+        var script = @"
+            var arr = [""apple"", ""banana"", ""orange""]
+            Data.result = IndexOf(arr, ""apple"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(0.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void IndexOf_FindsLastElement()
+    {
+        var script = @"
+            var arr = [""red"", ""green"", ""blue""]
+            Data.result = IndexOf(arr, ""blue"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void IndexOf_FindsObjectByDeepEquality()
+    {
+        var script = @"
+            var orders = [
+                { ""id"": ""ORD-1001"", ""total"": 100 },
+                { ""id"": ""ORD-1002"", ""total"": 200 },
+                { ""id"": ""ORD-1003"", ""total"": 150 }
+            ]
+            Data.result = IndexOf(orders, { ""id"": ""ORD-1002"", ""total"": 200 })
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(1.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void IndexOf_ReturnsNegativeOneForNonMatchingObject()
+    {
+        var script = @"
+            var orders = [
+                { ""id"": ""ORD-1001"", ""total"": 100 },
+                { ""id"": ""ORD-1002"", ""total"": 200 }
+            ]
+            Data.result = IndexOf(orders, { ""id"": ""ORD-9999"", ""total"": 999 })
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(-1.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void IndexOf_ReturnsFirstOccurrenceOfDuplicate()
+    {
+        var script = @"
+            var arr = [1, 2, 3, 2, 4]
+            Data.result = IndexOf(arr, 2)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(1.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void IndexOf_WorksWithEmptyArray()
+    {
+        var script = @"
+            var arr = array []
+            Data.result = IndexOf(arr, 1)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(-1.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void IndexOf_FindsNestedArray()
+    {
+        var script = @"
+            var matrix = [[1, 2], [3, 4], [5, 6]]
+            Data.result = IndexOf(matrix, [3, 4])
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(1.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void IndexOf_UsedWithRemoveAt()
+    {
+        var script = @"
+            var items = [
+                { ""id"": 1, ""name"": ""Item A"" },
+                { ""id"": 2, ""name"": ""Item B"" },
+                { ""id"": 3, ""name"": ""Item C"" }
+            ]
+            var idx = IndexOf(items, { ""id"": 2, ""name"": ""Item B"" })
+            if idx >= 0 then
+                RemoveAt(items, idx)
+            end
+            Data.result = Length(items)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
     #endregion
 
     #region Math Functions

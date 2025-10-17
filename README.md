@@ -93,7 +93,7 @@ var script = @"
 ";
 
 var result = JyroBuilder
-    .Create()
+    .Create(NullLoggerFactory.Instance)
     .WithScript(script)
     .WithData(data)
     .WithStandardLibrary()
@@ -133,7 +133,7 @@ var data = JyroValue.FromObject(customer);
 
 // Execute script
 var result = JyroBuilder
-    .Create()
+    .Create(NullLoggerFactory.Instance) 
     .WithScript("Data.displayName = Upper(Data.Name)")
     .WithData(data)
     .WithStandardLibrary()
@@ -190,7 +190,7 @@ var rawOrders = new JyroArray();
 inputData.SetProperty("rawOrders", rawOrders);
 
 var result = JyroBuilder
-    .Create()
+    .Create(NullLoggerFactory.Instance)  
     .WithScript(script)
     .WithData(inputData)
     .WithStandardLibrary()
@@ -353,7 +353,7 @@ public class ScriptController : ControllerBase
             {
                 success = true,
                 data = JsonDocument.Parse(outputJson),
-                executionTime = result.Metadata.ExecutionTime
+                executionTime = result.Metadata.ProcessingTime  // Note: ProcessingTime, not ExecutionTime
             });
         }
         catch (JsonException ex)
@@ -463,6 +463,261 @@ var options = new JyroExecutionOptions
 };
 ```
 
+## API Reference
+
+### Core Types
+
+#### JyroExecutionResult
+
+The result of executing a Jyro script.
+
+**Properties:**
+- `bool IsSuccessful` - Whether execution completed successfully without fatal errors
+- `JyroValue Data` - Final state of the root data object after execution
+- `IReadOnlyList<IMessage> Messages` - Diagnostic messages (errors, warnings, info)
+- `ExecutionMetadata Metadata` - Execution statistics and timing information
+- `int ErrorCount` - Number of error-level messages (computed property)
+
+**Constructor:**
+```csharp
+public JyroExecutionResult(
+    bool executionSucceeded,
+    JyroValue finalDataValue,
+    IReadOnlyList<IMessage> diagnosticMessages,
+    ExecutionMetadata executionMetadata)
+```
+
+#### ExecutionMetadata
+
+Contains performance and statistical information about script execution.
+
+**Properties:**
+- `TimeSpan ProcessingTime` - Total execution time ⚠️ **Note:** Named `ProcessingTime`, not `ExecutionTime`
+- `int StatementCount` - Number of statements executed
+- `int LoopCount` - Total loop iterations performed
+- `int FunctionCallCount` - Number of function calls made
+- `int MaxCallDepth` - Maximum call stack depth reached
+- `DateTimeOffset StartedAt` - When execution began
+
+**Constructor:**
+```csharp
+public ExecutionMetadata(
+    TimeSpan executionProcessingTime,
+    int executedStatementCount,
+    int executedLoopCount,
+    int performedFunctionCallCount,
+    int maximumCallDepth,
+    DateTimeOffset executionStartedAt)
+```
+
+#### IMessage
+
+Diagnostic message interface for compilation and runtime errors.
+
+**Properties:**
+- `MessageCode Code` - Error code (enum, not string!)
+- `MessageSeverity Severity` - Error, Warning, or Information
+- `ProcessingStage Stage` - Which pipeline stage produced the message
+- `int LineNumber` - Source line number (1-based)
+- `int ColumnPosition` - Source column position (1-based)
+- `IReadOnlyList<string> Arguments` - Message arguments for formatting
+
+⚠️ **Important:** `IMessage` does **not** have a `Text` or `Message` property. Error details are conveyed through the `Code` enum and `Arguments` array.
+
+**Implementation (Message class):**
+```csharp
+public Message(
+    MessageCode code,
+    int lineNumber,
+    int columnPosition,
+    MessageSeverity severity,
+    ProcessingStage stage,
+    params string[] arguments)
+```
+
+#### MessageCode Enum
+
+Standardized diagnostic codes organized by processing stage:
+
+**Lexical Analysis (1000-1999):**
+- `UnknownLexerError` (1000)
+- `UnexpectedCharacter` (1001)
+- `UnterminatedString` (1002)
+
+**Parsing (2000-2999):**
+- `UnknownParserError` (2000)
+- `UnexpectedToken` (2001)
+- `MissingToken` (2002)
+- `InvalidNumberFormat` (2003)
+
+**Validation (3000-3999):**
+- `UnknownValidatorError` (3000)
+- `InvalidVariableReference` (3001)
+- `InvalidAssignmentTarget` (3002)
+- `TypeMismatch` (3003)
+- `LoopStatementOutsideOfLoop` (3004)
+- `ExcessiveLoopNesting` (3005)
+- `UnreachableCode` (3006)
+
+**Linking (4000-4999):**
+- `UnknownLinkerError` (4000)
+- `UndefinedFunction` (4001)
+- `DuplicateFunction` (4002)
+- `FunctionOverride` (4003)
+- `InvalidNumberArguments` (4004)
+
+**Execution (5000-5999):**
+- `UnknownExecutorError` (5000)
+- `RuntimeError` (5001)
+- `CancelledByHost` (5002)
+- `InvalidType` (5003)
+- `InvalidArgumentType` (5004)
+
+#### MessageSeverity Enum
+
+- `Error` - Fatal errors that prevent execution
+- `Warning` - Non-fatal issues
+- `Information` - Informational messages
+
+#### ProcessingStage Enum
+
+- `Lexing` - Tokenization stage
+- `Parsing` - Syntax analysis stage
+- `Validation` - Semantic analysis stage
+- `Linking` - Reference resolution stage
+- `Execution` - Runtime stage
+
+### JyroValue Types
+
+#### JyroNull
+
+Represents null values. Uses the **singleton pattern**.
+
+```csharp
+// ✅ Correct - use the singleton instance
+var nullValue = JyroNull.Instance;
+
+// ❌ Wrong - constructor is private
+var nullValue = new JyroNull();
+```
+
+**Properties:**
+- `JyroValueType Type` - Always returns `JyroValueType.Null`
+- `bool IsNull` - Always returns `true`
+
+#### JyroString
+
+Represents string values.
+
+```csharp
+var str = new JyroString("Hello");
+string value = str.Value;
+```
+
+#### JyroNumber
+
+Represents numeric values (stored as `decimal`).
+
+```csharp
+var num = new JyroNumber(42.5m);
+decimal value = num.Value;
+```
+
+#### JyroBoolean
+
+Represents boolean values.
+
+```csharp
+var boolean = JyroBoolean.True;   // Singleton for true
+var boolean = JyroBoolean.False;  // Singleton for false
+
+// Or construct from bool
+var boolean = JyroBoolean.FromBoolean(true);
+```
+
+#### JyroObject
+
+Represents objects (key-value pairs).
+
+```csharp
+var obj = new JyroObject();
+obj.SetProperty("name", new JyroString("Alice"));
+obj.SetProperty("age", new JyroNumber(25));
+
+// Get property
+JyroValue name = obj.GetProperty("name");  // Returns JyroNull.Instance if not found
+
+// Check if object has properties
+int propertyCount = obj.Count;  // ⚠️ Use Count, not GetProperties()
+
+// Indexer access
+obj["name"] = new JyroString("Bob");
+JyroValue name = obj["name"];
+```
+
+#### JyroArray
+
+Represents arrays.
+
+```csharp
+var arr = new JyroArray();
+arr.Add(new JyroNumber(1));
+arr.Add(new JyroNumber(2));
+
+// Access by index
+JyroValue first = arr[0];
+
+// Array properties
+int length = arr.Count;
+```
+
+### JyroBuilder
+
+Fluent API for building and executing Jyro scripts.
+
+```csharp
+var result = JyroBuilder
+    .Create(loggerFactory)           // Required: ILoggerFactory
+    .WithScript(scriptSource)        // Required: Script source code
+    .WithData(dataObject)            // Required: Input data
+    .WithStandardLibrary()           // Optional: Include standard functions
+    .WithFunction(customFunction)    // Optional: Add custom functions
+    .WithOptions(executionOptions)   // Optional: Configure resource limits
+    .Run(cancellationToken);         // Optional: CancellationToken
+```
+
+**Important:** `JyroBuilder.Create()` requires an `ILoggerFactory` parameter. Use `NullLoggerFactory.Instance` for no logging.
+
+### Creating Error Results
+
+When manually creating error results (e.g., for script-not-found scenarios):
+
+```csharp
+private JyroExecutionResult CreateErrorResult(string errorMessage)
+{
+    return new JyroExecutionResult(
+        false,                          // executionSucceeded
+        JyroNull.Instance,              // finalDataValue (use singleton!)
+        new List<IMessage>
+        {
+            new Message(
+                MessageCode.RuntimeError,   // code (enum!)
+                0,                          // lineNumber
+                0,                          // columnPosition
+                MessageSeverity.Error,      // severity
+                ProcessingStage.Execution,  // stage
+                errorMessage)               // arguments (params string[])
+        },
+        new ExecutionMetadata(
+            TimeSpan.Zero,              // processingTime
+            0,                          // statementCount
+            0,                          // loopCount
+            0,                          // functionCallCount
+            0,                          // maxCallDepth
+            DateTimeOffset.UtcNow));    // startedAt
+}
+```
+
 ## Standard Library Functions
 
 ### String Functions
@@ -479,6 +734,7 @@ var options = new JyroExecutionOptions
 ### Array Functions
 - `Length(arr)` - Get array length
 - `Append(arr, value)` - Add element to end
+- `IndexOf(arr, value)` - Find index of element using deep equality
 - `Insert(arr, index, value)` - Insert element at index
 - `RemoveAt(arr, index)` - Remove element at index
 - `RemoveLast(arr)` - Remove last element
@@ -502,6 +758,7 @@ var options = new JyroExecutionOptions
 - `Equal(a, b)` - Deep equality comparison
 - `NotEqual(a, b)` - Deep inequality comparison
 - `NewGuid()` - Generate new GUID string
+- `InvokeRestMethod(url, method, options)` - Execute HTTP REST API requests (experimental)
 
 ### Date/Time Functions
 - `Now()` - Current date and time
@@ -584,7 +841,8 @@ end
 Jyro uses fail-fast error handling to prevent data corruption:
 
 ```csharp
-var result = JyroBuilder.Create()
+var result = JyroBuilder
+    .Create(loggerFactory)  
     .WithScript(script)
     .WithData(data)
     .WithStandardLibrary()
@@ -601,6 +859,12 @@ if (!result.IsSuccessful)
                 message.Code,
                 message.LineNumber,
                 message.ColumnPosition);
+
+            // Error details are in Code (enum) and Arguments (string array)
+            if (message.Arguments.Any())
+            {
+                _logger.LogError("  Arguments: {Arguments}", string.Join(", ", message.Arguments));
+            }
         }
     }
 

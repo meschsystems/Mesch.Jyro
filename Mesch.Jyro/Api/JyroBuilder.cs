@@ -134,6 +134,7 @@ public sealed partial class JyroBuilder
             // Array manipulation functions
             new AppendFunction(),
             new ClearFunction(),
+            new IndexOfFunction(),
             new InsertFunction(),
             new LengthFunction(),
             new MergeArraysFunction(),
