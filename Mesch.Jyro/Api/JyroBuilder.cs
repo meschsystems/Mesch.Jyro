@@ -157,6 +157,7 @@ public sealed partial class JyroBuilder
             new ExistsFunction(),
             new IsNullFunction(),
             new NewGuidFunction(),
+            new Base64EncodeFunction(),
             new NotEqualFunction(),
             new TypeOfFunction(),
 
