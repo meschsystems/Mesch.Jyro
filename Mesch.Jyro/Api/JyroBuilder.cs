@@ -109,7 +109,7 @@ public sealed partial class JyroBuilder
     /// <remarks>
     /// The standard library includes the following function categories:
     /// <list type="bullet">
-    /// <item><description>String functions: upper, lower, trim, replace, contains, startsWith, endsWith, split, join</description></item>
+    /// <item><description>String functions: upper, lower, trim, replace, contains, startsWith, endsWith, split, join, toNumber</description></item>
     /// <item><description>Array functions: length, append, appendWithFields, removeLast, mergeArrays, sort, sortByField, reverse, insert, removeAt, clear</description></item>
     /// <item><description>Math functions: min, max, sum, abs, round</description></item>
     /// <item><description>Utility functions: equal, notEqual, typeOf, exists, isNull</description></item>
@@ -128,6 +128,7 @@ public sealed partial class JyroBuilder
             new ReplaceFunction(),
             new SplitFunction(),
             new StartsWithFunction(),
+            new ToNumberFunction(),
             new TrimFunction(),
             new UpperFunction(),
 
