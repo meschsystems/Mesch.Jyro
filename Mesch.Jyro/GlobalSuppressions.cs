@@ -6,3 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0130:Namespace does not match folder structure", Justification = "Library requires single namespace")]
+[assembly: SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "Can change semantics")]

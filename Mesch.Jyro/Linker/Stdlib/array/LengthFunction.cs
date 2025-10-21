@@ -25,7 +25,7 @@ public sealed class LengthFunction : JyroFunctionBase
     /// The function arguments where:
     /// - arguments[0]: The value to measure (any JyroValue type)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroNumber"/> containing the length or count:
     /// - For strings: character count

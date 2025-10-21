@@ -23,7 +23,7 @@ public sealed class RemoveAtFunction : JyroFunctionBase
     /// - arguments[0]: The array to modify (JyroArray)
     /// - arguments[1]: The zero-based index of the element to remove (JyroNumber, must be integer)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// The element that was removed from the array, or <see cref="JyroNull.Instance"/>
     /// if the index is out of bounds. The array is modified in-place.

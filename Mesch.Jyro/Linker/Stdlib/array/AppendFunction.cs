@@ -26,7 +26,7 @@ public sealed class AppendFunction : JyroFunctionBase
     /// - arguments[0]: The target array to append to (JyroArray)
     /// - arguments[1]: The value to append (any JyroValue type)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// The modified array with the new value appended to the end. The same array
     /// instance is returned to support method chaining.

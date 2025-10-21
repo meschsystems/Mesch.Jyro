@@ -24,7 +24,7 @@ public sealed class JoinFunction : JyroFunctionBase
     /// - arguments[0]: The array of elements to join (JyroArray)
     /// - arguments[1]: The delimiter string to place between elements (JyroString)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroString"/> containing all array elements joined with the delimiter.
     /// String elements are used directly, null values become "null", and other types

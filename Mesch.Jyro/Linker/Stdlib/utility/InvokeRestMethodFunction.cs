@@ -17,13 +17,12 @@ public sealed class InvokeRestMethodFunction : JyroFunctionBase
     public InvokeRestMethodFunction(RestApiOptions options) : base(
         new JyroFunctionSignature(
             "InvokeRestMethod",
-            new[]
-            {
+            [
                 new Parameter("url", ParameterType.String),
                 new Parameter("method", ParameterType.String, isOptionalParameter: true),
                 new Parameter("headers", ParameterType.Object, isOptionalParameter: true),
                 new Parameter("body", ParameterType.Any, isOptionalParameter: true)
-            },
+            ],
             ParameterType.Object))
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
@@ -104,7 +103,7 @@ public sealed class InvokeRestMethodFunction : JyroFunctionBase
         }
     }
 
-    private JyroValue ExecuteRequestSync(
+    private JyroObject ExecuteRequestSync(
         Uri uri,
         string method,
         JyroObject? headers,

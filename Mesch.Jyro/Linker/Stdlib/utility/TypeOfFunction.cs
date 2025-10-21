@@ -22,7 +22,7 @@ public sealed class TypeOfFunction : JyroFunctionBase
     /// The function arguments where:
     /// - arguments[0]: The value to inspect for type information (any JyroValue type)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroString"/> containing the lowercase type name of the input value.
     /// Possible return values include: "number", "string", "boolean", "object", "array", "null".

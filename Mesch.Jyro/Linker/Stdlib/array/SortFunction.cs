@@ -23,7 +23,7 @@ public sealed class SortFunction : JyroFunctionBase
     /// The function arguments where:
     /// - arguments[0]: The array to sort (JyroArray)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// The same array instance after sorting. Elements are ordered with null values first,
     /// followed by numbers in ascending order, then strings in lexicographic order,

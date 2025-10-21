@@ -25,7 +25,7 @@ public sealed class MergeArraysFunction : JyroFunctionBase
     /// Array arguments have their elements added individually, while
     /// non-array arguments are added as single elements. Null values are ignored.
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A new <see cref="JyroArray"/> containing all elements from the input arrays
     /// and individual values, preserving the order in which they were provided.

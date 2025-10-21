@@ -33,7 +33,7 @@ public sealed class DateDiffFunction : JyroFunctionBase
     /// - arguments[1]: The start date string (JyroString)
     /// - arguments[2]: The time unit for the result (JyroString)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroNumber"/> containing the calculated time difference
     /// in the requested unit. Positive values indicate the end date is later.

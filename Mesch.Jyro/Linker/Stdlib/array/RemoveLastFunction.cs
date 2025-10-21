@@ -22,7 +22,7 @@ public sealed class RemoveLastFunction : JyroFunctionBase
     /// The function arguments where:
     /// - arguments[0]: The array to modify (JyroArray)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// The element that was removed from the end of the array, or <see cref="JyroNull.Instance"/>
     /// if the array is empty. The array is modified in-place.

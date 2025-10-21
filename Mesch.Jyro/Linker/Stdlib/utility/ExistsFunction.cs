@@ -22,7 +22,7 @@ public sealed class ExistsFunction : JyroFunctionBase
     /// The function arguments where:
     /// - arguments[0]: The value to test for existence (any JyroValue type)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroBoolean"/> indicating whether the value exists (is not null).
     /// Returns <c>true</c> for all non-null values, <c>false</c> for null values.

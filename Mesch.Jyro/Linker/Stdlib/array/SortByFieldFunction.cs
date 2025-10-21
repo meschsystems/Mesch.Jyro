@@ -32,7 +32,7 @@ public sealed class SortByFieldFunction : JyroFunctionBase
     /// - arguments[1]: The field name to sort by (JyroString)
     /// - arguments[2]: Sort direction - "asc" for ascending or "desc" for descending (JyroString)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A new <see cref="JyroArray"/> containing the sorted elements. Objects are compared
     /// by the specified field value using appropriate type-specific comparison logic.

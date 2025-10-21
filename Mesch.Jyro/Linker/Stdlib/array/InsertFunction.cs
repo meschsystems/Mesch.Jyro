@@ -32,7 +32,7 @@ public sealed class InsertFunction : JyroFunctionBase
     /// - arguments[1]: The zero-based index position for insertion (JyroNumber, must be integer)
     /// - arguments[2]: The value to insert (any JyroValue type)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// The modified array with the value inserted at the specified position.
     /// Elements at and after the insertion point are shifted to higher indices.

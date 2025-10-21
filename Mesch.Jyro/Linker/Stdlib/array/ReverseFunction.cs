@@ -22,7 +22,7 @@ public sealed class ReverseFunction : JyroFunctionBase
     /// The function arguments where:
     /// - arguments[0]: The array to reverse (JyroArray)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// The same array instance with its elements in reversed order. The first
     /// element moves to the last position, the second to second-last, and so on.

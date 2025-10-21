@@ -22,7 +22,7 @@ public sealed class ParseDateFunction : JyroFunctionBase
     /// The function arguments where:
     /// - arguments[0]: The date string to parse (JyroString)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroString"/> containing the parsed date in ISO 8601 format
     /// (yyyy-MM-ddTHH:mm:ss.fffZ) in UTC timezone.

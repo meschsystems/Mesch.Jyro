@@ -23,7 +23,7 @@ public sealed class SumFunction : JyroFunctionBase
     /// The function arguments containing numeric values to sum.
     /// Non-numeric arguments are ignored during the calculation.
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroNumber"/> containing the total sum of all numeric arguments.
     /// Returns zero if no numeric arguments are provided.

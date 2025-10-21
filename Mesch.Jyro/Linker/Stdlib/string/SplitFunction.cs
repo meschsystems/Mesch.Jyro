@@ -23,7 +23,7 @@ public sealed class SplitFunction : JyroFunctionBase
     /// - arguments[0]: The source string to split (JyroString)
     /// - arguments[1]: The delimiter string used for splitting (JyroString)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroArray"/> containing string elements representing the split parts.
     /// Empty strings are preserved when they occur between consecutive delimiters

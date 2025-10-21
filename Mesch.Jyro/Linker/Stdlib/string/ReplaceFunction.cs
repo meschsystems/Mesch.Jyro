@@ -31,7 +31,7 @@ public sealed class ReplaceFunction : JyroFunctionBase
     /// - arguments[1]: The substring to search for and replace (JyroString)
     /// - arguments[2]: The replacement string to substitute (JyroString)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroString"/> containing the modified string with all occurrences
     /// of the search string replaced with the replacement string. If the search

@@ -22,7 +22,7 @@ public sealed class MaxFunction : JyroFunctionBase
     /// The function arguments containing numeric values to compare.
     /// Non-numeric arguments are ignored during processing.
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroNumber"/> containing the maximum value found among the numeric arguments,
     /// or <see cref="JyroNull.Instance"/> if no numeric arguments are provided.

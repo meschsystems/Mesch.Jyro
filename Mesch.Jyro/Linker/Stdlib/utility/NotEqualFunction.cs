@@ -23,7 +23,7 @@ public sealed class NotEqualFunction : JyroFunctionBase
     /// - arguments[0]: The first value to compare (any JyroValue type)
     /// - arguments[1]: The second value to compare (any JyroValue type)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroBoolean"/> indicating whether the two values are not equal
     /// according to Jyro's equality rules. Returns <c>true</c> if the values differ,

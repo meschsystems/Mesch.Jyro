@@ -22,7 +22,7 @@ public sealed class EndsWithFunction : JyroFunctionBase
     /// - arguments[0]: The source string to test (JyroString)
     /// - arguments[1]: The suffix to search for (JyroString)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroBoolean"/> indicating whether the source string ends
     /// with the specified suffix.

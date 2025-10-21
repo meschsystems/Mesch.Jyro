@@ -23,7 +23,7 @@ public sealed class FormatDateFunction : JyroFunctionBase
     /// - arguments[0]: The date string to parse and format (JyroString)
     /// - arguments[1]: The format pattern to apply (JyroString)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroString"/> containing the formatted date according to the specified pattern.
     /// </returns>

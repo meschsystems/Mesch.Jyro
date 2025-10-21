@@ -22,7 +22,7 @@ public sealed class AbsFunction : JyroFunctionBase
     /// The function arguments where:
     /// - arguments[0]: The numeric value to process (JyroNumber)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroNumber"/> containing the absolute value of the input.
     /// The result is always non-negative.

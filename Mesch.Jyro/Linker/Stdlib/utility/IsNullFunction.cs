@@ -22,7 +22,7 @@ public sealed class IsNullFunction : JyroFunctionBase
     /// The function arguments where:
     /// - arguments[0]: The value to test for null (any JyroValue type)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroBoolean"/> indicating whether the value is null.
     /// Returns <c>true</c> for null values, <c>false</c> for all non-null values.

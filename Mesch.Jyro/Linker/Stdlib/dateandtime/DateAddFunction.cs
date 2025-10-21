@@ -31,7 +31,7 @@ public sealed class DateAddFunction : JyroFunctionBase
     /// - arguments[1]: The time unit for the addition (JyroString)
     /// - arguments[2]: The amount to add (JyroNumber, must be integer)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroString"/> containing the modified date in ISO 8601 format.
     /// </returns>

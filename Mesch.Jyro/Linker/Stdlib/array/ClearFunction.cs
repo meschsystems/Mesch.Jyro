@@ -22,7 +22,7 @@ public sealed class ClearFunction : JyroFunctionBase
     /// The function arguments where:
     /// - arguments[0]: The array to clear (JyroArray)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// The same array instance after all elements have been removed. The array
     /// will have a length of zero but retains its identity for reference equality.

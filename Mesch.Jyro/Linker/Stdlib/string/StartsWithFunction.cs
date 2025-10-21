@@ -23,7 +23,7 @@ public sealed class StartsWithFunction : JyroFunctionBase
     /// - arguments[0]: The source string to test (JyroString)
     /// - arguments[1]: The prefix to search for (JyroString)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroBoolean"/> indicating whether the source string begins
     /// with the specified prefix using case-sensitive comparison.

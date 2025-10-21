@@ -22,7 +22,7 @@ public sealed class LowerFunction : JyroFunctionBase
     /// The function arguments where:
     /// - arguments[0]: The string to convert to lowercase (JyroString)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroString"/> containing the input string converted to lowercase
     /// using invariant culture rules for consistent behavior across environments.

@@ -22,7 +22,7 @@ public sealed class TrimFunction : JyroFunctionBase
     /// The function arguments where:
     /// - arguments[0]: The string to trim (JyroString)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroString"/> containing the input string with leading and
     /// trailing whitespace removed. Internal whitespace is preserved unchanged.

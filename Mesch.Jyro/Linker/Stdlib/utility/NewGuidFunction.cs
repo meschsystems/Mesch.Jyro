@@ -40,7 +40,7 @@ public sealed class NewGuidFunction : JyroFunctionBase
     /// The function arguments (none required for this function).
     /// </param>
     /// <param name="executionContext">
-    /// The execution context (not used by this function).
+    /// The execution context.
     /// </param>
     /// <returns>
     /// A <see cref="JyroString"/> containing a newly generated GUID in standard

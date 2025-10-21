@@ -30,7 +30,7 @@ public sealed class RoundFunction : JyroFunctionBase
     /// - arguments[0]: The numeric value to round (JyroNumber)
     /// - arguments[1]: Optional number of decimal places (JyroNumber, must be integer, defaults to 0)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroNumber"/> containing the rounded value. Uses .NET's
     /// Math.Round implementation with banker's rounding (round half to even).

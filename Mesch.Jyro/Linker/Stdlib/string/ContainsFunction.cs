@@ -23,7 +23,7 @@ public sealed class ContainsFunction : JyroFunctionBase
     /// - arguments[0]: The source value to search within (JyroString or JyroArray)
     /// - arguments[1]: The value to search for (any JyroValue type)
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroBoolean"/> indicating whether the source contains the search value.
     /// Returns <c>false</c> if either argument is null.

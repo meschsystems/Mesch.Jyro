@@ -21,7 +21,7 @@ public sealed class TodayFunction : JyroFunctionBase
     /// <param name="arguments">
     /// The function arguments (empty for this function).
     /// </param>
-    /// <param name="executionContext">The execution context (not used by this function).</param>
+    /// <param name="executionContext">The execution context.</param>
     /// <returns>
     /// A <see cref="JyroString"/> containing the current UTC date
     /// in ISO 8601 date format (yyyy-MM-dd) without time components.
