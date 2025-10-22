@@ -16,6 +16,7 @@ namespace Mesch.Jyro;
 public sealed partial class JyroBuilder
 {
     private string? _scriptSource;
+    private LinkedProgram? _compiledProgram;
     private JyroValue? _data;
     private JyroExecutionOptions _options = new();
     private JyroScriptResolver? _resolver;
@@ -73,6 +74,40 @@ public sealed partial class JyroBuilder
     public JyroBuilder WithData(JyroValue data)
     {
         _data = data ?? throw new ArgumentNullException(nameof(data));
+        return this;
+    }
+
+    /// <summary>
+    /// Configures a pre-compiled program for execution.
+    /// This allows execution of a previously compiled <see cref="LinkedProgram"/>
+    /// without repeating the parsing, validation, and linking stages.
+    /// </summary>
+    /// <param name="program">The compiled LinkedProgram to execute.</param>
+    /// <returns>This builder instance for method chaining.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when program is null.</exception>
+    /// <remarks>
+    /// This method is typically used in conjunction with the <see cref="Compile"/> method
+    /// to separate compilation from execution, enabling scenarios like caching compiled scripts
+    /// for improved performance in web servers or other multi-execution environments.
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// // Compile once
+    /// var linkResult = JyroBuilder.Create()
+    ///     .WithScript("Data.result = Data.value * 2")
+    ///     .WithStandardLibrary()
+    ///     .Compile();
+    ///
+    /// // Execute multiple times with different data
+    /// var result = JyroBuilder.Create()
+    ///     .WithCompiledProgram(linkResult.Program!)
+    ///     .WithData(new JyroObject { ["value"] = new JyroNumber(5) })
+    ///     .Execute();
+    /// </code>
+    /// </example>
+    public JyroBuilder WithCompiledProgram(LinkedProgram program)
+    {
+        _compiledProgram = program ?? throw new ArgumentNullException(nameof(program));
         return this;
     }
 
@@ -285,6 +320,155 @@ public sealed partial class JyroBuilder
         options ??= RestApiOptions.CreateDefault();
         _hostFunctions.Add(new InvokeRestMethodFunction(options));
         return this;
+    }
+
+    /// <summary>
+    /// Compiles the configured script through the parsing, validation, and linking stages.
+    /// This method stops before execution, returning a reusable <see cref="LinkedProgram"/>
+    /// that can be executed multiple times with different data contexts.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="JyroLinkingResult"/> containing the linked program ready for execution,
+    /// along with any diagnostic messages and metadata from the compilation stages.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when script source has not been configured before calling Compile.
+    /// </exception>
+    /// <remarks>
+    /// This method is useful for scenarios where the same script needs to be executed
+    /// multiple times with different data, such as web servers processing requests.
+    /// The compiled LinkedProgram can be cached and reused, avoiding the overhead of
+    /// parsing, validation, and linking on subsequent executions.
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// // Compile once
+    /// var linkResult = JyroBuilder.Create()
+    ///     .WithScript("Data.result = Data.value * 2")
+    ///     .WithStandardLibrary()
+    ///     .Compile();
+    ///
+    /// if (linkResult.IsSuccessful)
+    /// {
+    ///     var program = linkResult.Program;
+    ///
+    ///     // Execute multiple times with different data
+    ///     var result1 = JyroBuilder.Create()
+    ///         .WithCompiledProgram(program)
+    ///         .WithData(new JyroObject { ["value"] = new JyroNumber(5) })
+    ///         .Execute();
+    ///
+    ///     var result2 = JyroBuilder.Create()
+    ///         .WithCompiledProgram(program)
+    ///         .WithData(new JyroObject { ["value"] = new JyroNumber(10) })
+    ///         .Execute();
+    /// }
+    /// </code>
+    /// </example>
+    public JyroLinkingResult Compile()
+    {
+        if (_scriptSource is null)
+        {
+            throw new InvalidOperationException("Script source must be configured before compilation.");
+        }
+
+        // Create ANTLR-based pipeline components
+        var validator = new Validator(_loggerFactory.CreateLogger<Validator>(), new[] { "Data" });
+        var linker = new Linker(_loggerFactory.CreateLogger<Linker>());
+        var jyroPipeline = new Jyro(validator, linker, new Interpreter());
+
+        // Stage 1: Parse
+        var parseResult = jyroPipeline.Parse(_scriptSource);
+        if (!parseResult.IsSuccessful || parseResult.ProgramContext == null)
+        {
+            return new JyroLinkingResult(
+                false,
+                null,
+                parseResult.Messages,
+                new LinkingMetadata(TimeSpan.Zero, 0, DateTimeOffset.UtcNow));
+        }
+
+        // Stage 2: Validate
+        var validationResult = jyroPipeline.Validate(parseResult.ProgramContext);
+        if (!validationResult.IsSuccessful)
+        {
+            return new JyroLinkingResult(
+                false,
+                null,
+                validationResult.Messages,
+                new LinkingMetadata(TimeSpan.Zero, 0, DateTimeOffset.UtcNow));
+        }
+
+        // Stage 3: Link
+        return jyroPipeline.Link(parseResult.ProgramContext, _hostFunctions);
+    }
+
+    /// <summary>
+    /// Executes a pre-compiled program with the configured data context.
+    /// This method is designed for scenarios where a program has been compiled once
+    /// and needs to be executed multiple times with different data, avoiding redundant
+    /// compilation overhead.
+    /// </summary>
+    /// <param name="cancellationToken">
+    /// Optional cancellation token for cooperative cancellation of long-running operations.
+    /// </param>
+    /// <returns>
+    /// A <see cref="JyroExecutionResult"/> containing the final data state, diagnostic messages,
+    /// and execution metadata from the execution.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when either compiled program or data has not been configured before calling Execute.
+    /// </exception>
+    /// <remarks>
+    /// This method requires a pre-compiled <see cref="LinkedProgram"/> to be configured via
+    /// <see cref="WithCompiledProgram"/>. The data context must be configured via <see cref="WithData"/>.
+    ///
+    /// <example>
+    /// Compile once, execute multiple times:
+    /// <code>
+    /// // Compile the program once
+    /// var linkingResult = JyroBuilder.Create()
+    ///     .WithScript("Data.result = Data.value * 2")
+    ///     .Compile();
+    ///
+    /// if (linkingResult.IsSuccessful)
+    /// {
+    ///     var program = linkingResult.Program;
+    ///
+    ///     // Execute multiple times with different data
+    ///     var result1 = JyroBuilder.Create()
+    ///         .WithCompiledProgram(program)
+    ///         .WithData(new JyroObject { ["value"] = new JyroNumber(5) })
+    ///         .Execute();
+    ///
+    ///     var result2 = JyroBuilder.Create()
+    ///         .WithCompiledProgram(program)
+    ///         .WithData(new JyroObject { ["value"] = new JyroNumber(10) })
+    ///         .Execute();
+    /// }
+    /// </code>
+    /// </example>
+    /// </remarks>
+    public JyroExecutionResult Execute(CancellationToken cancellationToken = default)
+    {
+        if (_compiledProgram is null)
+        {
+            throw new InvalidOperationException("Compiled program must be configured before execution. Use WithCompiledProgram() or compile with Compile() first.");
+        }
+        if (_data is null)
+        {
+            throw new InvalidOperationException("Data context must be configured before execution.");
+        }
+
+        // Create interpreter for execution
+        var interpreter = new Interpreter();
+        var jyroPipeline = new Jyro(
+            new Validator(_loggerFactory.CreateLogger<Validator>(), new[] { "Data" }),
+            new Linker(_loggerFactory.CreateLogger<Linker>()),
+            interpreter);
+
+        // Execute the pre-compiled program with fresh data
+        return jyroPipeline.ExecuteLinkedProgram(_compiledProgram, _data, _options, _resolver, cancellationToken);
     }
 
     /// <summary>
