@@ -728,7 +728,7 @@ var result = JyroBuilder
     .Execute(cancellationToken);     // Optional: CancellationToken
 ```
 
-**Performance benefit:** Avoids redundant parsing, validation, and linking. Typically 20-50x faster than `Run()` for cached programs.
+**Performance benefit:** Avoids redundant parsing, validation, and linking. Typically 5x-10x faster than `Run()` for cached programs.
 
 #### WithCompiledProgram() - Set Pre-compiled Program
 
