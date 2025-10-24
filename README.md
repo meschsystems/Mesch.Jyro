@@ -288,7 +288,72 @@ var result = JyroBuilder
     .Run();
 ```
 
-### 4. Dynamic Configuration Processing
+### 4. Plugin Architecture - Loading Functions from DLLs
+
+Load custom Jyro functions dynamically from external assemblies at runtime, enabling a plugin-based architecture:
+
+```csharp
+// Create a plugin DLL with custom functions
+public class GreetFunction : JyroFunctionBase
+{
+    public GreetFunction() : base(new JyroFunctionSignature(
+        "Greet",
+        new[] { new Parameter("name", ParameterType.String) },
+        ParameterType.String))
+    {
+    }
+
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    {
+        var name = GetStringArgument(arguments, 0);
+        return new JyroString($"Hello, {name}! Welcome to Jyro plugins!");
+    }
+}
+
+// Load from a single DLL file
+var pluginPath = "path/to/MyPlugins.dll";
+var result = JyroBuilder
+    .Create(loggerFactory)
+    .WithScript("Data.greeting = Greet(\"World\")")
+    .WithData(data)
+    .WithStandardLibrary()
+    .WithFunctionsFromAssemblyPath(pluginPath)
+    .Run();
+
+// Or load all plugins from a directory
+var pluginDirectory = "path/to/Plugins";
+var result = JyroBuilder
+    .Create(loggerFactory)
+    .WithScript("Data.result = CustomFunction()")
+    .WithData(data)
+    .WithFunctionsFromDirectory(pluginDirectory)
+    .Run();
+
+// Load with custom search pattern
+var result = JyroBuilder
+    .Create(loggerFactory)
+    .WithScript("Data.value = ProcessData()")
+    .WithData(data)
+    .WithFunctionsFromDirectory("C:\\Plugins", "*.JyroPlugin.dll", SearchOption.AllDirectories)
+    .Run();
+```
+
+**Key features:**
+- Automatically discovers all `IJyroFunction` implementations in assemblies
+- Three loading methods: single file (`WithFunctionsFromAssemblyPath`), loaded assembly (`WithFunctionsFromAssembly`), or directory (`WithFunctionsFromDirectory`)
+- Directory loading supports custom search patterns and recursive subdirectory search
+- Combines seamlessly with standard library and manually added functions
+- Supports compile-once, execute-many pattern for cached plugins
+- Gracefully handles mixed assemblies (skips types without parameterless constructors when loading from directory)
+
+**Requirements:**
+- Plugin functions must have public parameterless constructors
+- Plugin assemblies must reference the Mesch.Jyro package
+- All function types must implement `IJyroFunction` (typically by inheriting from `JyroFunctionBase`)
+
+See the `Mesch.Jyro.PluginExample` project for complete working examples including `ReverseString`, `Multiply`, and `Greet` functions.
+
+### 5. Dynamic Configuration Processing
 
 Load and process configuration with scripts:
 
@@ -309,7 +374,7 @@ var configScript = @"
 ";
 ```
 
-### 5. REST API Integration
+### 6. REST API Integration
 
 Use Jyro in ASP.NET Core API endpoints:
 
@@ -756,6 +821,107 @@ for (int i = 0; i < 1000; i++)
         .Execute();
 }
 ```
+
+#### WithFunctionsFromAssembly() - Load Functions from Assembly
+
+Loads all `IJyroFunction` implementations from a loaded assembly and adds them to the execution environment.
+
+```csharp
+JyroBuilder WithFunctionsFromAssembly(Assembly assembly)
+```
+
+**Parameters:**
+- `assembly` - The assembly to scan for JyroFunction implementations
+
+**Throws:**
+- `ArgumentNullException` - When assembly is null
+- `InvalidOperationException` - When a function type cannot be instantiated
+
+**Example:**
+```csharp
+var assembly = Assembly.LoadFrom("path/to/MyPlugins.dll");
+
+var result = JyroBuilder.Create(loggerFactory)
+    .WithScript("Data.result = CustomFunction()")
+    .WithData(data)
+    .WithFunctionsFromAssembly(assembly)
+    .Run();
+```
+
+#### WithFunctionsFromAssemblyPath() - Load Functions from DLL Path
+
+Loads an assembly from the specified file path, scans it for all `IJyroFunction` implementations, and adds them to the execution environment.
+
+```csharp
+JyroBuilder WithFunctionsFromAssemblyPath(string assemblyPath)
+```
+
+**Parameters:**
+- `assemblyPath` - The file path to the assembly DLL to load
+
+**Throws:**
+- `ArgumentNullException` - When assemblyPath is null
+- `FileNotFoundException` - When the assembly file does not exist
+- `InvalidOperationException` - When a function type cannot be instantiated
+
+**Example:**
+```csharp
+var result = JyroBuilder.Create(loggerFactory)
+    .WithScript("Data.greeting = Greet(\"World\")")
+    .WithData(data)
+    .WithStandardLibrary()
+    .WithFunctionsFromAssemblyPath("C:\\Plugins\\MyFunctions.dll")
+    .Run();
+```
+
+**Notes:**
+- Uses `Assembly.LoadFrom` to load the assembly and its dependencies
+- Automatically discovers and instantiates all concrete classes implementing `IJyroFunction`
+- All function classes must have public parameterless constructors
+- Can be combined with `WithStandardLibrary()` and `WithFunction()` calls
+
+#### WithFunctionsFromDirectory() - Load Functions from Directory
+
+Loads all DLL files from the specified directory, scans each for `IJyroFunction` implementations, and adds them to the execution environment.
+
+```csharp
+JyroBuilder WithFunctionsFromDirectory(
+    string directoryPath,
+    string searchPattern = "*.dll",
+    SearchOption searchOption = SearchOption.TopDirectoryOnly)
+```
+
+**Parameters:**
+- `directoryPath` - The directory path containing plugin DLL files
+- `searchPattern` - Optional search pattern for filtering DLL files (default: "*.dll")
+- `searchOption` - Optional search option to specify whether to search subdirectories (default: TopDirectoryOnly)
+
+**Throws:**
+- `ArgumentNullException` - When directoryPath or searchPattern is null
+- `DirectoryNotFoundException` - When the directory does not exist
+
+**Example:**
+```csharp
+// Load all DLLs from directory
+var result = JyroBuilder.Create(loggerFactory)
+    .WithScript("Data.result = CustomFunction()")
+    .WithData(data)
+    .WithFunctionsFromDirectory("C:\\Plugins")
+    .Run();
+
+// Load with custom search pattern
+var result = JyroBuilder.Create(loggerFactory)
+    .WithScript("Data.greeting = Greet(\"World\")")
+    .WithData(data)
+    .WithFunctionsFromDirectory("C:\\Plugins", "*.JyroPlugin.dll", SearchOption.AllDirectories)
+    .Run();
+```
+
+**Notes:**
+- Automatically skips non-.NET assemblies and DLLs that can't be loaded
+- Gracefully handles types without parameterless constructors (skips them instead of throwing)
+- Useful for plugin-based architectures where multiple plugin assemblies are deployed to a common directory
+- Can be combined with `WithStandardLibrary()` and `WithFunction()` calls
 
 ### Creating Error Results
 

@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Mesch.Jyro\Mesch.Jyro.csproj" />
+    <ProjectReference Include="..\Mesch.Jyro.PluginExample\Mesch.Jyro.PluginExample.csproj" />
   </ItemGroup>
 
 </Project>

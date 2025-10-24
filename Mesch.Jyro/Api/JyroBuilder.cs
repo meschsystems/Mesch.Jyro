@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -226,6 +227,197 @@ public sealed partial class JyroBuilder
     {
         ArgumentNullException.ThrowIfNull(function);
         _hostFunctions.Add(function);
+        return this;
+    }
+
+    /// <summary>
+    /// Loads and adds all IJyroFunction implementations from a loaded Assembly.
+    /// This method scans the assembly for all concrete classes that implement IJyroFunction,
+    /// creates instances of them (using parameterless constructors), and adds them to the execution environment.
+    /// </summary>
+    /// <param name="assembly">The assembly to scan for JyroFunction implementations.</param>
+    /// <param name="skipInstantiationErrors">
+    /// If true, silently skips types that cannot be instantiated (e.g., missing parameterless constructor).
+    /// If false (default), throws an exception when instantiation fails.
+    /// </param>
+    /// <returns>This builder instance for method chaining.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when assembly is null.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when skipInstantiationErrors is false and a function type cannot be instantiated.
+    /// </exception>
+    /// <remarks>
+    /// This method is useful for loading custom functions from plugin assemblies or separate class libraries.
+    /// All function types must have a public parameterless constructor to be instantiated.
+    ///
+    /// Example:
+    /// <code>
+    /// var assembly = Assembly.LoadFrom("MyCustomFunctions.dll");
+    /// var result = JyroBuilder.Create()
+    ///     .WithScript("var id = MyCustomFunction()")
+    ///     .WithData(new JyroObject())
+    ///     .WithFunctionsFromAssembly(assembly)
+    ///     .Run();
+    /// </code>
+    /// </remarks>
+    public JyroBuilder WithFunctionsFromAssembly(Assembly assembly, bool skipInstantiationErrors = false)
+    {
+        ArgumentNullException.ThrowIfNull(assembly);
+
+        var functionTypes = assembly.GetTypes()
+            .Where(t => !t.IsAbstract && !t.IsInterface && typeof(IJyroFunction).IsAssignableFrom(t));
+
+        foreach (var functionType in functionTypes)
+        {
+            try
+            {
+                var instance = Activator.CreateInstance(functionType) as IJyroFunction;
+                if (instance != null)
+                {
+                    _hostFunctions.Add(instance);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (skipInstantiationErrors)
+                {
+                    // Skip types that can't be instantiated (e.g., no parameterless constructor)
+                    continue;
+                }
+
+                throw new InvalidOperationException(
+                    $"Failed to instantiate JyroFunction type '{functionType.FullName}'. " +
+                    $"Ensure the type has a public parameterless constructor. Inner exception: {ex.Message}",
+                    ex);
+            }
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Loads and adds all IJyroFunction implementations from a DLL file at the specified path.
+    /// This method loads the assembly from the file path, scans it for all concrete classes
+    /// that implement IJyroFunction, creates instances of them, and adds them to the execution environment.
+    /// </summary>
+    /// <param name="assemblyPath">The file path to the assembly DLL to load.</param>
+    /// <returns>This builder instance for method chaining.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when assemblyPath is null.</exception>
+    /// <exception cref="FileNotFoundException">Thrown when the assembly file does not exist.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when a function type cannot be instantiated (e.g., missing parameterless constructor).
+    /// </exception>
+    /// <remarks>
+    /// This method is useful for loading custom functions from plugin DLLs or separate class libraries.
+    /// All function types must have a public parameterless constructor to be instantiated.
+    ///
+    /// The assembly is loaded using Assembly.LoadFrom, which loads the assembly from a specific path
+    /// and allows it to load dependent assemblies from the same directory.
+    ///
+    /// Example:
+    /// <code>
+    /// var result = JyroBuilder.Create()
+    ///     .WithScript("var id = MyCustomFunction()")
+    ///     .WithData(new JyroObject())
+    ///     .WithFunctionsFromAssemblyPath("C:\\Plugins\\MyCustomFunctions.dll")
+    ///     .Run();
+    /// </code>
+    /// </remarks>
+    public JyroBuilder WithFunctionsFromAssemblyPath(string assemblyPath)
+    {
+        ArgumentNullException.ThrowIfNull(assemblyPath);
+
+        if (!File.Exists(assemblyPath))
+        {
+            throw new FileNotFoundException($"Assembly file not found at path: {assemblyPath}", assemblyPath);
+        }
+
+        var assembly = Assembly.LoadFrom(assemblyPath);
+        return WithFunctionsFromAssembly(assembly);
+    }
+
+    /// <summary>
+    /// Loads and adds all IJyroFunction implementations from all DLL files in the specified directory.
+    /// This method scans the directory for .dll files, loads each assembly, and discovers all
+    /// concrete classes that implement IJyroFunction, creating instances and adding them to the execution environment.
+    /// </summary>
+    /// <param name="directoryPath">The directory path containing plugin DLL files.</param>
+    /// <param name="searchPattern">
+    /// Optional search pattern for filtering DLL files (default: "*.dll").
+    /// Use patterns like "*.Plugin.dll" to load only specific plugin assemblies.
+    /// </param>
+    /// <param name="searchOption">
+    /// Optional search option to specify whether to search subdirectories (default: TopDirectoryOnly).
+    /// Use SearchOption.AllDirectories to recursively search subdirectories.
+    /// </param>
+    /// <returns>This builder instance for method chaining.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when directoryPath is null.</exception>
+    /// <exception cref="DirectoryNotFoundException">Thrown when the directory does not exist.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when a function type cannot be instantiated (e.g., missing parameterless constructor).
+    /// </exception>
+    /// <remarks>
+    /// This method is useful for plugin-based architectures where multiple plugin assemblies
+    /// are deployed to a common directory. All function types must have a public parameterless
+    /// constructor to be instantiated.
+    ///
+    /// The method loads assemblies using Assembly.LoadFrom, which allows dependent assemblies
+    /// to be loaded from the same directory.
+    ///
+    /// If any assembly fails to load or contains types that cannot be instantiated, the error
+    /// is propagated. Consider using try-catch if you need graceful handling of individual
+    /// plugin failures.
+    ///
+    /// Example:
+    /// <code>
+    /// var result = JyroBuilder.Create()
+    ///     .WithScript("var id = MyCustomFunction()")
+    ///     .WithData(new JyroObject())
+    ///     .WithFunctionsFromDirectory("C:\\Plugins")
+    ///     .Run();
+    ///
+    /// // Or with custom search pattern
+    /// var result = JyroBuilder.Create()
+    ///     .WithScript("var greeting = Greet(\"World\")")
+    ///     .WithData(new JyroObject())
+    ///     .WithFunctionsFromDirectory("C:\\Plugins", "*.JyroPlugin.dll", SearchOption.AllDirectories)
+    ///     .Run();
+    /// </code>
+    /// </remarks>
+    public JyroBuilder WithFunctionsFromDirectory(
+        string directoryPath,
+        string searchPattern = "*.dll",
+        SearchOption searchOption = SearchOption.TopDirectoryOnly)
+    {
+        ArgumentNullException.ThrowIfNull(directoryPath);
+        ArgumentNullException.ThrowIfNull(searchPattern);
+
+        if (!Directory.Exists(directoryPath))
+        {
+            throw new DirectoryNotFoundException($"Plugin directory not found at path: {directoryPath}");
+        }
+
+        var dllFiles = Directory.GetFiles(directoryPath, searchPattern, searchOption);
+
+        foreach (var dllFile in dllFiles)
+        {
+            try
+            {
+                var assembly = Assembly.LoadFrom(dllFile);
+                // Skip instantiation errors when loading from directory to handle mixed assemblies
+                WithFunctionsFromAssembly(assembly, skipInstantiationErrors: true);
+            }
+            catch (BadImageFormatException)
+            {
+                // Skip non-.NET assemblies (e.g., native DLLs)
+                continue;
+            }
+            catch (Exception ex) when (ex is FileLoadException or FileNotFoundException)
+            {
+                // Skip DLLs that can't be loaded (e.g., missing dependencies)
+                continue;
+            }
+        }
+
         return this;
     }
 
