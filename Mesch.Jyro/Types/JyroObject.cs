@@ -40,12 +40,41 @@ public sealed class JyroObject : JyroValue, IEnumerable<KeyValuePair<string, Jyr
 
     /// <summary>
     /// Gets the value of the property with the specified key.
+    /// Supports nested path notation using dots (e.g., "address.city").
     /// </summary>
-    /// <param name="key">The property key to retrieve.</param>
-    /// <returns>The property value, or JyroNull.Instance if the property does not exist.</returns>
+    /// <param name="key">The property key or path to retrieve. Use dot notation for nested properties.</param>
+    /// <returns>
+    /// The property value, or JyroNull.Instance if the property does not exist or
+    /// any intermediate path segment is not an object.
+    /// </returns>
     public override JyroValue GetProperty(string key)
     {
-        return _properties.TryGetValue(key, out var value) ? value : JyroNull.Instance;
+        // Check if the key contains a dot, indicating a nested path
+        if (key.Contains('.'))
+        {
+            var pathSegments = key.Split('.');
+            var currentValue = (JyroValue)this;
+
+            foreach (var segment in pathSegments)
+            {
+                if (currentValue is JyroObject currentObject)
+                {
+                    currentValue = currentObject._properties.TryGetValue(segment, out var value)
+                        ? value
+                        : JyroNull.Instance;
+                }
+                else
+                {
+                    // Path traversal failed - intermediate value is not an object
+                    return JyroNull.Instance;
+                }
+            }
+
+            return currentValue;
+        }
+
+        // Simple property lookup (no nested path)
+        return _properties.TryGetValue(key, out var propertyValue) ? propertyValue : JyroNull.Instance;
     }
 
     /// <summary>

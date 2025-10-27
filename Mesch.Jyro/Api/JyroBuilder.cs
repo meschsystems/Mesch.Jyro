@@ -146,7 +146,7 @@ public sealed partial class JyroBuilder
     /// The standard library includes the following function categories:
     /// <list type="bullet">
     /// <item><description>String functions: upper, lower, trim, replace, contains, startsWith, endsWith, split, join, toNumber</description></item>
-    /// <item><description>Array functions: length, append, appendWithFields, removeLast, mergeArrays, sort, sortByField, reverse, insert, removeAt, clear</description></item>
+    /// <item><description>Array functions: length, append, countIf, indexOf, insert, removeLast, removeAt, clear, mergeArrays, sort, sortByField, reverse</description></item>
     /// <item><description>Math functions: min, max, sum, abs, round</description></item>
     /// <item><description>Utility functions: equal, notEqual, typeOf, exists, isNull</description></item>
     /// <item><description>Date functions: now, today, parseDate, formatDate, dateAdd, dateDiff, datePart</description></item>
@@ -171,6 +171,7 @@ public sealed partial class JyroBuilder
             // Array manipulation functions
             new AppendFunction(),
             new ClearFunction(),
+            new CountIfFunction(),
             new IndexOfFunction(),
             new InsertFunction(),
             new LengthFunction(),
