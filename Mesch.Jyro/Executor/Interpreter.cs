@@ -296,6 +296,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             }
             finally
             {
+                _context.Limiter.ExitLoop();
                 if (_context.Variables != null)
                 {
                     // Scope may have been popped in catch
@@ -344,6 +345,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
                 }
                 finally
                 {
+                    _context.Limiter.ExitLoop();
                     if (_context.Variables != null)
                     {
                         // Scope may have been popped in catch
@@ -380,6 +382,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
                 }
                 finally
                 {
+                    _context.Limiter.ExitLoop();
                     if (_context.Variables != null)
                     {
                         // Scope may have been popped in catch
@@ -980,6 +983,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         }
         finally
         {
+            _context.Limiter.ExitCall();
             _metrics.CurrentCallDepth--;
         }
     }
