@@ -146,10 +146,19 @@ public sealed partial class JyroBuilder
     /// The standard library includes the following function categories:
     /// <list type="bullet">
     /// <item><description>String functions: upper, lower, trim, replace, contains, startsWith, endsWith, split, join, toNumber</description></item>
-    /// <item><description>Array functions: length, append, countIf, indexOf, insert, removeLast, removeAt, clear, mergeArrays, sort, sortByField, reverse</description></item>
+    /// <item><description>Array functions: length, append, countIf, filter, first, last, indexOf, insert, pop, removeLast, removeAt, clear, mergeArrays, sort, sortByField, reverse</description></item>
     /// <item><description>Math functions: min, max, sum, abs, round</description></item>
-    /// <item><description>Utility functions: equal, notEqual, typeOf, exists, isNull</description></item>
+    /// <item><description>Utility functions: equal, notEqual, typeOf, exists, isNull, base64Encode, base64Decode, newGuid, callScript</description></item>
     /// <item><description>Date functions: now, today, parseDate, formatDate, dateAdd, dateDiff, datePart</description></item>
+    /// </list>
+    /// <para>
+    /// API Design Principles:
+    /// </para>
+    /// <list type="bullet">
+    /// <item><description><b>Immutable Transformations</b>: Functions like Sort, Reverse, Filter, and SortByField return new arrays without modifying the original</description></item>
+    /// <item><description><b>Chainable Operations</b>: All array functions return arrays to enable fluent chaining patterns</description></item>
+    /// <item><description><b>Consistent Parameter Ordering</b>: Target object always comes first, followed by modifiers (e.g., Filter(array, field, operator, value))</description></item>
+    /// <item><description><b>Composable by Design</b>: Small, focused functions that combine powerfully (e.g., Length(Filter(Sort(array), "status", "==", "open")))</description></item>
     /// </list>
     /// </remarks>
     public JyroBuilder WithStandardLibrary()
@@ -172,10 +181,14 @@ public sealed partial class JyroBuilder
             new AppendFunction(),
             new ClearFunction(),
             new CountIfFunction(),
+            new FilterFunction(),
+            new FirstFunction(),
             new IndexOfFunction(),
             new InsertFunction(),
+            new LastFunction(),
             new LengthFunction(),
             new MergeArraysFunction(),
+            new PopFunction(),
             new RemoveAtFunction(),
             new RemoveLastFunction(),
             new ReverseFunction(),
@@ -196,6 +209,7 @@ public sealed partial class JyroBuilder
             new IsNullFunction(),
             new NewGuidFunction(),
             new Base64EncodeFunction(),
+            new Base64DecodeFunction(),
             new NotEqualFunction(),
             new TypeOfFunction(),
 

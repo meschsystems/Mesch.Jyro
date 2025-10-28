@@ -969,16 +969,21 @@ private JyroExecutionResult CreateErrorResult(string errorMessage)
 
 ### Array Functions
 - `Length(arr)` - Get array length
-- `Append(arr, value)` - Add element to end
+- `First(arr)` - Get first element safely (returns null if empty)
+- `Last(arr)` - Get last element safely (returns null if empty)
+- `Append(arr, value)` - Add element to end, returns array
+- `Pop(arr)` - Remove and return last element
 - `IndexOf(arr, value)` - Find index of element using deep equality
-- `Insert(arr, index, value)` - Insert element at index
-- `RemoveAt(arr, index)` - Remove element at index
-- `RemoveLast(arr)` - Remove last element
-- `Clear(arr)` - Remove all elements
-- `Sort(arr)` - Sort array in-place (ascending)
-- `SortByField(arr, field, direction)` - Sort array of objects by field
-- `Reverse(arr)` - Reverse array in-place
-- `MergeArrays(arr1, arr2)` - Combine two arrays
+- `Insert(arr, index, value)` - Insert element at index, returns array
+- `RemoveAt(arr, index)` - Remove element at index, returns array
+- `RemoveLast(arr)` - Remove last element, returns array
+- `Clear(arr)` - Remove all elements, returns array
+- `Filter(arr, field, operator, value)` - Filter array by field comparison (returns new array)
+- `CountIf(arr, field, operator, value)` - Count elements matching condition
+- `Sort(arr)` - Sort array (returns new sorted array)
+- `SortByField(arr, field, direction)` - Sort array of objects by field (returns new sorted array)
+- `Reverse(arr)` - Reverse array (returns new reversed array)
+- `MergeArrays(arr1, arr2, ...)` - Combine arrays
 
 ### Math Functions
 - `Min(a, b)` - Return minimum value
@@ -990,20 +995,23 @@ private JyroExecutionResult CreateErrorResult(string errorMessage)
 ### Utility Functions
 - `TypeOf(value)` - Get type name as string
 - `IsNull(value)` - Check if value is null
-- `Exists(obj, property)` - Check if property exists
+- `Exists(value)` - Check if value is not null
 - `Equal(a, b)` - Deep equality comparison
 - `NotEqual(a, b)` - Deep inequality comparison
+- `Base64Encode(str)` - Encode string to Base64
+- `Base64Decode(str)` - Decode Base64 string
 - `NewGuid()` - Generate new GUID string
-- `InvokeRestMethod(url, method, options)` - Execute HTTP REST API requests (experimental)
+- `CallScript(scriptSource, data)` - Execute child script with cycle detection
+- `InvokeRestMethod(url, method, headers, body)` - Execute HTTP REST API requests (opt-in)
 
 ### Date/Time Functions
-- `Now()` - Current date and time
-- `Today()` - Current date (midnight)
-- `ParseDate(str)` - Parse ISO 8601 date string
-- `FormatDate(date, format)` - Format date to string
-- `DateAdd(date, days)` - Add days to date
-- `DateDiff(date1, date2)` - Get difference in days
-- `DatePart(date, part)` - Extract part ('year', 'month', 'day', 'hour', 'minute', 'second')
+- `Now()` - Current UTC date and time (ISO 8601)
+- `Today()` - Current UTC date at midnight (ISO 8601)
+- `ParseDate(str)` - Parse date string to ISO 8601 format
+- `FormatDate(date, format)` - Format date using .NET format patterns
+- `DateAdd(date, unit, amount)` - Add time to date (units: "days", "weeks", "months", "years", "hours", "minutes", "seconds")
+- `DateDiff(endDate, startDate, unit)` - Calculate difference between dates in specified unit
+- `DatePart(date, part)` - Extract date component ("year", "month", "day", "hour", "minute", "second", "dayofweek", "dayofyear")
 
 ## Language Syntax
 
@@ -1027,19 +1035,22 @@ end
 
 ### Loops
 ```jyro
-# For loop
-for i = 1 to 10 do
-    Data.sum = Data.sum + i
-end
-
 # While loop
+var count = 0
 while count < 100 do
     count = count + 1
 end
 
-# Foreach loop
+# Foreach loop (arrays)
 foreach item in Data.items do
     Data.total = Data.total + item.price
+end
+
+# Foreach loop (object keys)
+var obj = { "a": 1, "b": 2, "c": 3 }
+foreach key in obj do
+    # key is a string ("a", "b", "c")
+    var value = obj[key]
 end
 ```
 

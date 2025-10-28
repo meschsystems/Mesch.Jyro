@@ -1,17 +1,17 @@
 namespace Mesch.Jyro;
 
 /// <summary>
-/// Removes and returns the last element from an array. The array is modified
-/// in-place by removing the final element, reducing the array length by one.
-/// Returns null if the array is empty rather than throwing an exception.
+/// Removes the last element from an array and returns the modified array to support chaining.
+/// The array is modified in-place by removing the final element, reducing the array length by one.
+/// If the array is empty, it is returned unchanged rather than throwing an exception.
 /// </summary>
 public sealed class RemoveLastFunction : JyroFunctionBase
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="RemoveLastFunction"/> class
-    /// with a signature that accepts an array and returns the removed element.
+    /// with a signature that accepts an array and returns the modified array.
     /// </summary>
-    public RemoveLastFunction() : base(FunctionSignatures.Unary("RemoveLast", ParameterType.Array, ParameterType.Any))
+    public RemoveLastFunction() : base(FunctionSignatures.Unary("RemoveLast", ParameterType.Array, ParameterType.Array))
     {
     }
 
@@ -24,21 +24,21 @@ public sealed class RemoveLastFunction : JyroFunctionBase
     /// </param>
     /// <param name="executionContext">The execution context.</param>
     /// <returns>
-    /// The element that was removed from the end of the array, or <see cref="JyroNull.Instance"/>
-    /// if the array is empty. The array is modified in-place.
+    /// The modified array with the last element removed. If the array is empty,
+    /// it is returned unchanged. This enables method chaining.
     /// </returns>
     public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
     {
         var targetArray = GetArrayArgument(arguments, 0);
 
-        if (targetArray.Length == 0)
+        // Only remove if array is not empty
+        if (targetArray.Length > 0)
         {
-            return JyroNull.Instance;
+            var lastElementIndex = targetArray.Length - 1;
+            targetArray.RemoveAt(lastElementIndex);
         }
 
-        var lastElementIndex = targetArray.Length - 1;
-        var removedElement = targetArray[lastElementIndex];
-        targetArray.RemoveAt(lastElementIndex);
-        return removedElement;
+        // Always return the array for chaining
+        return targetArray;
     }
 }

@@ -209,8 +209,7 @@ public class StandardLibraryTests
     {
         var script = @"
             var arr = [1, 2, 3]
-            Reverse(arr)
-            Data.result = arr
+            Data.result = Reverse(arr)
         ";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
@@ -227,8 +226,7 @@ public class StandardLibraryTests
         // Sort only accepts one parameter (array) and always sorts ascending
         var script = @"
             var arr = [3, 1, 2]
-            Sort(arr)
-            Data.result = arr
+            Data.result = Sort(arr)
         ";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 

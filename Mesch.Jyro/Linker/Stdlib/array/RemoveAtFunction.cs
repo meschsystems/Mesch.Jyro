@@ -1,17 +1,18 @@
 namespace Mesch.Jyro;
 
 /// <summary>
-/// Removes an element at a specific index from an array and returns the removed element.
-/// The array is modified in-place with all subsequent elements shifted down by one position.
-/// Returns null if the specified index is out of bounds rather than throwing an exception.
+/// Removes an element at a specific index from an array and returns the modified array
+/// to support chaining. The array is modified in-place with all subsequent elements
+/// shifted down by one position. If the index is out of bounds, the array is returned
+/// unchanged rather than throwing an exception.
 /// </summary>
 public sealed class RemoveAtFunction : JyroFunctionBase
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="RemoveAtFunction"/> class
-    /// with a signature that accepts an array and index, returning the removed element.
+    /// with a signature that accepts an array and index, returning the modified array.
     /// </summary>
-    public RemoveAtFunction() : base(FunctionSignatures.Binary("RemoveAt", ParameterType.Array, ParameterType.Number, ParameterType.Any))
+    public RemoveAtFunction() : base(FunctionSignatures.Binary("RemoveAt", ParameterType.Array, ParameterType.Number, ParameterType.Array))
     {
     }
 
@@ -25,8 +26,8 @@ public sealed class RemoveAtFunction : JyroFunctionBase
     /// </param>
     /// <param name="executionContext">The execution context.</param>
     /// <returns>
-    /// The element that was removed from the array, or <see cref="JyroNull.Instance"/>
-    /// if the index is out of bounds. The array is modified in-place.
+    /// The modified array with the element removed. If the index is out of bounds,
+    /// the array is returned unchanged. This enables method chaining.
     /// </returns>
     /// <exception cref="JyroRuntimeException">
     /// Thrown when the index is not an integer value.
@@ -38,17 +39,18 @@ public sealed class RemoveAtFunction : JyroFunctionBase
 
         if (!indexArgument.IsInteger)
         {
-            throw new JyroRuntimeException("RemoveAt() function requires an integer index");
+            throw new JyroRuntimeException("RemoveAt() function requires an integer index. Received: " + indexArgument.Value);
         }
 
         var removalIndex = indexArgument.ToInteger();
-        if (removalIndex < 0 || removalIndex >= targetArray.Length)
+
+        // Only remove if index is within bounds
+        if (removalIndex >= 0 && removalIndex < targetArray.Length)
         {
-            return JyroNull.Instance;
+            targetArray.RemoveAt(removalIndex);
         }
 
-        var removedElement = targetArray[removalIndex];
-        targetArray.RemoveAt(removalIndex);
-        return removedElement;
+        // Always return the array for chaining
+        return targetArray;
     }
 }

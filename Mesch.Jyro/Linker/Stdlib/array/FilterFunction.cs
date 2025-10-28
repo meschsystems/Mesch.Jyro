@@ -1,44 +1,44 @@
 namespace Mesch.Jyro;
 
 /// <summary>
-/// Counts the number of elements in an array where a specified field satisfies a comparison condition.
+/// Filters an array of objects, returning only elements where a specified field satisfies a comparison condition.
 /// Supports nested field paths using dot notation (e.g., "address.city") and comparison operators
-/// (==, !=, &lt;, &lt;=, &gt;, &gt;=) for flexible counting logic.
+/// (==, !=, &lt;, &lt;=, &gt;, &gt;=) for flexible filtering logic.
 /// </summary>
-public sealed class CountIfFunction : JyroFunctionBase
+public sealed class FilterFunction : JyroFunctionBase
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="CountIfFunction"/> class
+    /// Initializes a new instance of the <see cref="FilterFunction"/> class
     /// with a signature that accepts an array, field name, comparison operator, and value.
     /// </summary>
-    public CountIfFunction() : base(new JyroFunctionSignature(
-        "CountIf",
+    public FilterFunction() : base(new JyroFunctionSignature(
+        "Filter",
         [
             new Parameter("array", ParameterType.Array),
             new Parameter("fieldName", ParameterType.String),
             new Parameter("operator", ParameterType.String),
             new Parameter("value", ParameterType.Any)
         ],
-        ParameterType.Number))
+        ParameterType.Array))
     {
     }
 
     /// <summary>
-    /// Executes the counting operation on the array of elements.
+    /// Executes the filtering operation on the array of elements.
     /// </summary>
     /// <param name="arguments">
     /// The function arguments where:
-    /// - arguments[0]: The array of elements to count (JyroArray)
+    /// - arguments[0]: The array of elements to filter (JyroArray)
     /// - arguments[1]: The field name or path to compare (JyroString). Supports nested paths with dot notation.
     /// - arguments[2]: The comparison operator (JyroString): "==", "!=", "&lt;", "&lt;=", "&gt;", "&gt;="
     /// - arguments[3]: The value to compare against (any JyroValue type)
     /// </param>
     /// <param name="executionContext">The execution context.</param>
     /// <returns>
-    /// A <see cref="JyroNumber"/> representing the count of elements where the specified
+    /// A new <see cref="JyroArray"/> containing only the elements where the specified
     /// field satisfies the comparison condition. Non-object elements and elements with missing
-    /// fields are skipped (not counted for most operators; counted for != when comparing to non-null).
-    /// Empty arrays return 0.
+    /// fields are excluded from the result. Empty arrays or arrays with no matches return
+    /// an empty JyroArray.
     /// </returns>
     /// <exception cref="JyroRuntimeException">
     /// Thrown when an unsupported comparison operator is provided or when comparison
@@ -51,7 +51,7 @@ public sealed class CountIfFunction : JyroFunctionBase
         var operatorString = GetStringArgument(arguments, 2);
         var compareValue = arguments[3];
 
-        var count = 0;
+        var filteredResult = new JyroArray();
 
         for (int i = 0; i < array.Length; i++)
         {
@@ -66,13 +66,13 @@ public sealed class CountIfFunction : JyroFunctionBase
             // Get the field value using nested path support from GetProperty
             var fieldValue = obj.GetProperty(fieldName);
 
-            // For != operator, count items where field is missing (null)
+            // For != operator, include items where field is missing (null)
             // For other operators, skip items where field is missing
             if (fieldValue is JyroNull)
             {
                 if (operatorString == "!=" && !compareValue.IsNull)
                 {
-                    count++;
+                    filteredResult.Add(item);
                 }
                 continue;
             }
@@ -80,11 +80,11 @@ public sealed class CountIfFunction : JyroFunctionBase
             // Evaluate the comparison
             if (EvaluateComparison(fieldValue, operatorString, compareValue))
             {
-                count++;
+                filteredResult.Add(item);
             }
         }
 
-        return new JyroNumber(count);
+        return filteredResult;
     }
 
     /// <summary>

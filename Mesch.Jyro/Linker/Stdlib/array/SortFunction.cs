@@ -1,23 +1,24 @@
 namespace Mesch.Jyro;
 
 /// <summary>
-/// Sorts an array in-place using type-aware comparison logic. Handles mixed-type
-/// arrays by grouping like types together and applying appropriate comparison
-/// rules for numbers, strings, and booleans. Null values are sorted to the
+/// Sorts an array using type-aware comparison logic, returning a new sorted array.
+/// Handles mixed-type arrays by grouping like types together and applying appropriate
+/// comparison rules for numbers, strings, and booleans. Null values are sorted to the
 /// beginning of the array, followed by typed values in their natural order.
+/// The original array is not modified.
 /// </summary>
 public sealed class SortFunction : JyroFunctionBase
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="SortFunction"/> class
-    /// with a signature that accepts an array and returns the same sorted array.
+    /// with a signature that accepts an array and returns a new sorted array.
     /// </summary>
     public SortFunction() : base(FunctionSignatures.Unary("Sort", ParameterType.Array, ParameterType.Array))
     {
     }
 
     /// <summary>
-    /// Executes the in-place sorting operation on the specified array.
+    /// Executes the sorting operation, returning a new sorted array.
     /// </summary>
     /// <param name="arguments">
     /// The function arguments where:
@@ -25,20 +26,23 @@ public sealed class SortFunction : JyroFunctionBase
     /// </param>
     /// <param name="executionContext">The execution context.</param>
     /// <returns>
-    /// The same array instance after sorting. Elements are ordered with null values first,
-    /// followed by numbers in ascending order, then strings in lexicographic order,
-    /// then boolean values (false before true). Incomparable types maintain relative order.
+    /// A new <see cref="JyroArray"/> containing the sorted elements. The original array
+    /// is not modified. Elements are ordered with null values first, followed by numbers
+    /// in ascending order, then strings in lexicographic order, then boolean values
+    /// (false before true). Incomparable types maintain relative order.
     /// </returns>
     public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
     {
-        var targetArray = GetArrayArgument(arguments, 0);
+        var sourceArray = GetArrayArgument(arguments, 0);
         var arrayElements = new List<JyroValue>();
 
-        for (int elementIndex = 0; elementIndex < targetArray.Length; elementIndex++)
+        // Copy elements from source array
+        for (int elementIndex = 0; elementIndex < sourceArray.Length; elementIndex++)
         {
-            arrayElements.Add(targetArray[elementIndex]);
+            arrayElements.Add(sourceArray[elementIndex]);
         }
 
+        // Sort the copied list
         arrayElements.Sort((firstElement, secondElement) =>
         {
             if (firstElement.IsNull && secondElement.IsNull)
@@ -74,12 +78,13 @@ public sealed class SortFunction : JyroFunctionBase
             return 0;
         });
 
-        targetArray.Clear();
+        // Create and return new array with sorted elements
+        var sortedArray = new JyroArray();
         foreach (var sortedElement in arrayElements)
         {
-            targetArray.Add(sortedElement);
+            sortedArray.Add(sortedElement);
         }
 
-        return targetArray;
+        return sortedArray;
     }
 }

@@ -1,22 +1,22 @@
 namespace Mesch.Jyro;
 
 /// <summary>
-/// Reverses the order of elements in an array in-place, with the first element
-/// becoming the last and the last element becoming the first. The array is
-/// modified directly and returned to support method chaining patterns.
+/// Reverses the order of elements in an array, returning a new array with elements
+/// in reversed order. The first element becomes the last and the last element becomes
+/// the first. The original array is not modified.
 /// </summary>
 public sealed class ReverseFunction : JyroFunctionBase
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ReverseFunction"/> class
-    /// with a signature that accepts an array and returns the same reversed array.
+    /// with a signature that accepts an array and returns a new reversed array.
     /// </summary>
     public ReverseFunction() : base(FunctionSignatures.Unary("Reverse", ParameterType.Array, ParameterType.Array))
     {
     }
 
     /// <summary>
-    /// Executes the array reversal operation in-place on the specified array.
+    /// Executes the array reversal operation, returning a new reversed array.
     /// </summary>
     /// <param name="arguments">
     /// The function arguments where:
@@ -24,27 +24,31 @@ public sealed class ReverseFunction : JyroFunctionBase
     /// </param>
     /// <param name="executionContext">The execution context.</param>
     /// <returns>
-    /// The same array instance with its elements in reversed order. The first
-    /// element moves to the last position, the second to second-last, and so on.
+    /// A new <see cref="JyroArray"/> with elements in reversed order. The original
+    /// array is not modified. The first element of the source array becomes the last
+    /// element of the result, the second becomes second-last, and so on.
     /// </returns>
     public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
     {
-        var targetArray = GetArrayArgument(arguments, 0);
+        var sourceArray = GetArrayArgument(arguments, 0);
         var arrayElements = new List<JyroValue>();
 
-        for (int elementIndex = 0; elementIndex < targetArray.Length; elementIndex++)
+        // Copy elements from source array
+        for (int elementIndex = 0; elementIndex < sourceArray.Length; elementIndex++)
         {
-            arrayElements.Add(targetArray[elementIndex]);
+            arrayElements.Add(sourceArray[elementIndex]);
         }
 
+        // Reverse the copied list
         arrayElements.Reverse();
-        targetArray.Clear();
 
+        // Create and return new array with reversed elements
+        var reversedArray = new JyroArray();
         foreach (var reversedElement in arrayElements)
         {
-            targetArray.Add(reversedElement);
+            reversedArray.Add(reversedElement);
         }
 
-        return targetArray;
+        return reversedArray;
     }
 }
