@@ -194,6 +194,7 @@ public sealed partial class JyroBuilder
             new ReverseFunction(),
             new SortByFieldFunction(),
             new SortFunction(),
+            new TakeFunction(),
 
             // Mathematical functions
             new AbsFunction(),

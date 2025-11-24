@@ -418,6 +418,137 @@ public class StandardLibraryTests
         Assert.Equal(2.0, ((JyroNumber)data.GetProperty("result")).Value);
     }
 
+    [Fact]
+    public void Take_ReturnsFirstNElements()
+    {
+        var script = @"
+            var arr = [1, 2, 3, 4, 5]
+            Data.result = Take(arr, 3)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var resultArray = (JyroArray)data.GetProperty("result");
+        Assert.Equal(3, resultArray.Length);
+        Assert.Equal(1.0, ((JyroNumber)resultArray[0]).Value);
+        Assert.Equal(2.0, ((JyroNumber)resultArray[1]).Value);
+        Assert.Equal(3.0, ((JyroNumber)resultArray[2]).Value);
+    }
+
+    [Fact]
+    public void Take_DoesNotModifyOriginalArray()
+    {
+        var script = @"
+            var arr = [1, 2, 3, 4, 5]
+            var taken = Take(arr, 2)
+            Data.originalLength = Length(arr)
+            Data.takenLength = Length(taken)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(5.0, ((JyroNumber)data.GetProperty("originalLength")).Value);
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("takenLength")).Value);
+    }
+
+    [Fact]
+    public void Take_CountGreaterThanLength_ReturnsAllElements()
+    {
+        var script = @"
+            var arr = [1, 2, 3]
+            Data.result = Take(arr, 10)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var resultArray = (JyroArray)data.GetProperty("result");
+        Assert.Equal(3, resultArray.Length);
+        Assert.Equal(1.0, ((JyroNumber)resultArray[0]).Value);
+        Assert.Equal(2.0, ((JyroNumber)resultArray[1]).Value);
+        Assert.Equal(3.0, ((JyroNumber)resultArray[2]).Value);
+    }
+
+    [Fact]
+    public void Take_ZeroCount_ReturnsEmptyArray()
+    {
+        var script = @"
+            var arr = [1, 2, 3]
+            Data.result = Take(arr, 0)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var resultArray = (JyroArray)data.GetProperty("result");
+        Assert.Equal(0, resultArray.Length);
+    }
+
+    [Fact]
+    public void Take_NegativeCount_ReturnsEmptyArray()
+    {
+        var script = @"
+            var arr = [1, 2, 3]
+            Data.result = Take(arr, -1)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var resultArray = (JyroArray)data.GetProperty("result");
+        Assert.Equal(0, resultArray.Length);
+    }
+
+    [Fact]
+    public void Take_EmptyArray_ReturnsEmptyArray()
+    {
+        var script = @"
+            var arr = []
+            Data.result = Take(arr, 5)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var resultArray = (JyroArray)data.GetProperty("result");
+        Assert.Equal(0, resultArray.Length);
+    }
+
+    [Fact]
+    public void Take_WorksWithObjects()
+    {
+        var script = @"
+            var people = [
+                { ""name"": ""Alice"", ""age"": 30 },
+                { ""name"": ""Bob"", ""age"": 25 },
+                { ""name"": ""Charlie"", ""age"": 35 }
+            ]
+            Data.result = Take(people, 2)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var resultArray = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, resultArray.Length);
+
+        var firstPerson = (JyroObject)resultArray[0];
+        Assert.Equal("Alice", ((JyroString)firstPerson.GetProperty("name")).Value);
+
+        var secondPerson = (JyroObject)resultArray[1];
+        Assert.Equal("Bob", ((JyroString)secondPerson.GetProperty("name")).Value);
+    }
+
+    [Fact]
+    public void Take_TakeOne_ReturnsArrayNotSingleElement()
+    {
+        var script = @"
+            var arr = [42, 43, 44]
+            Data.result = Take(arr, 1)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var resultArray = (JyroArray)data.GetProperty("result");
+        Assert.Equal(1, resultArray.Length);
+        Assert.Equal(42.0, ((JyroNumber)resultArray[0]).Value);
+    }
+
     #endregion
 
     #region Math Functions
