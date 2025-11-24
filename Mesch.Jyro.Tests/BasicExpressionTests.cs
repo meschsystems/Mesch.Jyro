@@ -245,4 +245,295 @@ public class BasicExpressionTests
         var data = (JyroObject)result.Data;
         Assert.Equal("Bob", ((JyroString)data.GetProperty("result")).Value);
     }
+
+    #region Type Checking Operators
+
+    [Fact]
+    public void TypeCheck_IsNumber_True()
+    {
+        var script = "Data.result = 42 is number";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNumber_False()
+    {
+        var script = "Data.result = \"hello\" is number";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsString_True()
+    {
+        var script = "Data.result = \"hello\" is string";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsString_False()
+    {
+        var script = "Data.result = 42 is string";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsBoolean_True()
+    {
+        var script = "Data.result = true is boolean";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsBoolean_False()
+    {
+        var script = "Data.result = 1 is boolean";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsObject_True()
+    {
+        var script = "Data.result = {\"key\": \"value\"} is object";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsObject_False()
+    {
+        var script = "Data.result = [1, 2, 3] is object";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsArray_True()
+    {
+        var script = "Data.result = [1, 2, 3] is array";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsArray_False()
+    {
+        var script = "Data.result = {\"key\": \"value\"} is array";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNull_True()
+    {
+        var script = "Data.result = null is null";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNull_False()
+    {
+        var script = "Data.result = 0 is null";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotNumber_True()
+    {
+        var script = "Data.result = \"hello\" is not number";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotNumber_False()
+    {
+        var script = "Data.result = 42 is not number";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotString_True()
+    {
+        var script = "Data.result = 42 is not string";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotString_False()
+    {
+        var script = "Data.result = \"hello\" is not string";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotBoolean_True()
+    {
+        var script = "Data.result = 1 is not boolean";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotBoolean_False()
+    {
+        var script = "Data.result = true is not boolean";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotObject_True()
+    {
+        var script = "Data.result = [1, 2, 3] is not object";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotObject_False()
+    {
+        var script = "Data.result = {\"key\": \"value\"} is not object";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotArray_True()
+    {
+        var script = "Data.result = {\"key\": \"value\"} is not array";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotArray_False()
+    {
+        var script = "Data.result = [1, 2, 3] is not array";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotNull_True()
+    {
+        var script = "Data.result = 0 is not null";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotNull_False()
+    {
+        var script = "Data.result = null is not null";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_InIfStatement()
+    {
+        var script = @"
+            var x = 42
+            if x is number then
+                Data.result = ""is_number""
+            else
+                Data.result = ""not_number""
+            end
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("is_number", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_IsNotInIfStatement()
+    {
+        var script = @"
+            var x = ""hello""
+            if x is not number then
+                Data.result = ""not_a_number""
+            else
+                Data.result = ""is_a_number""
+            end
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("not_a_number", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void TypeCheck_WithVariable()
+    {
+        var script = @"
+            var obj = {""name"": ""test""}
+            Data.result = obj is object
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    #endregion
 }

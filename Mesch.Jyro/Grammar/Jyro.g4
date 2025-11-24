@@ -113,7 +113,7 @@ equalityExpr
     ;
 
 relationalExpr
-    : additiveExpr ((LT | LE | GT | GE | IS) additiveExpr)*
+    : additiveExpr ((LT | LE | GT | GE | ISNOT | IS) additiveExpr)*
     ;
 
 additiveExpr
@@ -147,10 +147,19 @@ memberOrIndex
 primaryExpr
     : literal
     | Identifier
+    | typeKeyword
     | DATA (memberOrIndex)+
     | LPAREN expression RPAREN
     | objectLiteral
     | arrayLiteral
+    ;
+
+typeKeyword
+    : NUMBER_T
+    | STRING_T
+    | BOOLEAN_T
+    | OBJECT_T
+    | ARRAY_T
     ;
 
 literal
@@ -213,6 +222,7 @@ NULL       : 'null';
 AND        : 'and';
 OR         : 'or';
 NOT        : 'not';
+ISNOT      : 'is not';
 IS         : 'is';
 
 // Types

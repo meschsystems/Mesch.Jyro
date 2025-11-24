@@ -519,7 +519,13 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
 
         for (int i = 1; i < context.relationalExpr().Length; i++)
         {
-            var op = context.GetChild(i * 2 - 1).GetText();
+            var child = context.GetChild(i * 2 - 1);
+            if (child == null)
+            {
+                throw new JyroRuntimeException("Invalid equality expression syntax");
+            }
+
+            var op = child.GetText();
             var right = Visit(context.relationalExpr(i));
 
             left = op switch
@@ -539,12 +545,22 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
 
         for (int i = 1; i < context.additiveExpr().Length; i++)
         {
-            var op = context.GetChild(i * 2 - 1).GetText();
+            var child = context.GetChild(i * 2 - 1);
+            if (child == null)
+            {
+                throw new JyroRuntimeException("Invalid relational expression syntax");
+            }
+
+            var op = child.GetText();
             var right = Visit(context.additiveExpr(i));
 
             if (op == "is")
             {
                 left = JyroBoolean.FromBoolean(CheckTypeIs(left, right));
+            }
+            else if (op == "is not")
+            {
+                left = JyroBoolean.FromBoolean(!CheckTypeIs(left, right));
             }
             else
             {
@@ -561,7 +577,13 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
 
         for (int i = 1; i < context.multiplicativeExpr().Length; i++)
         {
-            var op = context.GetChild(i * 2 - 1).GetText();
+            var child = context.GetChild(i * 2 - 1);
+            if (child == null)
+            {
+                throw new JyroRuntimeException("Invalid additive expression syntax");
+            }
+
+            var op = child.GetText();
             var right = Visit(context.multiplicativeExpr(i));
 
             left = op switch
@@ -581,7 +603,13 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
 
         for (int i = 1; i < context.unaryExpr().Length; i++)
         {
-            var op = context.GetChild(i * 2 - 1).GetText();
+            var child = context.GetChild(i * 2 - 1);
+            if (child == null)
+            {
+                throw new JyroRuntimeException("Invalid multiplicative expression syntax");
+            }
+
+            var op = child.GetText();
             var right = Visit(context.unaryExpr(i));
 
             left = op switch
@@ -660,6 +688,11 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             return new JyroString(name);
         }
 
+        if (context.typeKeyword() != null)
+        {
+            return Visit(context.typeKeyword());
+        }
+
         if (context.DATA() != null)
         {
             JyroValue value;
@@ -696,6 +729,13 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         }
 
         return JyroNull.Instance;
+    }
+
+    public override JyroValue VisitTypeKeyword(JyroParser.TypeKeywordContext context)
+    {
+        // Convert type keyword to its string name for use in type checking
+        var typeText = context.GetText();
+        return new JyroString(typeText);
     }
 
     public override JyroValue VisitLiteral(JyroParser.LiteralContext context)
@@ -1032,6 +1072,12 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
 
     private bool CheckTypeIs(JyroValue value, JyroValue typeValue)
     {
+        // Handle null as a special case (since it's both a literal and a type name)
+        if (typeValue is JyroNull)
+        {
+            return value is JyroNull;
+        }
+
         if (typeValue is not JyroString typeName)
         {
             throw new JyroRuntimeException("Type check requires a string type name");

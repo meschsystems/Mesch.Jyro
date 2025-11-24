@@ -375,7 +375,7 @@ public class StandardLibraryTests
     public void IndexOf_WorksWithEmptyArray()
     {
         var script = @"
-            var arr = array []
+            var arr = []
             Data.result = IndexOf(arr, 1)
         ";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
