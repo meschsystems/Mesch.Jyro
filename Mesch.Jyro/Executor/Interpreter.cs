@@ -895,7 +895,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         var lastAccessor = accessors[^1];
         if (lastAccessor.DOT() != null)
         {
-            var memberName = lastAccessor.Identifier().GetText();
+            var memberName = lastAccessor.propertyName().GetText();
             if (target is JyroObject obj)
             {
                 obj.SetProperty(memberName, value);
@@ -936,7 +936,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
     {
         if (context.DOT() != null)
         {
-            var memberName = context.Identifier().GetText();
+            var memberName = context.propertyName().GetText();
 
             if (target is JyroNull)
             {

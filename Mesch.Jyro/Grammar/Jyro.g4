@@ -139,8 +139,37 @@ postfixSuffix
     ;
 
 memberOrIndex
-    : DOT Identifier
+    : DOT propertyName
     | LBRACK expression RBRACK
+    ;
+
+// Property names can be identifiers or keywords
+propertyName
+    : Identifier
+    | typeKeyword
+    | TRUE
+    | FALSE
+    | NULL
+    | VAR
+    | IF
+    | THEN
+    | ELSE
+    | END
+    | SWITCH
+    | DO
+    | CASE
+    | DEFAULT
+    | WHILE
+    | FOREACH
+    | IN
+    | RETURN
+    | BREAK
+    | CONTINUE
+    | AND
+    | OR
+    | NOT
+    | IS
+    | DATA
     ;
 
 // ---- Primaries & literals ----

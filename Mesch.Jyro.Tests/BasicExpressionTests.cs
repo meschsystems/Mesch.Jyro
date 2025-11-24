@@ -536,4 +536,152 @@ public class BasicExpressionTests
     }
 
     #endregion
+
+    #region Keywords as Property Names
+
+    [Fact]
+    public void PropertyAccess_TypeNameAsProperty_Number()
+    {
+        var script = "Data.number = 42";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(42.0, ((JyroNumber)data.GetProperty("number")).Value);
+    }
+
+    [Fact]
+    public void PropertyAccess_TypeNameAsProperty_String()
+    {
+        var script = "Data.string = \"hello\"";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("hello", ((JyroString)data.GetProperty("string")).Value);
+    }
+
+    [Fact]
+    public void PropertyAccess_TypeNameAsProperty_Boolean()
+    {
+        var script = "Data.boolean = true";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("boolean")).Value);
+    }
+
+    [Fact]
+    public void PropertyAccess_TypeNameAsProperty_Object()
+    {
+        var script = "Data.object = {\"key\": \"value\"}";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var obj = (JyroObject)data.GetProperty("object");
+        Assert.Equal("value", ((JyroString)obj.GetProperty("key")).Value);
+    }
+
+    [Fact]
+    public void PropertyAccess_TypeNameAsProperty_Array()
+    {
+        var script = "Data.array = [1, 2, 3]";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var arr = (JyroArray)data.GetProperty("array");
+        Assert.Equal(3, arr.Length);
+    }
+
+    [Fact]
+    public void PropertyAccess_BooleanLiteralAsProperty_True()
+    {
+        var script = "Data.true = \"yes\"";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("yes", ((JyroString)data.GetProperty("true")).Value);
+    }
+
+    [Fact]
+    public void PropertyAccess_BooleanLiteralAsProperty_False()
+    {
+        var script = "Data.false = \"no\"";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("no", ((JyroString)data.GetProperty("false")).Value);
+    }
+
+    [Fact]
+    public void PropertyAccess_NullAsProperty()
+    {
+        var script = "Data.null = 123";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(123.0, ((JyroNumber)data.GetProperty("null")).Value);
+    }
+
+    [Fact]
+    public void PropertyAccess_ControlFlowKeywordAsProperty_If()
+    {
+        var script = "Data.if = \"condition\"";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("condition", ((JyroString)data.GetProperty("if")).Value);
+    }
+
+    [Fact]
+    public void PropertyAccess_ControlFlowKeywordAsProperty_While()
+    {
+        var script = "Data.while = \"loop\"";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("loop", ((JyroString)data.GetProperty("while")).Value);
+    }
+
+    [Fact]
+    public void PropertyAccess_ReadTypeNameProperty()
+    {
+        var script = @"
+            var obj = {""number"": 99}
+            Data.result = obj.number
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(99.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void PropertyAccess_MultipleTypeNamesAsProperties()
+    {
+        var script = @"
+            Data.number = 42
+            Data.string = ""test""
+            Data.boolean = false
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(42.0, ((JyroNumber)data.GetProperty("number")).Value);
+        Assert.Equal("test", ((JyroString)data.GetProperty("string")).Value);
+        Assert.False(((JyroBoolean)data.GetProperty("boolean")).Value);
+    }
+
+    [Fact]
+    public void PropertyAccess_NestedTypeNameProperties()
+    {
+        var script = @"
+            var obj = {""string"": {""number"": 7}}
+            Data.result = obj.string.number
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(7.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    #endregion
 }
