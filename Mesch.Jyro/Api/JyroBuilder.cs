@@ -170,6 +170,7 @@ public sealed partial class JyroBuilder
             new EndsWithFunction(),
             new JoinFunction(),
             new LowerFunction(),
+            new RandomStringFunction(),
             new ReplaceFunction(),
             new SplitFunction(),
             new StartsWithFunction(),
@@ -189,6 +190,7 @@ public sealed partial class JyroBuilder
             new LengthFunction(),
             new MergeArraysFunction(),
             new PopFunction(),
+            new RandomChoiceFunction(),
             new RemoveAtFunction(),
             new RemoveLastFunction(),
             new ReverseFunction(),
@@ -200,6 +202,7 @@ public sealed partial class JyroBuilder
             new AbsFunction(),
             new MaxFunction(),
             new MinFunction(),
+            new RandomIntFunction(),
             new RoundFunction(),
             new SumFunction(),
 

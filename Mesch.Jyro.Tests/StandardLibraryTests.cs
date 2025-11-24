@@ -710,4 +710,228 @@ public class StandardLibraryTests
     }
 
     #endregion
+
+    #region Random Functions
+
+    [Fact]
+    public void RandomInt_SingleArgument_ReturnsValueInRange()
+    {
+        var script = @"
+            Data.result = RandomInt(10)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var value = ((JyroNumber)data.GetProperty("result")).Value;
+        Assert.True(value >= 0 && value < 10, $"Expected value in [0, 10), got {value}");
+        Assert.True(value == Math.Floor(value), "Expected integer value");
+    }
+
+    [Fact]
+    public void RandomInt_TwoArguments_ReturnsValueInRange()
+    {
+        var script = @"
+            Data.result = RandomInt(5, 15)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var value = ((JyroNumber)data.GetProperty("result")).Value;
+        Assert.True(value >= 5 && value < 15, $"Expected value in [5, 15), got {value}");
+        Assert.True(value == Math.Floor(value), "Expected integer value");
+    }
+
+    [Fact]
+    public void RandomInt_MultipleCallsProduceDifferentValues()
+    {
+        var script = @"
+            Data.val1 = RandomInt(1000)
+            Data.val2 = RandomInt(1000)
+            Data.val3 = RandomInt(1000)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var val1 = ((JyroNumber)data.GetProperty("val1")).Value;
+        var val2 = ((JyroNumber)data.GetProperty("val2")).Value;
+        var val3 = ((JyroNumber)data.GetProperty("val3")).Value;
+
+        // Very unlikely all three are the same with a large range
+        Assert.False(val1 == val2 && val2 == val3, "Expected at least some variation in random values");
+    }
+
+    [Fact]
+    public void RandomString_DefaultCharset_ReturnsAlphanumericString()
+    {
+        var script = @"
+            Data.result = RandomString(16)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var str = ((JyroString)data.GetProperty("result")).Value;
+
+        Assert.Equal(16, str.Length);
+        Assert.All(str, c => Assert.True(
+            (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'),
+            $"Expected alphanumeric character, got '{c}'"));
+    }
+
+    [Fact]
+    public void RandomString_CustomCharset_UsesSpecifiedCharacters()
+    {
+        var script = @"
+            Data.result = RandomString(20, ""ABC123"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var str = ((JyroString)data.GetProperty("result")).Value;
+
+        Assert.Equal(20, str.Length);
+        Assert.All(str, c => Assert.Contains(c, "ABC123"));
+    }
+
+    [Fact]
+    public void RandomString_NumericCharset_GeneratesPin()
+    {
+        var script = @"
+            Data.result = RandomString(4, ""0123456789"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var str = ((JyroString)data.GetProperty("result")).Value;
+
+        Assert.Equal(4, str.Length);
+        Assert.All(str, c => Assert.True(c >= '0' && c <= '9', $"Expected digit, got '{c}'"));
+    }
+
+    [Fact]
+    public void RandomString_MultipleCallsProduceDifferentStrings()
+    {
+        var script = @"
+            Data.str1 = RandomString(32)
+            Data.str2 = RandomString(32)
+            Data.str3 = RandomString(32)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var str1 = ((JyroString)data.GetProperty("str1")).Value;
+        var str2 = ((JyroString)data.GetProperty("str2")).Value;
+        var str3 = ((JyroString)data.GetProperty("str3")).Value;
+
+        // Extremely unlikely all three 32-char random strings are identical
+        Assert.False(str1 == str2 && str2 == str3, "Expected different random strings");
+    }
+
+    [Fact]
+    public void RandomString_ZeroLength_ReturnsEmptyString()
+    {
+        var script = @"
+            Data.result = RandomString(0)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var str = ((JyroString)data.GetProperty("result")).Value;
+        Assert.Equal(string.Empty, str);
+    }
+
+    [Fact]
+    public void RandomChoice_SelectsElementFromArray()
+    {
+        var script = @"
+            var arr = [10, 20, 30, 40, 50]
+            Data.result = RandomChoice(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var value = ((JyroNumber)data.GetProperty("result")).Value;
+
+        // Check that the value is one of the array elements
+        Assert.Contains(value, new[] { 10.0, 20.0, 30.0, 40.0, 50.0 });
+    }
+
+    [Fact]
+    public void RandomChoice_WorksWithStrings()
+    {
+        var script = @"
+            var colors = [""red"", ""green"", ""blue""]
+            Data.result = RandomChoice(colors)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var color = ((JyroString)data.GetProperty("result")).Value;
+
+        Assert.Contains(color, new[] { "red", "green", "blue" });
+    }
+
+    [Fact]
+    public void RandomChoice_WorksWithObjects()
+    {
+        var script = @"
+            var people = [
+                { ""name"": ""Alice"" },
+                { ""name"": ""Bob"" },
+                { ""name"": ""Charlie"" }
+            ]
+            var chosen = RandomChoice(people)
+            Data.result = chosen.name
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var name = ((JyroString)data.GetProperty("result")).Value;
+
+        Assert.Contains(name, new[] { "Alice", "Bob", "Charlie" });
+    }
+
+    [Fact]
+    public void RandomChoice_SingleElement_ReturnsThatElement()
+    {
+        var script = @"
+            var arr = [42]
+            Data.result = RandomChoice(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var value = ((JyroNumber)data.GetProperty("result")).Value;
+
+        Assert.Equal(42.0, value);
+    }
+
+    [Fact]
+    public void RandomChoice_MultipleCalls_ProduceVariation()
+    {
+        var script = @"
+            var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            Data.val1 = RandomChoice(arr)
+            Data.val2 = RandomChoice(arr)
+            Data.val3 = RandomChoice(arr)
+            Data.val4 = RandomChoice(arr)
+            Data.val5 = RandomChoice(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var values = new[]
+        {
+            ((JyroNumber)data.GetProperty("val1")).Value,
+            ((JyroNumber)data.GetProperty("val2")).Value,
+            ((JyroNumber)data.GetProperty("val3")).Value,
+            ((JyroNumber)data.GetProperty("val4")).Value,
+            ((JyroNumber)data.GetProperty("val5")).Value
+        };
+
+        // With 5 random selections from 10 elements, extremely unlikely all are the same
+        var distinctCount = values.Distinct().Count();
+        Assert.True(distinctCount > 1, "Expected some variation in random selections");
+    }
+
+    #endregion
 }
