@@ -30,7 +30,7 @@ public sealed class MergeArraysFunction : JyroFunctionBase
     /// A new <see cref="JyroArray"/> containing all elements from the input arrays
     /// and individual values, preserving the order in which they were provided.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var mergedResult = new JyroArray();
 

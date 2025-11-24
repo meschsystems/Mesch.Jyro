@@ -41,7 +41,7 @@ public sealed class InsertFunction : JyroFunctionBase
     /// Thrown when the index is not an integer or when the index is outside the valid
     /// range (0 to array.Length inclusive). The upper bound allows insertion at the end.
     /// </exception>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var targetArray = GetArrayArgument(arguments, 0);
         var indexArgument = GetArgument<JyroNumber>(arguments, 1);

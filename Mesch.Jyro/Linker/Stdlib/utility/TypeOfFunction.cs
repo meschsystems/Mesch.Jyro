@@ -27,7 +27,7 @@ public sealed class TypeOfFunction : JyroFunctionBase
     /// A <see cref="JyroString"/> containing the lowercase type name of the input value.
     /// Possible return values include: "number", "string", "boolean", "object", "array", "null".
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var inputValue = arguments[0];
         var typeName = inputValue.Type.ToString().ToLowerInvariant();

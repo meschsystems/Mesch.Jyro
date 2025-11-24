@@ -27,7 +27,7 @@ public sealed class AbsFunction : JyroFunctionBase
     /// A <see cref="JyroNumber"/> containing the absolute value of the input.
     /// The result is always non-negative.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var inputNumber = GetArgument<JyroNumber>(arguments, 0);
         var absoluteValue = Math.Abs(inputNumber.Value);

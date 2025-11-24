@@ -48,7 +48,7 @@ public sealed class PopFunction : JyroFunctionBase
     /// </code>
     /// </para>
     /// </remarks>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var targetArray = GetArrayArgument(arguments, 0);
 

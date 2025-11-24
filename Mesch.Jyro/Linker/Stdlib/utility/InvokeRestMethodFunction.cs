@@ -30,7 +30,7 @@ public sealed class InvokeRestMethodFunction : JyroFunctionBase
 
     public override JyroValue Execute(
         IReadOnlyList<JyroValue> arguments,
-        ExecutionContext executionContext)
+        JyroExecutionContext executionContext)
     {
         // Check execution time limits
         executionContext.Limiter.CheckExecutionTime();
@@ -108,7 +108,7 @@ public sealed class InvokeRestMethodFunction : JyroFunctionBase
         string method,
         JyroObject? headers,
         JyroValue? body,
-        ExecutionContext executionContext)
+        JyroExecutionContext executionContext)
     {
         try
         {

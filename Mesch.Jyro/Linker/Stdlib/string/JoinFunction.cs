@@ -30,7 +30,7 @@ public sealed class JoinFunction : JyroFunctionBase
     /// String elements are used directly, null values become "null", and other types
     /// are converted using their ToString() representation.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var sourceArray = GetArrayArgument(arguments, 0);
         var delimiterString = GetArgument<JyroString>(arguments, 1);

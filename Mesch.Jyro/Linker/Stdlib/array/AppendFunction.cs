@@ -31,7 +31,7 @@ public sealed class AppendFunction : JyroFunctionBase
     /// The modified array with the new value appended to the end. The same array
     /// instance is returned to support method chaining.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var targetArray = GetArrayArgument(arguments, 0);
         var valueToAppend = arguments[1];

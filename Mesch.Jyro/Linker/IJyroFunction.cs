@@ -33,5 +33,5 @@ public interface IJyroFunction
     /// A <see cref="JyroValue"/> representing the result of the function execution.
     /// The returned value's type must match the signature's declared return type.
     /// </returns>
-    JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext);
+    JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext);
 }

@@ -34,7 +34,7 @@ public sealed class LengthFunction : JyroFunctionBase
     /// - For null: zero
     /// - For primitives (numbers, booleans): one
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var inputValue = arguments[0];
 

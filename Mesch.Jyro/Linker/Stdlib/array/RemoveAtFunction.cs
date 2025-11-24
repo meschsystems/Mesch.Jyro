@@ -32,7 +32,7 @@ public sealed class RemoveAtFunction : JyroFunctionBase
     /// <exception cref="JyroRuntimeException">
     /// Thrown when the index is not an integer value.
     /// </exception>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var targetArray = GetArrayArgument(arguments, 0);
         var indexArgument = GetArgument<JyroNumber>(arguments, 1);

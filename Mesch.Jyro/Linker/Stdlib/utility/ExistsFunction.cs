@@ -27,7 +27,7 @@ public sealed class ExistsFunction : JyroFunctionBase
     /// A <see cref="JyroBoolean"/> indicating whether the value exists (is not null).
     /// Returns <c>true</c> for all non-null values, <c>false</c> for null values.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var valueToTest = arguments[0];
         var valueExists = !valueToTest.IsNull;

@@ -54,7 +54,7 @@ public sealed class NewGuidFunction : JyroFunctionBase
     ///
     /// The returned string is always in lowercase format for consistency.
     /// </remarks>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var newGuid = Guid.NewGuid();
         var guidString = newGuid.ToString("D").ToLowerInvariant();

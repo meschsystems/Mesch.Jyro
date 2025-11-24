@@ -27,7 +27,7 @@ public sealed class IsNullFunction : JyroFunctionBase
     /// A <see cref="JyroBoolean"/> indicating whether the value is null.
     /// Returns <c>true</c> for null values, <c>false</c> for all non-null values.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var valueToTest = arguments[0];
         var valueIsNull = valueToTest.IsNull;

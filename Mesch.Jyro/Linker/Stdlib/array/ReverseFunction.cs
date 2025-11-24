@@ -28,7 +28,7 @@ public sealed class ReverseFunction : JyroFunctionBase
     /// array is not modified. The first element of the source array becomes the last
     /// element of the result, the second becomes second-last, and so on.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var sourceArray = GetArrayArgument(arguments, 0);
         var arrayElements = new List<JyroValue>();

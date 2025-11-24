@@ -27,7 +27,7 @@ public sealed class MinFunction : JyroFunctionBase
     /// A <see cref="JyroNumber"/> containing the minimum value found among the numeric arguments,
     /// or <see cref="JyroNull.Instance"/> if no numeric arguments are provided.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var minimumValue = double.MaxValue;
         var foundNumericValue = false;

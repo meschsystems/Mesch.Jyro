@@ -32,7 +32,7 @@ public sealed class ParseDateFunction : JyroFunctionBase
     /// Supported formats include ISO dates, common slash-separated formats, and
     /// general date parsing as a fallback.
     /// </exception>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var dateStringArgument = GetArgument<JyroString>(arguments, 0);
 

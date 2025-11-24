@@ -27,7 +27,7 @@ public sealed class TrimFunction : JyroFunctionBase
     /// A <see cref="JyroString"/> containing the input string with leading and
     /// trailing whitespace removed. Internal whitespace is preserved unchanged.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var inputString = GetArgument<JyroString>(arguments, 0);
         var trimmedResult = inputString.Value.Trim();

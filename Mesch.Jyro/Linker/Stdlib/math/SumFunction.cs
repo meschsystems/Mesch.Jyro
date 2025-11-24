@@ -28,7 +28,7 @@ public sealed class SumFunction : JyroFunctionBase
     /// A <see cref="JyroNumber"/> containing the total sum of all numeric arguments.
     /// Returns zero if no numeric arguments are provided.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var runningTotal = 0.0;
 

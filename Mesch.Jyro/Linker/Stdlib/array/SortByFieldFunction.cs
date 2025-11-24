@@ -38,7 +38,7 @@ public sealed class SortByFieldFunction : JyroFunctionBase
     /// by the specified field value using appropriate type-specific comparison logic.
     /// Non-object elements maintain their relative positions.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var sourceArray = GetArrayArgument(arguments, 0);
         var fieldNameArgument = GetArgument<JyroString>(arguments, 1);

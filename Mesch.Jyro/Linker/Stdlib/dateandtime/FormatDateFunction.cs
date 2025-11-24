@@ -31,7 +31,7 @@ public sealed class FormatDateFunction : JyroFunctionBase
     /// Thrown when the date string cannot be parsed or the format pattern is invalid.
     /// The function uses universal time parsing and adjustment for consistent behavior.
     /// </exception>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var dateStringArgument = GetArgument<JyroString>(arguments, 0);
         var formatPatternArgument = GetArgument<JyroString>(arguments, 1);

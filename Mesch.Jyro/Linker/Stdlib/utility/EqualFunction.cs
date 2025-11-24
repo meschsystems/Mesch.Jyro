@@ -28,7 +28,7 @@ public sealed class EqualFunction : JyroFunctionBase
     /// A <see cref="JyroBoolean"/> indicating whether the two values are considered
     /// equal according to Jyro's equality rules.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var firstValue = arguments[0];
         var secondValue = arguments[1];

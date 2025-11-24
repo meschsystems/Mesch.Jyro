@@ -26,7 +26,7 @@ public sealed class Base64EncodeFunction : JyroFunctionBase
     /// A <see cref="JyroString"/> containing the Base64-encoded representation of the input string.
     /// The encoding uses UTF-8 for converting the string to bytes before Base64 encoding.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var inputString = GetArgument<JyroString>(arguments, 0);
 

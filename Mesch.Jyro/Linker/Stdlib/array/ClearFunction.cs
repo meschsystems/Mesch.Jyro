@@ -27,7 +27,7 @@ public sealed class ClearFunction : JyroFunctionBase
     /// The same array instance after all elements have been removed. The array
     /// will have a length of zero but retains its identity for reference equality.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var targetArray = GetArrayArgument(arguments, 0);
         targetArray.Clear();

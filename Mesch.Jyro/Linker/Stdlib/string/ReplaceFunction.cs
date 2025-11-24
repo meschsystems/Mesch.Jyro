@@ -37,7 +37,7 @@ public sealed class ReplaceFunction : JyroFunctionBase
     /// of the search string replaced with the replacement string. If the search
     /// string is not found, the original string is returned unchanged.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var sourceString = GetArgument<JyroString>(arguments, 0);
         var searchString = GetArgument<JyroString>(arguments, 1);

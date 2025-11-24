@@ -40,7 +40,7 @@ public abstract class JyroFunctionBase : IJyroFunction
     public JyroFunctionSignature Signature { get; }
 
     /// <inheritdoc />
-    public abstract JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext);
+    public abstract JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext);
 
     /// <summary>
     /// Safely retrieves and casts the argument at the specified index to the expected type

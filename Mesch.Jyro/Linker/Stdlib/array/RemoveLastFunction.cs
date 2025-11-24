@@ -27,7 +27,7 @@ public sealed class RemoveLastFunction : JyroFunctionBase
     /// The modified array with the last element removed. If the array is empty,
     /// it is returned unchanged. This enables method chaining.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var targetArray = GetArrayArgument(arguments, 0);
 

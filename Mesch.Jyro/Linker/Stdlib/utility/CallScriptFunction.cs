@@ -48,7 +48,7 @@ public sealed class CallScriptFunction : JyroFunctionBase
     /// Thrown when a script execution cycle is detected (script calls itself directly or
     /// indirectly) or when the maximum script call depth is exceeded.
     /// </exception>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var scriptSource = GetArgument<JyroString>(arguments, 0);
         var dataArgument = arguments[1];
@@ -96,8 +96,8 @@ public sealed class CallScriptFunction : JyroFunctionBase
             }
 
             // Store the original Data value and replace it with the provided data
-            var originalData = executionContext.Variables.TryGet(ExecutionContext.RootIdentifier, out var currentData) ? currentData : JyroNull.Instance;
-            executionContext.Variables.Declare(ExecutionContext.RootIdentifier, dataArgument);
+            var originalData = executionContext.Variables.TryGet(JyroExecutionContext.RootIdentifier, out var currentData) ? currentData : JyroNull.Instance;
+            executionContext.Variables.Declare(JyroExecutionContext.RootIdentifier, dataArgument);
 
             try
             {
@@ -114,7 +114,7 @@ public sealed class CallScriptFunction : JyroFunctionBase
             finally
             {
                 // Restore the original Data value
-                executionContext.Variables.Declare(ExecutionContext.RootIdentifier, originalData);
+                executionContext.Variables.Declare(JyroExecutionContext.RootIdentifier, originalData);
             }
         }
         catch (OperationCanceledException)
@@ -146,7 +146,7 @@ public sealed class CallScriptFunction : JyroFunctionBase
     /// </summary>
     /// <param name="executionContext">The execution context to examine.</param>
     /// <returns>A list representing the current call stack.</returns>
-    private static List<string> GetCallStack(ExecutionContext executionContext)
+    private static List<string> GetCallStack(JyroExecutionContext executionContext)
     {
         if (executionContext.Variables.TryGet(CallStackKey, out var stackValue) &&
             stackValue is JyroObject stackObject &&
@@ -175,7 +175,7 @@ public sealed class CallScriptFunction : JyroFunctionBase
     /// </summary>
     /// <param name="executionContext">The execution context to update.</param>
     /// <param name="callStack">The call stack to store.</param>
-    private static void SetCallStack(ExecutionContext executionContext, List<string> callStack)
+    private static void SetCallStack(JyroExecutionContext executionContext, List<string> callStack)
     {
         // Convert List<string> to JyroArray
         var stackArray = new JyroArray();

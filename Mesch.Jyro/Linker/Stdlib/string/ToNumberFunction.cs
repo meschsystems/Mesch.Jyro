@@ -36,7 +36,7 @@ public sealed class ToNumberFunction : JyroFunctionBase
     /// include converting form input, query parameters, or user-provided text into numeric values
     /// for mathematical operations or database storage.
     /// </remarks>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var inputString = GetArgument<JyroString>(arguments, 0);
 

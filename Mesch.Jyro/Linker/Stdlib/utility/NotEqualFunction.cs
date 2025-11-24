@@ -29,7 +29,7 @@ public sealed class NotEqualFunction : JyroFunctionBase
     /// according to Jyro's equality rules. Returns <c>true</c> if the values differ,
     /// <c>false</c> if they are considered equal.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var firstValue = arguments[0];
         var secondValue = arguments[1];

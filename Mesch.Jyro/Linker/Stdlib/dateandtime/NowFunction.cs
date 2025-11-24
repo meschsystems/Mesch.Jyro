@@ -26,7 +26,7 @@ public sealed class NowFunction : JyroFunctionBase
     /// A <see cref="JyroString"/> containing the current UTC date and time
     /// in ISO 8601 format (yyyy-MM-ddTHH:mm:ss.fffZ).
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var currentUtcTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
         return new JyroString(currentUtcTime);

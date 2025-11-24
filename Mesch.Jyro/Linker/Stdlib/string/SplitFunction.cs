@@ -29,7 +29,7 @@ public sealed class SplitFunction : JyroFunctionBase
     /// Empty strings are preserved when they occur between consecutive delimiters
     /// or at string boundaries.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var sourceString = GetArgument<JyroString>(arguments, 0);
         var delimiterString = GetArgument<JyroString>(arguments, 1);

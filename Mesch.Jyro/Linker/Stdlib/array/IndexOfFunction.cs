@@ -56,7 +56,7 @@ public sealed class IndexOfFunction : JyroFunctionBase
     /// A <see cref="JyroNumber"/> representing the zero-based index of the first matching element,
     /// or -1 if the value is not found in the array.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var searchArray = GetArrayArgument(arguments, 0);
         var searchValue = arguments[1];

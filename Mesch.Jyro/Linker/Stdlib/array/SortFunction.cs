@@ -31,7 +31,7 @@ public sealed class SortFunction : JyroFunctionBase
     /// in ascending order, then strings in lexicographic order, then boolean values
     /// (false before true). Incomparable types maintain relative order.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var sourceArray = GetArrayArgument(arguments, 0);
         var arrayElements = new List<JyroValue>();

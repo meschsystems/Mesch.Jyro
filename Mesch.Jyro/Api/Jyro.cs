@@ -123,7 +123,7 @@ public sealed class Jyro
         JyroScriptResolver? resolver = null,
         CancellationToken cancellationToken = default)
     {
-        var context = new ExecutionContext(
+        var context = new JyroExecutionContext(
             data,
             program,
             options,

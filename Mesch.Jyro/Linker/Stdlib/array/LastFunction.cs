@@ -27,7 +27,7 @@ public sealed class LastFunction : JyroFunctionBase
     /// The last element of the array, or <see cref="JyroNull.Instance"/> if the array
     /// is empty. The array is not modified.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var array = GetArrayArgument(arguments, 0);
 

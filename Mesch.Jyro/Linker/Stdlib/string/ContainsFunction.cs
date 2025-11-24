@@ -31,7 +31,7 @@ public sealed class ContainsFunction : JyroFunctionBase
     /// <exception cref="JyroRuntimeException">
     /// Thrown when the first argument is neither a string nor an array.
     /// </exception>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var sourceValue = arguments[0];
         var searchValue = arguments[1];

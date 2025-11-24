@@ -27,7 +27,7 @@ public sealed class UpperFunction : JyroFunctionBase
     /// A <see cref="JyroString"/> containing the input string converted to uppercase
     /// using invariant culture rules for consistent behavior across environments.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var inputString = GetArgument<JyroString>(arguments, 0);
         var uppercaseResult = inputString.Value.ToUpperInvariant();

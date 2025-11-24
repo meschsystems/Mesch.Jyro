@@ -35,7 +35,7 @@ public sealed class RoundFunction : JyroFunctionBase
     /// A <see cref="JyroNumber"/> containing the rounded value. Uses .NET's
     /// Math.Round implementation with banker's rounding (round half to even).
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var inputNumber = GetArgument<JyroNumber>(arguments, 0);
         var digitsArgument = GetOptionalArgument<JyroNumber>(arguments, 1);

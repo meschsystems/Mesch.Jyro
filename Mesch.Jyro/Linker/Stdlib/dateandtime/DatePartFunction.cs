@@ -31,7 +31,7 @@ public sealed class DatePartFunction : JyroFunctionBase
     /// Thrown when the date string cannot be parsed or the part name is invalid.
     /// Valid part names are: year, month, day, hour, minute, second, dayofweek, dayofyear.
     /// </exception>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var dateStringArgument = GetArgument<JyroString>(arguments, 0);
         var partNameArgument = GetArgument<JyroString>(arguments, 1);

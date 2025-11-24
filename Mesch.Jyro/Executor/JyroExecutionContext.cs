@@ -6,7 +6,7 @@
 /// where the reserved global identifier "Data" serves as the single source of truth
 /// for the root data object.
 /// </summary>
-public sealed class ExecutionContext
+public sealed class JyroExecutionContext
 {
     /// <summary>
     /// The reserved global identifier that always references the root data object.
@@ -15,7 +15,7 @@ public sealed class ExecutionContext
     public const string RootIdentifier = "Data";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExecutionContext"/> class
+    /// Initializes a new instance of the <see cref="JyroExecutionContext"/> class
     /// with the specified execution parameters and runtime configuration.
     /// </summary>
     /// <param name="initialDataValue">
@@ -45,7 +45,7 @@ public sealed class ExecutionContext
     /// Thrown when <paramref name="linkedProgram"/>, <paramref name="executionOptions"/>,
     /// or <paramref name="resourceLimiter"/> is null.
     /// </exception>
-    public ExecutionContext(
+    public JyroExecutionContext(
         JyroValue initialDataValue,
         LinkedProgram linkedProgram,
         JyroExecutionOptions executionOptions,

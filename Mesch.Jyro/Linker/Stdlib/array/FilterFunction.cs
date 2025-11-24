@@ -44,7 +44,7 @@ public sealed class FilterFunction : JyroFunctionBase
     /// Thrown when an unsupported comparison operator is provided or when comparison
     /// operations are attempted on incompatible types.
     /// </exception>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var array = GetArrayArgument(arguments, 0);
         var fieldName = GetStringArgument(arguments, 1);

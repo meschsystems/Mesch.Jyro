@@ -10,13 +10,13 @@ namespace Mesch.Jyro;
 /// </summary>
 public class Interpreter : JyroBaseVisitor<JyroValue>
 {
-    private ExecutionContext _context = null!;
+    private JyroExecutionContext _context = null!;
     private ExecutionMetrics _metrics;
 
     /// <summary>
     /// Executes the linked program with the provided execution context.
     /// </summary>
-    public JyroExecutionResult Execute(LinkedProgram linkedProgram, ExecutionContext executionContext)
+    public JyroExecutionResult Execute(LinkedProgram linkedProgram, JyroExecutionContext executionContext)
     {
         ArgumentNullException.ThrowIfNull(linkedProgram);
         ArgumentNullException.ThrowIfNull(executionContext);
@@ -77,7 +77,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             _metrics.MaxCallDepth,
             executionStartedAt);
 
-        if (!_context.Variables.TryGet(ExecutionContext.RootIdentifier, out var finalRootData) || finalRootData is null)
+        if (!_context.Variables.TryGet(JyroExecutionContext.RootIdentifier, out var finalRootData) || finalRootData is null)
         {
             finalRootData = JyroNull.Instance;
         }
@@ -663,7 +663,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         if (context.DATA() != null)
         {
             JyroValue value;
-            if (_context.Variables.TryGet(ExecutionContext.RootIdentifier, out var dataValue))
+            if (_context.Variables.TryGet(JyroExecutionContext.RootIdentifier, out var dataValue))
             {
                 value = dataValue;
             }
@@ -801,7 +801,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
 
         if (context.DATA() != null)
         {
-            var value = _context.Variables.TryGet(ExecutionContext.RootIdentifier, out var v)
+            var value = _context.Variables.TryGet(JyroExecutionContext.RootIdentifier, out var v)
                 ? v
                 : JyroNull.Instance;
 
@@ -838,7 +838,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         }
         else if (context.DATA() != null)
         {
-            var target = _context.Variables.TryGet(ExecutionContext.RootIdentifier, out var v)
+            var target = _context.Variables.TryGet(JyroExecutionContext.RootIdentifier, out var v)
                 ? v
                 : JyroNull.Instance;
             AssignToNestedTarget(target, context.memberOrIndex(), value);

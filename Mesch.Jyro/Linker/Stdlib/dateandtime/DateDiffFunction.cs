@@ -44,7 +44,7 @@ public sealed class DateDiffFunction : JyroFunctionBase
     /// (singular and plural forms accepted). Month and year calculations use
     /// approximate values (30.44 days per month, 365.25 days per year).
     /// </exception>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var endDateArgument = GetArgument<JyroString>(arguments, 0);
         var startDateArgument = GetArgument<JyroString>(arguments, 1);

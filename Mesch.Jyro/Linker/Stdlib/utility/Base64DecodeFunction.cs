@@ -30,7 +30,7 @@ public sealed class Base64DecodeFunction : JyroFunctionBase
     /// <exception cref="JyroRuntimeException">
     /// Thrown when the input string is not a valid Base64-encoded string.
     /// </exception>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var inputString = GetArgument<JyroString>(arguments, 0);
 

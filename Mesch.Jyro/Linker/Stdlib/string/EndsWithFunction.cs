@@ -27,7 +27,7 @@ public sealed class EndsWithFunction : JyroFunctionBase
     /// A <see cref="JyroBoolean"/> indicating whether the source string ends
     /// with the specified suffix.
     /// </returns>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var sourceString = GetArgument<JyroString>(arguments, 0);
         var suffixString = GetArgument<JyroString>(arguments, 1);

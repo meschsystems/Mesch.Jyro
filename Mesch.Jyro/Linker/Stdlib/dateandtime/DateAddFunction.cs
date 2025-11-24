@@ -40,7 +40,7 @@ public sealed class DateAddFunction : JyroFunctionBase
     /// or the time unit is invalid. Valid units are: days, weeks, months, years,
     /// hours, minutes, seconds (singular and plural forms accepted).
     /// </exception>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var dateStringArgument = GetArgument<JyroString>(arguments, 0);
         var timeUnitArgument = GetArgument<JyroString>(arguments, 1);
