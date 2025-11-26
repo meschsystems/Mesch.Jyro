@@ -549,6 +549,195 @@ public class StandardLibraryTests
         Assert.Equal(42.0, ((JyroNumber)resultArray[0]).Value);
     }
 
+    [Fact]
+    public void GroupBy_GroupsObjectsByField()
+    {
+        var script = @"
+            var orders = [
+                {""id"": 1, ""status"": ""pending"", ""amount"": 100},
+                {""id"": 2, ""status"": ""completed"", ""amount"": 200},
+                {""id"": 3, ""status"": ""pending"", ""amount"": 150},
+                {""id"": 4, ""status"": ""completed"", ""amount"": 50}
+            ]
+            Data.result = GroupBy(orders, ""status"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var grouped = (JyroObject)data.GetProperty("result");
+
+        var pendingGroup = (JyroArray)grouped.GetProperty("pending");
+        var completedGroup = (JyroArray)grouped.GetProperty("completed");
+
+        Assert.Equal(2, pendingGroup.Length);
+        Assert.Equal(2, completedGroup.Length);
+
+        // Verify first pending item
+        var firstPending = (JyroObject)pendingGroup[0];
+        Assert.Equal(1.0, ((JyroNumber)firstPending.GetProperty("id")).Value);
+
+        // Verify first completed item
+        var firstCompleted = (JyroObject)completedGroup[0];
+        Assert.Equal(2.0, ((JyroNumber)firstCompleted.GetProperty("id")).Value);
+    }
+
+    [Fact]
+    public void GroupBy_GroupsNullValuesUnderNullKey()
+    {
+        var script = @"
+            var items = [
+                {""id"": 1, ""category"": ""A""},
+                {""id"": 2, ""category"": null},
+                {""id"": 3},
+                {""id"": 4, ""category"": ""A""}
+            ]
+            Data.result = GroupBy(items, ""category"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var grouped = (JyroObject)data.GetProperty("result");
+
+        var aGroup = (JyroArray)grouped.GetProperty("A");
+        var nullGroup = (JyroArray)grouped.GetProperty("null");
+
+        Assert.Equal(2, aGroup.Length);
+        Assert.Equal(2, nullGroup.Length);
+
+        // Verify null group contains items with id 2 and 3
+        var firstNull = (JyroObject)nullGroup[0];
+        var secondNull = (JyroObject)nullGroup[1];
+        Assert.Equal(2.0, ((JyroNumber)firstNull.GetProperty("id")).Value);
+        Assert.Equal(3.0, ((JyroNumber)secondNull.GetProperty("id")).Value);
+    }
+
+    [Fact]
+    public void GroupBy_SkipsNonObjectItems()
+    {
+        var script = @"
+            var items = [
+                {""id"": 1, ""type"": ""A""},
+                ""not an object"",
+                42,
+                {""id"": 2, ""type"": ""A""},
+                null
+            ]
+            Data.result = GroupBy(items, ""type"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var grouped = (JyroObject)data.GetProperty("result");
+
+        var aGroup = (JyroArray)grouped.GetProperty("A");
+        Assert.Equal(2, aGroup.Length);
+    }
+
+    [Fact]
+    public void GroupBy_SupportsNestedFieldPaths()
+    {
+        var script = @"
+            var people = [
+                {""name"": ""Alice"", ""address"": {""city"": ""NYC""}},
+                {""name"": ""Bob"", ""address"": {""city"": ""LA""}},
+                {""name"": ""Charlie"", ""address"": {""city"": ""NYC""}}
+            ]
+            Data.result = GroupBy(people, ""address.city"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var grouped = (JyroObject)data.GetProperty("result");
+
+        var nycGroup = (JyroArray)grouped.GetProperty("NYC");
+        var laGroup = (JyroArray)grouped.GetProperty("LA");
+
+        Assert.Equal(2, nycGroup.Length);
+        Assert.Equal(1, laGroup.Length);
+
+        var firstNyc = (JyroObject)nycGroup[0];
+        Assert.Equal("Alice", ((JyroString)firstNyc.GetProperty("name")).Value);
+    }
+
+    [Fact]
+    public void GroupBy_DoesNotModifyOriginalArray()
+    {
+        var script = @"
+            var arr = [
+                {""id"": 1, ""type"": ""A""},
+                {""id"": 2, ""type"": ""B""}
+            ]
+            var grouped = GroupBy(arr, ""type"")
+            Data.originalLength = Length(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("originalLength")).Value);
+    }
+
+    [Fact]
+    public void GroupBy_EmptyArray_ReturnsEmptyObject()
+    {
+        var script = @"
+            var arr = []
+            Data.result = GroupBy(arr, ""type"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var grouped = (JyroObject)data.GetProperty("result");
+        Assert.Equal(0, grouped.Count);
+    }
+
+    [Fact]
+    public void GroupBy_GroupsByNumericField()
+    {
+        var script = @"
+            var items = [
+                {""name"": ""A"", ""priority"": 1},
+                {""name"": ""B"", ""priority"": 2},
+                {""name"": ""C"", ""priority"": 1}
+            ]
+            Data.result = GroupBy(items, ""priority"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var grouped = (JyroObject)data.GetProperty("result");
+
+        // Numbers are converted to string keys
+        var priority1 = (JyroArray)grouped.GetProperty("1");
+        var priority2 = (JyroArray)grouped.GetProperty("2");
+
+        Assert.Equal(2, priority1.Length);
+        Assert.Equal(1, priority2.Length);
+    }
+
+    [Fact]
+    public void GroupBy_GroupsByBooleanField()
+    {
+        var script = @"
+            var tasks = [
+                {""name"": ""Task 1"", ""done"": true},
+                {""name"": ""Task 2"", ""done"": false},
+                {""name"": ""Task 3"", ""done"": true}
+            ]
+            Data.result = GroupBy(tasks, ""done"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var grouped = (JyroObject)data.GetProperty("result");
+
+        // Booleans are converted to string keys "True" and "False" (C# casing)
+        var doneGroup = (JyroArray)grouped.GetProperty("True");
+        var notDoneGroup = (JyroArray)grouped.GetProperty("False");
+
+        Assert.Equal(2, doneGroup.Length);
+        Assert.Equal(1, notDoneGroup.Length);
+    }
+
     #endregion
 
     #region Math Functions
@@ -736,6 +925,93 @@ public class StandardLibraryTests
 
         var data = (JyroObject)result.Data;
         Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Keys_ReturnsPropertyNames()
+    {
+        var script = @"
+            var obj = {""name"": ""Alice"", ""age"": 30, ""active"": true}
+            Data.result = Keys(obj)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var keys = (JyroArray)data.GetProperty("result");
+
+        Assert.Equal(3, keys.Length);
+
+        // Convert to list for easier assertion (order may vary)
+        var keyList = new List<string>();
+        for (int i = 0; i < keys.Length; i++)
+        {
+            keyList.Add(((JyroString)keys[i]).Value);
+        }
+
+        Assert.Contains("name", keyList);
+        Assert.Contains("age", keyList);
+        Assert.Contains("active", keyList);
+    }
+
+    [Fact]
+    public void Keys_EmptyObject_ReturnsEmptyArray()
+    {
+        var script = @"
+            var obj = {}
+            Data.result = Keys(obj)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var keys = (JyroArray)data.GetProperty("result");
+
+        Assert.Equal(0, keys.Length);
+    }
+
+    [Fact]
+    public void Keys_UsedWithGroupBy()
+    {
+        var script = @"
+            var orders = [
+                {""id"": 1, ""status"": ""pending""},
+                {""id"": 2, ""status"": ""completed""},
+                {""id"": 3, ""status"": ""pending""}
+            ]
+            var grouped = GroupBy(orders, ""status"")
+            Data.result = Keys(grouped)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var keys = (JyroArray)data.GetProperty("result");
+
+        Assert.Equal(2, keys.Length);
+
+        var keyList = new List<string>();
+        for (int i = 0; i < keys.Length; i++)
+        {
+            keyList.Add(((JyroString)keys[i]).Value);
+        }
+
+        Assert.Contains("pending", keyList);
+        Assert.Contains("completed", keyList);
+    }
+
+    [Fact]
+    public void Keys_IterateOverObject()
+    {
+        var script = @"
+            var obj = {""a"": 1, ""b"": 2, ""c"": 3}
+            var sum = 0
+            foreach key in Keys(obj) do
+                sum = sum + obj[key]
+            end
+            Data.result = sum
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(6.0, ((JyroNumber)data.GetProperty("result")).Value);
     }
 
     [Fact]

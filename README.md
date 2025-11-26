@@ -993,6 +993,7 @@ Functions for manipulating and processing array data structures.
 - [**CountIf**](stdlib/array/countif/) - Count elements where field matches value using comparison operator
 - [**Filter**](stdlib/array/filter/) - Return new array with elements matching field comparison criteria
 - [**First**](stdlib/array/first/) - Return first element of array without modifying it
+- [**GroupBy**](stdlib/array/groupby/) - Group array of objects by field value into keyed object
 - [**IndexOf**](stdlib/array/indexof/) - Find index of element in array using deep equality
 - [**Insert**](stdlib/array/insert/) - Insert value at specific array index
 - [**Last**](stdlib/array/last/) - Return last element of array without modifying it
@@ -1029,6 +1030,7 @@ Miscellaneous functions for inspecting and testing data types, value generation,
 - [**Exists**](stdlib/utility/exists/) - Test if value is not null
 - [**InvokeRestMethod**](stdlib/utility/invokerestmethod/) - Execute HTTP REST API requests (experimental)
 - [**IsNull**](stdlib/utility/isnull/) - Test if value is null
+- [**Keys**](stdlib/utility/keys/) - Get array of property names from an object
 - [**Length**](stdlib/utility/length/) - Get length/count of strings, arrays, or objects
 - [**NewGuid**](stdlib/utility/newguid) - Generate a new globally unique identifier (GUID)
 - [**NotEqual**](stdlib/utility/notequal/) - Test inequality between two values
