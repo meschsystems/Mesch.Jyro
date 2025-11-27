@@ -171,7 +171,7 @@ public sealed class Validator
 
             // Validate main then branch
             _context.EnterScope();
-            VisitStatementBlock(context.statement().Take(GetMainThenCount(context)));
+            VisitStatementBlock(GetMainIfStatements(context));
             _context.ExitScope();
 
             // Validate else-if conditions and branches
@@ -180,7 +180,7 @@ public sealed class Validator
             {
                 Visit(context.expression(i + 1));
                 _context.EnterScope();
-                // TODO: Need to properly extract else-if statement blocks
+                VisitStatementBlock(GetElseIfStatements(context, i));
                 _context.ExitScope();
             }
 
@@ -188,7 +188,7 @@ public sealed class Validator
             if (context.ELSE().Length > elseIfCount)
             {
                 _context.EnterScope();
-                // TODO: Need to properly extract else statement blocks
+                VisitStatementBlock(GetElseStatements(context));
                 _context.ExitScope();
             }
 
@@ -208,7 +208,7 @@ public sealed class Validator
             {
                 Visit(context.expression(i + 1));
                 _context.EnterScope();
-                // TODO: Need to properly extract case statement blocks
+                VisitStatementBlock(GetCaseStatements(context, i));
                 _context.ExitScope();
             }
 
@@ -216,7 +216,7 @@ public sealed class Validator
             if (context.DEFAULT() != null)
             {
                 _context.EnterScope();
-                // TODO: Need to properly extract default statement blocks
+                VisitStatementBlock(GetDefaultStatements(context));
                 _context.ExitScope();
             }
 
@@ -421,11 +421,228 @@ public sealed class Validator
                    statement.returnStmt() != null;
         }
 
-        private static int GetMainThenCount(JyroParser.IfStmtContext context)
+        // Helper methods for parsing if/switch statement structures
+        // These methods walk the parse tree to partition statements into their respective branches
+
+        private static IEnumerable<JyroParser.StatementContext> GetMainIfStatements(JyroParser.IfStmtContext context)
         {
-            // This is a simplified approximation
-            // TODO: Properly parse if statement structure to extract exact statement counts
-            return context.statement().Length;
+            // Collect statements between the first "IF...THEN" and the first "ELSE" or "END"
+            var children = context.children;
+            bool pastThen = false;
+
+            for (int i = 0; i < children.Count; i++)
+            {
+                var child = children[i];
+
+                // Once we hit THEN, start collecting statements
+                if (child is ITerminalNode thenNode && thenNode.Symbol.Type == JyroParser.THEN && !pastThen)
+                {
+                    pastThen = true;
+                    continue;
+                }
+
+                // If we're past THEN, collect statements until we hit ELSE or END
+                if (pastThen)
+                {
+                    // Stop at ELSE or END
+                    if (child is ITerminalNode term && (term.Symbol.Type == JyroParser.ELSE || term.Symbol.Type == JyroParser.END))
+                    {
+                        yield break;
+                    }
+
+                    if (child is JyroParser.StatementContext stmtContext)
+                    {
+                        yield return stmtContext;
+                    }
+                }
+            }
+        }
+
+        private static IEnumerable<JyroParser.StatementContext> GetElseIfStatements(JyroParser.IfStmtContext context, int elseIfIndex)
+        {
+            // Walk through children to find statements between the Nth "ELSE IF...THEN" and the next keyword
+            var children = context.children;
+            int elseIfCount = 0;
+            bool inTargetBranch = false;
+
+            for (int i = 0; i < children.Count; i++)
+            {
+                var child = children[i];
+
+                // Check if this is "ELSE" followed by "IF"
+                if (child is ITerminalNode terminal && terminal.Symbol.Type == JyroParser.ELSE)
+                {
+                    if (i + 1 < children.Count && children[i + 1] is ITerminalNode nextTerminal
+                        && nextTerminal.Symbol.Type == JyroParser.IF)
+                    {
+                        if (elseIfCount == elseIfIndex)
+                        {
+                            inTargetBranch = true;
+                        }
+                        else if (elseIfCount > elseIfIndex)
+                        {
+                            yield break; // Past our target branch
+                        }
+                        elseIfCount++;
+                    }
+                }
+
+                // If we're in the target branch and hit a THEN, start collecting statements
+                if (inTargetBranch && child is ITerminalNode thenNode && thenNode.Symbol.Type == JyroParser.THEN)
+                {
+                    inTargetBranch = false; // Now we're past THEN, collect statements
+                    for (int j = i + 1; j < children.Count; j++)
+                    {
+                        var stmt = children[j];
+
+                        // Stop at the next keyword (ELSE, END)
+                        if (stmt is ITerminalNode term && (term.Symbol.Type == JyroParser.ELSE || term.Symbol.Type == JyroParser.END))
+                        {
+                            yield break;
+                        }
+
+                        if (stmt is JyroParser.StatementContext stmtContext)
+                        {
+                            yield return stmtContext;
+                        }
+                    }
+                }
+            }
+        }
+
+        private static IEnumerable<JyroParser.StatementContext> GetElseStatements(JyroParser.IfStmtContext context)
+        {
+            // Find the final ELSE (not followed by IF) and collect statements until END
+            var children = context.children;
+            bool inElseBranch = false;
+
+            for (int i = 0; i < children.Count; i++)
+            {
+                var child = children[i];
+
+                // Check if this is "ELSE" NOT followed by "IF"
+                if (child is ITerminalNode terminal && terminal.Symbol.Type == JyroParser.ELSE)
+                {
+                    if (i + 1 < children.Count)
+                    {
+                        var next = children[i + 1];
+                        if (next is ITerminalNode nextTerminal && nextTerminal.Symbol.Type == JyroParser.IF)
+                        {
+                            continue; // This is ELSE IF, not the final ELSE
+                        }
+                    }
+
+                    // This is the final ELSE
+                    inElseBranch = true;
+                    continue;
+                }
+
+                if (inElseBranch)
+                {
+                    if (child is ITerminalNode term && term.Symbol.Type == JyroParser.END)
+                    {
+                        yield break;
+                    }
+
+                    if (child is JyroParser.StatementContext stmtContext)
+                    {
+                        yield return stmtContext;
+                    }
+                }
+            }
+        }
+
+        private static IEnumerable<JyroParser.StatementContext> GetCaseStatements(JyroParser.SwitchStmtContext context, int caseIndex)
+        {
+            // Walk through children to find statements between the Nth CASE...THEN and the next keyword
+            var children = context.children;
+            int caseCount = 0;
+            bool collectStatements = false;
+
+            for (int i = 0; i < children.Count; i++)
+            {
+                var child = children[i];
+
+                // Found a CASE keyword
+                if (child is ITerminalNode terminal && terminal.Symbol.Type == JyroParser.CASE)
+                {
+                    if (caseCount == caseIndex)
+                    {
+                        // This is our target case - find the THEN and start collecting after it
+                        for (int j = i + 1; j < children.Count; j++)
+                        {
+                            if (children[j] is ITerminalNode thenNode && thenNode.Symbol.Type == JyroParser.THEN)
+                            {
+                                collectStatements = true;
+                                i = j; // Move past THEN
+                                break;
+                            }
+                        }
+                    }
+                    else if (caseCount > caseIndex)
+                    {
+                        // We've passed our target case
+                        yield break;
+                    }
+                    caseCount++;
+                }
+                else if (collectStatements)
+                {
+                    // Stop at next CASE, DEFAULT, or END
+                    if (child is ITerminalNode term &&
+                        (term.Symbol.Type == JyroParser.CASE ||
+                         term.Symbol.Type == JyroParser.DEFAULT ||
+                         term.Symbol.Type == JyroParser.END))
+                    {
+                        yield break;
+                    }
+
+                    if (child is JyroParser.StatementContext stmtContext)
+                    {
+                        yield return stmtContext;
+                    }
+                }
+            }
+        }
+
+        private static IEnumerable<JyroParser.StatementContext> GetDefaultStatements(JyroParser.SwitchStmtContext context)
+        {
+            // Find DEFAULT THEN and collect statements until END
+            var children = context.children;
+            bool collectStatements = false;
+
+            for (int i = 0; i < children.Count; i++)
+            {
+                var child = children[i];
+
+                // Found DEFAULT keyword
+                if (child is ITerminalNode terminal && terminal.Symbol.Type == JyroParser.DEFAULT)
+                {
+                    // Find the THEN and start collecting after it
+                    for (int j = i + 1; j < children.Count; j++)
+                    {
+                        if (children[j] is ITerminalNode thenNode && thenNode.Symbol.Type == JyroParser.THEN)
+                        {
+                            collectStatements = true;
+                            i = j; // Move past THEN
+                            break;
+                        }
+                    }
+                }
+                else if (collectStatements)
+                {
+                    // Stop at END
+                    if (child is ITerminalNode term && term.Symbol.Type == JyroParser.END)
+                    {
+                        yield break;
+                    }
+
+                    if (child is JyroParser.StatementContext stmtContext)
+                    {
+                        yield return stmtContext;
+                    }
+                }
+            }
         }
     }
 

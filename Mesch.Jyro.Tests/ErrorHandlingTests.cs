@@ -290,4 +290,261 @@ public class ErrorHandlingTests
         var data = (JyroObject)result.Data;
         Assert.Equal("truthy", ((JyroString)data.GetProperty("result")).Value);
     }
+
+    #region Validator Branch Validation Tests
+
+    [Fact]
+    public void Validator_CatchesUndeclaredVariableInElseIfBranch()
+    {
+        var script = @"
+            if true then
+                var x = 1
+            else if true then
+                y = undeclaredVar
+            end
+        ";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        Assert.Contains(result.Messages, m =>
+            m.Severity == MessageSeverity.Error &&
+            m.Stage == ProcessingStage.Validation);
+    }
+
+    [Fact]
+    public void Validator_CatchesUndeclaredVariableInElseBranch()
+    {
+        var script = @"
+            if false then
+                var x = 1
+            else
+                y = undeclaredVar
+            end
+        ";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        Assert.Contains(result.Messages, m =>
+            m.Severity == MessageSeverity.Error &&
+            m.Stage == ProcessingStage.Validation);
+    }
+
+    [Fact]
+    public void Validator_CatchesUndeclaredVariableInSwitchCase()
+    {
+        var script = @"
+            switch 1 do
+                case 1 then
+                    y = undeclaredVar
+            end
+        ";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        Assert.Contains(result.Messages, m =>
+            m.Severity == MessageSeverity.Error &&
+            m.Stage == ProcessingStage.Validation);
+    }
+
+    [Fact]
+    public void Validator_CatchesUndeclaredVariableInSwitchDefault()
+    {
+        var script = @"
+            switch 1 do
+                case 2 then
+                    var x = 1
+                default then
+                    y = undeclaredVar
+            end
+        ";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        Assert.Contains(result.Messages, m =>
+            m.Severity == MessageSeverity.Error &&
+            m.Stage == ProcessingStage.Validation);
+    }
+
+    [Fact]
+    public void Validator_ValidatesAllIfElseIfElseBranches()
+    {
+        var script = @"
+            if true then
+                var a = 1
+                Data.x = a
+            else if true then
+                var b = 2
+                Data.y = b
+            else
+                var c = 3
+                Data.z = c
+            end
+        ";
+
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+        Assert.True(result.IsSuccessful);
+    }
+
+    [Fact]
+    public void Validator_ValidatesAllSwitchCasesAndDefault()
+    {
+        var script = @"
+            switch 2 do
+                case 1 then
+                    var a = 1
+                    Data.x = a
+                case 2 then
+                    var b = 2
+                    Data.y = b
+                default then
+                    var c = 3
+                    Data.z = c
+            end
+        ";
+
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+        Assert.True(result.IsSuccessful);
+    }
+
+    [Fact]
+    public void Validator_VariablesInOneBranchNotVisibleInOther()
+    {
+        var script = @"
+            if true then
+                var x = 1
+            else
+                Data.result = x
+            end
+        ";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        Assert.Contains(result.Messages, m =>
+            m.Severity == MessageSeverity.Error &&
+            m.Stage == ProcessingStage.Validation);
+    }
+
+    #endregion
+
+    #region Syntax Error Tests
+
+    [Fact]
+    public void SyntaxError_MissingCommaInArray_ReturnsSyntaxError()
+    {
+        var script = "var arr = [1 2 3]";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        Assert.NotEmpty(result.Messages);
+        Assert.Contains(result.Messages, m => m.Severity == MessageSeverity.Error);
+        Assert.Contains(result.Messages, m => m.Stage == ProcessingStage.Parsing);
+    }
+
+    [Fact]
+    public void SyntaxError_MissingCommaInObjectArray_ReturnsSyntaxError()
+    {
+        var script = @"
+            var orders = [
+                { ""id"": 1, ""status"": ""pending"" }
+                { ""id"": 2, ""status"": ""completed"" }
+            ]
+        ";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        Assert.NotEmpty(result.Messages);
+        Assert.Contains(result.Messages, m => m.Severity == MessageSeverity.Error);
+        Assert.Contains(result.Messages, m => m.Stage == ProcessingStage.Parsing);
+    }
+
+    [Fact]
+    public void SyntaxError_MissingColonInObject_ReturnsSyntaxError()
+    {
+        var script = @"var obj = { ""name"" ""Alice"" }";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        Assert.NotEmpty(result.Messages);
+        Assert.Contains(result.Messages, m => m.Severity == MessageSeverity.Error);
+        Assert.Contains(result.Messages, m => m.Stage == ProcessingStage.Parsing);
+    }
+
+    [Fact]
+    public void SyntaxError_UnclosedBracket_ReturnsSyntaxError()
+    {
+        var script = "var arr = [1, 2, 3";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        Assert.NotEmpty(result.Messages);
+        Assert.Contains(result.Messages, m => m.Severity == MessageSeverity.Error);
+        Assert.Contains(result.Messages, m => m.Stage == ProcessingStage.Parsing);
+    }
+
+    [Fact]
+    public void SyntaxError_UnclosedBrace_ReturnsSyntaxError()
+    {
+        var script = @"var obj = { ""name"": ""Alice""";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        Assert.NotEmpty(result.Messages);
+        Assert.Contains(result.Messages, m => m.Severity == MessageSeverity.Error);
+        Assert.Contains(result.Messages, m => m.Stage == ProcessingStage.Parsing);
+    }
+
+    [Fact]
+    public void SyntaxError_ValidSyntax_ReturnsSuccess()
+    {
+        var script = "var arr = [1, 2, 3]";
+
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        Assert.True(result.IsSuccessful);
+    }
+
+    [Fact]
+    public void SyntaxError_ValidObjectLiteral_ReturnsSuccess()
+    {
+        var script = @"
+            var orders = [
+                { ""id"": 1, ""status"": ""pending"" },
+                { ""id"": 2, ""status"": ""completed"" }
+            ]
+            Data.count = Length(orders)
+        ";
+
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        Assert.True(result.IsSuccessful);
+        var data = (JyroObject)result.Data;
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("count")).Value);
+    }
+
+    [Fact]
+    public void SyntaxError_ErrorMessageIncludesLineNumber()
+    {
+        var script = @"
+            var x = 1
+            var arr = [1 2 3]
+        ";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        var syntaxError = result.Messages.First(m => m.Stage == ProcessingStage.Parsing);
+        Assert.True(syntaxError.LineNumber > 0, "Line number should be reported");
+    }
+
+    #endregion
 }

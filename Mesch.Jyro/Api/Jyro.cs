@@ -51,15 +51,19 @@ public sealed class Jyro
         var tokenStream = new CommonTokenStream(lexer);
         var parser = new JyroParser(tokenStream);
 
-        // TODO: Add error listener to collect syntax errors
+        // Add custom error listener to capture syntax errors
+        var errorListener = new SyntaxErrorListener();
+        parser.RemoveErrorListeners();  // Remove default console error listener
+        parser.AddErrorListener(errorListener);
+
         var programContext = parser.program();
 
-        // TODO: Return proper result with diagnostics
+        // Return failure if any syntax errors were captured
         return new JyroParsingResult(
-            true,
+            !errorListener.HasErrors,
             programContext,
-            Array.Empty<IMessage>(),
-            new ParsingMetadata(TimeSpan.Zero, 0, DateTimeOffset.UtcNow));
+            errorListener.Errors.ToArray(),
+            new ParsingMetadata(TimeSpan.Zero, tokenStream.Size, DateTimeOffset.UtcNow));
     }
 
     /// <summary>
