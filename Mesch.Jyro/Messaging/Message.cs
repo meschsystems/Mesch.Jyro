@@ -88,15 +88,16 @@ public sealed class Message : IMessage
 
     /// <summary>
     /// Returns a string representation of this diagnostic message for debugging and logging purposes.
-    /// The format includes severity, location, code, and arguments in a compact, readable format
+    /// The format includes severity, location, diagnostic code, and arguments in a compact, readable format
     /// suitable for console output and log files.
     /// </summary>
     /// <returns>
     /// A formatted string containing the essential diagnostic information in the format:
-    /// [Severity] LineNumber:ColumnPosition Code Arguments
+    /// [Severity] LineNumber:ColumnPosition JMnnnn CodeName Arguments
     /// </returns>
     public override string ToString()
     {
-        return $"[{Severity}] {LineNumber}:{ColumnPosition} {Code} {string.Join(' ', Arguments)}";
+        var diagnosticCode = $"JM{(int)Code:D4}";
+        return $"[{Severity}] {LineNumber}:{ColumnPosition} {diagnosticCode} {Code} {string.Join(' ', Arguments)}";
     }
 }

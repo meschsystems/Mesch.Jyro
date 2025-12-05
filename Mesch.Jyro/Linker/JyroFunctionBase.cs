@@ -66,14 +66,18 @@ public abstract class JyroFunctionBase : IJyroFunction
     {
         if (argumentIndex >= arguments.Count)
         {
-            throw new JyroRuntimeException($"Missing required argument at position {argumentIndex} in function '{Signature.Name}'");
+            throw new JyroRuntimeException(
+                MessageCode.InvalidArgumentType, 0, 0,
+                $"Function '{Signature.Name}' missing required argument at position {argumentIndex}");
         }
 
         var argument = arguments[argumentIndex];
         if (argument is not TJyroValue typedArgument)
         {
             var expectedTypeName = typeof(TJyroValue).Name.Replace("Jyro", "").ToLowerInvariant();
-            throw new JyroRuntimeException($"Function '{Signature.Name}' expects {expectedTypeName} at position {argumentIndex}, but received {argument.Type}");
+            throw new JyroRuntimeException(
+                MessageCode.InvalidArgumentType, 0, 0,
+                $"Function '{Signature.Name}' expects argument {argumentIndex} to be of type {expectedTypeName}, but got {argument.Type}");
         }
 
         return typedArgument;
@@ -108,7 +112,9 @@ public abstract class JyroFunctionBase : IJyroFunction
     {
         if (argumentIndex >= arguments.Count)
         {
-            throw new JyroRuntimeException($"Missing required argument at position {argumentIndex} in function '{Signature.Name}'");
+            throw new JyroRuntimeException(
+                MessageCode.InvalidArgumentType, 0, 0,
+                $"Function '{Signature.Name}' missing required argument at position {argumentIndex}");
         }
 
         var argument = arguments[argumentIndex];
@@ -151,7 +157,9 @@ public abstract class JyroFunctionBase : IJyroFunction
         }
 
         var expectedTypeName = typeof(TJyroValue).Name.Replace("Jyro", "").ToLowerInvariant();
-        throw new JyroRuntimeException($"Cannot convert {argument.Type} to {expectedTypeName} in function '{Signature.Name}' at position {argumentIndex}");
+        throw new JyroRuntimeException(
+            MessageCode.InvalidArgumentType, 0, 0,
+            $"Function '{Signature.Name}' expects argument {argumentIndex} to be of type {expectedTypeName}, but got {argument.Type}");
     }
 
     /// <summary>

@@ -25,7 +25,7 @@ public sealed class GreetFunction : JyroFunctionBase
     {
     }
 
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var name = GetStringArgument(arguments, 0);
         var greeting = $"Hello, {name}! Welcome to Jyro plugins!";
@@ -39,7 +39,7 @@ public sealed class GreetFunction : JyroFunctionBase
 ### Option 1: Load from Assembly Path
 
 ```csharp
-var result = JyroBuilder.Create()
+var result = JyroBuilder.Create(loggerFactory)
     .WithScript("Data.greeting = Greet(\"World\")")
     .WithData(new JyroObject())
     .WithFunctionsFromAssemblyPath("path/to/MyFunctions.dll")
@@ -50,7 +50,7 @@ var result = JyroBuilder.Create()
 
 ```csharp
 var assembly = Assembly.LoadFrom("path/to/MyFunctions.dll");
-var result = JyroBuilder.Create()
+var result = JyroBuilder.Create(loggerFactory)
     .WithScript("Data.greeting = Greet(\"World\")")
     .WithData(new JyroObject())
     .WithFunctionsFromAssembly(assembly)
@@ -62,7 +62,7 @@ var result = JyroBuilder.Create()
 Plugin functions can be combined with the Jyro standard library:
 
 ```csharp
-var result = JyroBuilder.Create()
+var result = JyroBuilder.Create(loggerFactory)
     .WithScript(@"
         var upperName = Upper(""jyro"")
         Data.greeting = Greet(upperName)

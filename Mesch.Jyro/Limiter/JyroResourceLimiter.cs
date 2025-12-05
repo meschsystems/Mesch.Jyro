@@ -74,7 +74,9 @@ public sealed class JyroResourceLimiter
         _currentStatementCount++;
         if (_currentStatementCount > _maxStatementCount)
         {
-            throw new JyroRuntimeException($"Script execution exceeded maximum statement limit of {_maxStatementCount}");
+            throw new JyroRuntimeException(
+                MessageCode.StatementLimitExceeded, 0, 0,
+                $"Script execution exceeded maximum statement limit of {_maxStatementCount}");
         }
 
         CheckExecutionTime();
@@ -93,7 +95,9 @@ public sealed class JyroResourceLimiter
         _currentLoopIterations++;
         if (_currentLoopIterations > _maxLoopIterations)
         {
-            throw new JyroRuntimeException($"Script execution exceeded maximum loop iteration limit of {_maxLoopIterations}");
+            throw new JyroRuntimeException(
+                MessageCode.LoopIterationLimitExceeded, 0, 0,
+                $"Script execution exceeded maximum loop iteration limit of {_maxLoopIterations}");
         }
 
         CheckExecutionTime();
@@ -124,7 +128,9 @@ public sealed class JyroResourceLimiter
         _currentCallStackDepth++;
         if (_currentCallStackDepth > _maxCallStackDepth)
         {
-            throw new JyroRuntimeException($"Script execution exceeded maximum call depth limit of {_maxCallStackDepth}");
+            throw new JyroRuntimeException(
+                MessageCode.CallDepthLimitExceeded, 0, 0,
+                $"Script execution exceeded maximum call depth limit of {_maxCallStackDepth}");
         }
 
         CheckExecutionTime();
@@ -154,7 +160,9 @@ public sealed class JyroResourceLimiter
         _currentScriptCallDepth++;
         if (_currentScriptCallDepth > _maxScriptCallDepth)
         {
-            throw new JyroRuntimeException($"Script execution exceeded maximum script call depth limit of {_maxScriptCallDepth}");
+            throw new JyroRuntimeException(
+                MessageCode.ScriptCallDepthLimitExceeded, 0, 0,
+                $"Script execution exceeded maximum script call depth limit of {_maxScriptCallDepth}");
         }
         CheckExecutionTime();
     }
@@ -182,7 +190,9 @@ public sealed class JyroResourceLimiter
     {
         if (_executionTimer.Elapsed > _maxExecutionTime)
         {
-            throw new JyroRuntimeException($"Script execution exceeded maximum time limit of {_maxExecutionTime.TotalMilliseconds:F0}ms");
+            throw new JyroRuntimeException(
+                MessageCode.ExecutionTimeLimitExceeded, 0, 0,
+                $"Script execution exceeded maximum time limit of {_maxExecutionTime.TotalMilliseconds:F0}ms");
         }
     }
 

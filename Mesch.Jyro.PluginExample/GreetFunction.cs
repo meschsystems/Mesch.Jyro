@@ -19,7 +19,7 @@ public sealed class GreetFunction : JyroFunctionBase
     /// <summary>
     /// Executes the greeting operation.
     /// </summary>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var name = GetStringArgument(arguments, 0);
         var greeting = $"Hello, {name}! Welcome to Jyro plugins!";

@@ -23,7 +23,7 @@ public sealed class MultiplyFunction : JyroFunctionBase
     /// <summary>
     /// Executes the multiplication operation.
     /// </summary>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var a = GetNumberArgument(arguments, 0);
         var b = GetNumberArgument(arguments, 1);

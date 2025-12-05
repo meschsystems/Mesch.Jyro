@@ -47,12 +47,50 @@ public sealed class MessageProvider : IMessageProvider
         { MessageCode.FunctionOverride, "Function '{0}' overrides existing definition" },
         { MessageCode.InvalidNumberArguments, "Function '{0}' expects {1} arguments, but {2} were provided" },
         
-        // Execution Templates
+        // Execution Templates (General)
         { MessageCode.RuntimeError, "Runtime error: {0}" },
         { MessageCode.CancelledByHost, "Execution was cancelled by the host application" },
         { MessageCode.InvalidType, "Invalid type '{0}' for operation '{1}'" },
         { MessageCode.InvalidArgumentType, "Function '{0}' expects argument {1} to be of type {2}, but got {3}" },
-        
+
+        // Arithmetic Error Templates
+        { MessageCode.DivisionByZero, "Division by zero" },
+        { MessageCode.NegateNonNumber, "Cannot negate non-number value of type '{0}'" },
+        { MessageCode.IncrementDecrementNonNumber, "Cannot increment/decrement non-number value of type '{0}'" },
+        { MessageCode.IncompatibleOperandTypes, "Cannot {0} types '{1}' and '{2}'" },
+        { MessageCode.IncompatibleComparison, "Cannot compare types '{0}' and '{1}'" },
+
+        // Collection Access Error Templates
+        { MessageCode.IndexOutOfRange, "Array index {0} is out of bounds (array length: {1})" },
+        { MessageCode.NegativeIndex, "Array index cannot be negative: {0}" },
+        { MessageCode.IndexAccessOnNull, "Cannot access index on null" },
+        { MessageCode.InvalidIndexTarget, "Cannot access index on type '{0}'" },
+        { MessageCode.PropertyAccessOnNull, "Cannot access property '{0}' on null" },
+        { MessageCode.PropertyAccessInvalidType, "Cannot access property '{0}' on type '{1}'" },
+
+        // Type Error Templates
+        { MessageCode.InvalidTypeCheck, "Type check requires a string type name, got '{0}'" },
+        { MessageCode.UnknownTypeName, "Unknown type name: '{0}'" },
+        { MessageCode.NotIterable, "Cannot iterate over non-iterable value of type '{0}'" },
+
+        // Function Error Templates
+        { MessageCode.UndefinedFunctionRuntime, "Undefined function: '{0}'" },
+        { MessageCode.InvalidFunctionTarget, "Only named functions can be called" },
+
+        // Internal/Syntax Error Templates
+        { MessageCode.InvalidExpressionSyntax, "Invalid expression syntax: {0}" },
+        { MessageCode.UnknownOperator, "Unknown operator: '{0}'" },
+
+        // Resource Limit Error Templates
+        { MessageCode.StatementLimitExceeded, "Script execution exceeded maximum statement limit of {0}" },
+        { MessageCode.LoopIterationLimitExceeded, "Script execution exceeded maximum loop iteration limit of {0}" },
+        { MessageCode.CallDepthLimitExceeded, "Script execution exceeded maximum call depth limit of {0}" },
+        { MessageCode.ScriptCallDepthLimitExceeded, "Script execution exceeded maximum script call depth limit of {0}" },
+        { MessageCode.ExecutionTimeLimitExceeded, "Script execution exceeded maximum time limit of {0}ms" },
+
+        // Parse Error Templates
+        { MessageCode.InvalidNumberParse, "Invalid number: '{0}'" },
+
         // General Error Templates
         { MessageCode.UnknownExecutorError, "Unknown execution error: {0}" },
         { MessageCode.UnknownLexerError, "Unknown lexical analysis error: {0}" },

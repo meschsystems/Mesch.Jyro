@@ -180,7 +180,161 @@ public enum MessageCode
     /// A function was called with an argument of an incorrect type for the expected parameter.
     /// This error enforces type safety at function call boundaries during execution.
     /// </summary>
-    InvalidArgumentType = 5004
+    InvalidArgumentType = 5004,
+
+    #region Arithmetic Errors (5005–5009)
+
+    /// <summary>
+    /// A division or modulo operation attempted to divide by zero.
+    /// </summary>
+    DivisionByZero = 5005,
+
+    /// <summary>
+    /// A unary negation operator was applied to a non-numeric value.
+    /// </summary>
+    NegateNonNumber = 5006,
+
+    /// <summary>
+    /// An increment or decrement operator was applied to a non-numeric value.
+    /// </summary>
+    IncrementDecrementNonNumber = 5007,
+
+    /// <summary>
+    /// An arithmetic operation was attempted on incompatible operand types.
+    /// This includes add, subtract, multiply, divide, and modulo on mismatched types.
+    /// </summary>
+    IncompatibleOperandTypes = 5008,
+
+    /// <summary>
+    /// A comparison operation was attempted on incompatible types.
+    /// </summary>
+    IncompatibleComparison = 5009,
 
     #endregion
+
+    #region Collection Access Errors (5010–5015)
+
+    /// <summary>
+    /// An array index was out of the valid bounds of the array.
+    /// </summary>
+    IndexOutOfRange = 5010,
+
+    /// <summary>
+    /// An array index was negative, which is not allowed.
+    /// </summary>
+    NegativeIndex = 5011,
+
+    /// <summary>
+    /// An index access operation was attempted on a null value.
+    /// </summary>
+    IndexAccessOnNull = 5012,
+
+    /// <summary>
+    /// An index access operation was attempted on a value that is neither an array nor an object.
+    /// </summary>
+    InvalidIndexTarget = 5013,
+
+    /// <summary>
+    /// A property access operation was attempted on a null value.
+    /// </summary>
+    PropertyAccessOnNull = 5014,
+
+    /// <summary>
+    /// A property access operation was attempted on a value that does not support properties.
+    /// </summary>
+    PropertyAccessInvalidType = 5015,
+
+    #endregion
+
+    #region Type Errors (5020–5022)
+
+    /// <summary>
+    /// A type check operation was provided with an invalid type specifier.
+    /// Type checks require a string type name or a type keyword.
+    /// </summary>
+    InvalidTypeCheck = 5020,
+
+    /// <summary>
+    /// A type check operation referenced an unknown type name.
+    /// Valid type names are: number, string, boolean, object, array, null.
+    /// </summary>
+    UnknownTypeName = 5021,
+
+    /// <summary>
+    /// A foreach loop attempted to iterate over a non-iterable value.
+    /// Only arrays and objects can be iterated.
+    /// </summary>
+    NotIterable = 5022,
+
+    #endregion
+
+    #region Function Errors (5030–5031)
+
+    /// <summary>
+    /// A function was called that was not found in the execution environment at runtime.
+    /// </summary>
+    UndefinedFunctionRuntime = 5030,
+
+    /// <summary>
+    /// A function call was attempted on a value that is not a valid function target.
+    /// Only named functions can be called.
+    /// </summary>
+    InvalidFunctionTarget = 5031,
+
+    #endregion
+
+    #region Internal/Syntax Errors (5040–5041)
+
+    /// <summary>
+    /// An internal error occurred due to invalid expression syntax.
+    /// This typically indicates an internal interpreter error.
+    /// </summary>
+    InvalidExpressionSyntax = 5040,
+
+    /// <summary>
+    /// An unknown operator was encountered during expression evaluation.
+    /// </summary>
+    UnknownOperator = 5041,
+
+    #endregion
+
+    #region Resource Limit Errors (5050–5054)
+
+    /// <summary>
+    /// Script execution exceeded the maximum allowed statement count.
+    /// </summary>
+    StatementLimitExceeded = 5050,
+
+    /// <summary>
+    /// Script execution exceeded the maximum allowed loop iteration count.
+    /// </summary>
+    LoopIterationLimitExceeded = 5051,
+
+    /// <summary>
+    /// Script execution exceeded the maximum allowed call stack depth.
+    /// </summary>
+    CallDepthLimitExceeded = 5052,
+
+    /// <summary>
+    /// Script execution exceeded the maximum allowed script call chain depth.
+    /// </summary>
+    ScriptCallDepthLimitExceeded = 5053,
+
+    /// <summary>
+    /// Script execution exceeded the maximum allowed execution time.
+    /// </summary>
+    ExecutionTimeLimitExceeded = 5054,
+
+    #endregion
+
+    #region Parse Errors (5060)
+
+    /// <summary>
+    /// A numeric literal could not be parsed into a valid number at runtime.
+    /// </summary>
+    InvalidNumberParse = 5060
+
+    #endregion
+
+    #endregion // Execution Errors
 }

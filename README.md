@@ -260,7 +260,7 @@ public class SendEmailFunction : JyroFunctionBase
 
     public override JyroValue Execute(
         IReadOnlyList<JyroValue> arguments,
-        ExecutionContext executionContext)
+        JyroExecutionContext executionContext)
     {
         var recipient = GetArgument<JyroString>(arguments, 0).Value;
         var subject = GetArgument<JyroString>(arguments, 1).Value;
@@ -303,7 +303,7 @@ public class GreetFunction : JyroFunctionBase
     {
     }
 
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var name = GetStringArgument(arguments, 0);
         return new JyroString($"Hello, {name}! Welcome to Jyro plugins!");

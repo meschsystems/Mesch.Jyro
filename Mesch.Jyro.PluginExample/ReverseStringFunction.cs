@@ -19,7 +19,7 @@ public sealed class ReverseStringFunction : JyroFunctionBase
     /// <summary>
     /// Executes the string reversal operation.
     /// </summary>
-    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, ExecutionContext executionContext)
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var text = GetStringArgument(arguments, 0);
         var reversed = new string(text.Reverse().ToArray());
