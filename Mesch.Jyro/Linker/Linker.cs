@@ -104,6 +104,7 @@ public sealed class Linker
         List<IMessage> diagnosticMessages)
     {
         int missingFunctionCount = 0;
+        int invalidArgumentCount = 0;
 
         foreach (var functionReference in functionReferences)
         {
@@ -120,8 +121,45 @@ public sealed class Linker
                     ProcessingStage.Linking,
                     functionReference.Name));
             }
+            else
+            {
+                var signature = availableFunction.Signature;
+                var actualCount = functionReference.Arguments.Count;
+
+                if (actualCount < signature.MinimumArgumentCount)
+                {
+                    invalidArgumentCount++;
+                    _logger.LogTrace("Too few arguments for function {FunctionName}: expected at least {Expected}, got {Actual}",
+                        functionReference.Name, signature.MinimumArgumentCount, actualCount);
+
+                    diagnosticMessages.Add(new Message(
+                        MessageCode.InvalidNumberArguments,
+                        functionReference.LineNumber, functionReference.ColumnPosition,
+                        MessageSeverity.Error,
+                        ProcessingStage.Linking,
+                        functionReference.Name,
+                        $"at least {signature.MinimumArgumentCount}",
+                        actualCount.ToString()));
+                }
+                else if (actualCount > signature.MaximumArgumentCount)
+                {
+                    invalidArgumentCount++;
+                    _logger.LogTrace("Too many arguments for function {FunctionName}: expected at most {Expected}, got {Actual}",
+                        functionReference.Name, signature.MaximumArgumentCount, actualCount);
+
+                    diagnosticMessages.Add(new Message(
+                        MessageCode.InvalidNumberArguments,
+                        functionReference.LineNumber, functionReference.ColumnPosition,
+                        MessageSeverity.Error,
+                        ProcessingStage.Linking,
+                        functionReference.Name,
+                        $"at most {signature.MaximumArgumentCount}",
+                        actualCount.ToString()));
+                }
+            }
         }
 
-        _logger.LogTrace("Signature validation completed: {MissingCount} missing functions", missingFunctionCount);
+        _logger.LogTrace("Signature validation completed: {MissingCount} missing functions, {InvalidArgCount} invalid argument counts",
+            missingFunctionCount, invalidArgumentCount);
     }
 }

@@ -547,4 +547,64 @@ public class ErrorHandlingTests
     }
 
     #endregion
+
+    #region Argument Count Validation Tests
+
+    [Fact]
+    public void TooFewArguments_FailsLinking()
+    {
+        // Length() requires 1 argument
+        var script = "Data.result = Length()";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        Assert.Contains(result.Messages, m =>
+            m.Code == MessageCode.InvalidNumberArguments &&
+            m.Stage == ProcessingStage.Linking);
+    }
+
+    [Fact]
+    public void TooManyArguments_FailsLinking()
+    {
+        // Length() accepts 1 argument max
+        var script = "Data.result = Length([1,2,3], \"extra\", 999)";
+
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+        Assert.Contains(result.Messages, m =>
+            m.Code == MessageCode.InvalidNumberArguments &&
+            m.Stage == ProcessingStage.Linking);
+    }
+
+    [Fact]
+    public void OptionalArguments_AllowsVariableCount()
+    {
+        // Round() has an optional second parameter (digits)
+        var script = @"
+            Data.r1 = Round(3.14159)
+            Data.r2 = Round(3.14159, 2)
+        ";
+
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+        Assert.True(result.IsSuccessful);
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3.0, ((JyroNumber)data.GetProperty("r1")).Value);
+        Assert.Equal(3.14, ((JyroNumber)data.GetProperty("r2")).Value);
+    }
+
+    [Fact]
+    public void CorrectArgumentCount_Succeeds()
+    {
+        // Length() with exactly 1 argument
+        var script = "Data.result = Length([1, 2, 3])";
+
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+        Assert.True(result.IsSuccessful);
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    #endregion
 }

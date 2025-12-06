@@ -632,11 +632,51 @@ Standardized diagnostic codes organized by processing stage:
 - `InvalidNumberArguments` (4004)
 
 **Execution (5000-5999):**
+
+*General Execution Errors (5000-5099):*
 - `UnknownExecutorError` (5000)
 - `RuntimeError` (5001)
 - `CancelledByHost` (5002)
 - `InvalidType` (5003)
 - `InvalidArgumentType` (5004)
+
+*Arithmetic Errors (5100-5199):*
+- `DivisionByZero` (5100)
+- `NegateNonNumber` (5101)
+- `IncrementDecrementNonNumber` (5102)
+- `IncompatibleOperandTypes` (5103)
+- `IncompatibleComparison` (5104)
+
+*Collection Access Errors (5200-5299):*
+- `IndexOutOfRange` (5200)
+- `NegativeIndex` (5201)
+- `IndexAccessOnNull` (5202)
+- `InvalidIndexTarget` (5203)
+- `PropertyAccessOnNull` (5204)
+- `PropertyAccessInvalidType` (5205)
+
+*Type Errors (5300-5399):*
+- `InvalidTypeCheck` (5300)
+- `UnknownTypeName` (5301)
+- `NotIterable` (5302)
+
+*Function Errors (5400-5499):*
+- `UndefinedFunctionRuntime` (5400)
+- `InvalidFunctionTarget` (5401)
+
+*Internal/Syntax Errors (5500-5599):*
+- `InvalidExpressionSyntax` (5500)
+- `UnknownOperator` (5501)
+
+*Resource Limit Errors (5600-5699):*
+- `StatementLimitExceeded` (5600)
+- `LoopIterationLimitExceeded` (5601)
+- `CallDepthLimitExceeded` (5602)
+- `ScriptCallDepthLimitExceeded` (5603)
+- `ExecutionTimeLimitExceeded` (5604)
+
+*Parse Errors (5700-5799):*
+- `InvalidNumberParse` (5700)
 
 #### MessageSeverity Enum
 
@@ -1372,6 +1412,8 @@ Jyro is designed for safe execution of untrusted scripts:
 **Important**: Host functions are the primary extension point. Ensure your custom functions validate inputs and don't expose sensitive functionality.
 
 ## License
+
+MIT License
 
 Copyright © Mesch Systems
 

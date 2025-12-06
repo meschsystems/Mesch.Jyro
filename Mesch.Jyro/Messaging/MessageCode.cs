@@ -20,7 +20,7 @@
 /// </remarks>
 public enum MessageCode
 {
-    #region Lexical Analysis Errors (1000–1999)
+    #region Lexical Analysis Errors (1000-1999)
 
     /// <summary>
     /// An unexpected error occurred during lexical analysis that doesn't fit other categories.
@@ -42,7 +42,7 @@ public enum MessageCode
 
     #endregion
 
-    #region Parsing Errors (2000–2999)
+    #region Parsing Errors (2000-2999)
 
     /// <summary>
     /// An unexpected error occurred during parsing that doesn't fit other categories.
@@ -70,7 +70,7 @@ public enum MessageCode
 
     #endregion
 
-    #region Validation Errors (3000–3999)
+    #region Validation Errors (3000-3999)
 
     /// <summary>
     /// An unexpected error occurred during semantic validation that doesn't fit other categories.
@@ -116,7 +116,7 @@ public enum MessageCode
 
     #endregion
 
-    #region Linking Errors (4000–4999)
+    #region Linking Errors (4000-4999)
 
     /// <summary>
     /// An unexpected error occurred during linking that doesn't fit other categories.
@@ -150,7 +150,9 @@ public enum MessageCode
 
     #endregion
 
-    #region Execution Errors (5000–5999)
+    #region Execution Errors (5000-5999)
+
+    #region General Execution Errors (5000-5099)
 
     /// <summary>
     /// An unexpected error occurred during execution that doesn't fit other categories.
@@ -182,157 +184,159 @@ public enum MessageCode
     /// </summary>
     InvalidArgumentType = 5004,
 
-    #region Arithmetic Errors (5005–5009)
+    #endregion
+
+    #region Arithmetic Errors (5100-5199)
 
     /// <summary>
     /// A division or modulo operation attempted to divide by zero.
     /// </summary>
-    DivisionByZero = 5005,
+    DivisionByZero = 5100,
 
     /// <summary>
     /// A unary negation operator was applied to a non-numeric value.
     /// </summary>
-    NegateNonNumber = 5006,
+    NegateNonNumber = 5101,
 
     /// <summary>
     /// An increment or decrement operator was applied to a non-numeric value.
     /// </summary>
-    IncrementDecrementNonNumber = 5007,
+    IncrementDecrementNonNumber = 5102,
 
     /// <summary>
     /// An arithmetic operation was attempted on incompatible operand types.
     /// This includes add, subtract, multiply, divide, and modulo on mismatched types.
     /// </summary>
-    IncompatibleOperandTypes = 5008,
+    IncompatibleOperandTypes = 5103,
 
     /// <summary>
     /// A comparison operation was attempted on incompatible types.
     /// </summary>
-    IncompatibleComparison = 5009,
+    IncompatibleComparison = 5104,
 
     #endregion
 
-    #region Collection Access Errors (5010–5015)
+    #region Collection Access Errors (5200-5299)
 
     /// <summary>
     /// An array index was out of the valid bounds of the array.
     /// </summary>
-    IndexOutOfRange = 5010,
+    IndexOutOfRange = 5200,
 
     /// <summary>
     /// An array index was negative, which is not allowed.
     /// </summary>
-    NegativeIndex = 5011,
+    NegativeIndex = 5201,
 
     /// <summary>
     /// An index access operation was attempted on a null value.
     /// </summary>
-    IndexAccessOnNull = 5012,
+    IndexAccessOnNull = 5202,
 
     /// <summary>
     /// An index access operation was attempted on a value that is neither an array nor an object.
     /// </summary>
-    InvalidIndexTarget = 5013,
+    InvalidIndexTarget = 5203,
 
     /// <summary>
     /// A property access operation was attempted on a null value.
     /// </summary>
-    PropertyAccessOnNull = 5014,
+    PropertyAccessOnNull = 5204,
 
     /// <summary>
     /// A property access operation was attempted on a value that does not support properties.
     /// </summary>
-    PropertyAccessInvalidType = 5015,
+    PropertyAccessInvalidType = 5205,
 
     #endregion
 
-    #region Type Errors (5020–5022)
+    #region Type Errors (5300-5399)
 
     /// <summary>
     /// A type check operation was provided with an invalid type specifier.
     /// Type checks require a string type name or a type keyword.
     /// </summary>
-    InvalidTypeCheck = 5020,
+    InvalidTypeCheck = 5300,
 
     /// <summary>
     /// A type check operation referenced an unknown type name.
     /// Valid type names are: number, string, boolean, object, array, null.
     /// </summary>
-    UnknownTypeName = 5021,
+    UnknownTypeName = 5301,
 
     /// <summary>
     /// A foreach loop attempted to iterate over a non-iterable value.
     /// Only arrays and objects can be iterated.
     /// </summary>
-    NotIterable = 5022,
+    NotIterable = 5302,
 
     #endregion
 
-    #region Function Errors (5030–5031)
+    #region Function Errors (5400-5499)
 
     /// <summary>
     /// A function was called that was not found in the execution environment at runtime.
     /// </summary>
-    UndefinedFunctionRuntime = 5030,
+    UndefinedFunctionRuntime = 5400,
 
     /// <summary>
     /// A function call was attempted on a value that is not a valid function target.
     /// Only named functions can be called.
     /// </summary>
-    InvalidFunctionTarget = 5031,
+    InvalidFunctionTarget = 5401,
 
     #endregion
 
-    #region Internal/Syntax Errors (5040–5041)
+    #region Internal/Syntax Errors (5500-5599)
 
     /// <summary>
     /// An internal error occurred due to invalid expression syntax.
     /// This typically indicates an internal interpreter error.
     /// </summary>
-    InvalidExpressionSyntax = 5040,
+    InvalidExpressionSyntax = 5500,
 
     /// <summary>
     /// An unknown operator was encountered during expression evaluation.
     /// </summary>
-    UnknownOperator = 5041,
+    UnknownOperator = 5501,
 
     #endregion
 
-    #region Resource Limit Errors (5050–5054)
+    #region Resource Limit Errors (5600-5699)
 
     /// <summary>
     /// Script execution exceeded the maximum allowed statement count.
     /// </summary>
-    StatementLimitExceeded = 5050,
+    StatementLimitExceeded = 5600,
 
     /// <summary>
     /// Script execution exceeded the maximum allowed loop iteration count.
     /// </summary>
-    LoopIterationLimitExceeded = 5051,
+    LoopIterationLimitExceeded = 5601,
 
     /// <summary>
     /// Script execution exceeded the maximum allowed call stack depth.
     /// </summary>
-    CallDepthLimitExceeded = 5052,
+    CallDepthLimitExceeded = 5602,
 
     /// <summary>
     /// Script execution exceeded the maximum allowed script call chain depth.
     /// </summary>
-    ScriptCallDepthLimitExceeded = 5053,
+    ScriptCallDepthLimitExceeded = 5603,
 
     /// <summary>
     /// Script execution exceeded the maximum allowed execution time.
     /// </summary>
-    ExecutionTimeLimitExceeded = 5054,
+    ExecutionTimeLimitExceeded = 5604,
 
     #endregion
 
-    #region Parse Errors (5060)
+    #region Parse Errors (5700-5799)
 
     /// <summary>
     /// A numeric literal could not be parsed into a valid number at runtime.
     /// </summary>
-    InvalidNumberParse = 5060
+    InvalidNumberParse = 5700
 
     #endregion
 
