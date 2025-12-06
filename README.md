@@ -1082,7 +1082,7 @@ Miscellaneous functions for inspecting and testing data types, value generation,
 - [**CallScript**](stdlib/utility/callscript/) - Execute Jyro script with isolated data context
 - [**Equal**](stdlib/utility/equal/) - Test equality between two values
 - [**Exists**](stdlib/utility/exists/) - Test if value is not null
-- [**InvokeRestMethod**](stdlib/utility/invokerestmethod/) - Execute HTTP REST API requests (experimental)
+- [**InvokeRestMethod**](stdlib/utility/invokerestmethod/) - Execute HTTP REST API requests with configurable security options
 - [**IsNull**](stdlib/utility/isnull/) - Test if value is null
 - [**Keys**](stdlib/utility/keys/) - Get array of property names from an object
 - [**Length**](stdlib/utility/length/) - Get length/count of strings, arrays, or objects

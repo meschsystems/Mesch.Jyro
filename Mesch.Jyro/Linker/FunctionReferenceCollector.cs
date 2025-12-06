@@ -2,7 +2,7 @@
 
 namespace Mesch.Jyro;
 
-public class FunctionReferenceCollector : JyroBaseVisitor<object?>
+internal class FunctionReferenceCollector : JyroBaseVisitor<object?>
 {
     private readonly HashSet<FunctionReference> _functionReferences = new();
 

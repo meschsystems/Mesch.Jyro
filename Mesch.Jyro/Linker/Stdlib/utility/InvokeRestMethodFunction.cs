@@ -315,7 +315,7 @@ public sealed class InvokeRestMethodFunction : JyroFunctionBase
 
         if (body is JyroNumber number)
         {
-            return number.ToString();
+            return number.ToString() ?? "0";
         }
 
         if (body is JyroBoolean boolean)
@@ -328,7 +328,7 @@ public sealed class InvokeRestMethodFunction : JyroFunctionBase
             return "null";
         }
 
-        return body.ToString();
+        return body.ToString() ?? string.Empty;
     }
 
     private string SerializeObjectToJson(JyroObject obj)

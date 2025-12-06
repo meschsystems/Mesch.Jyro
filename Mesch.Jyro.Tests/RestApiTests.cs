@@ -231,7 +231,7 @@ public class RestApiTests
         Assert.False(result.IsSuccessful);
         Assert.Contains(result.Messages, m =>
             m.Severity == MessageSeverity.Error &&
-            m.ToString().Contains("not allowed"));
+            (m.ToString() ?? "").Contains("not allowed"));
     }
 
     #endregion
@@ -260,8 +260,8 @@ public class RestApiTests
         Assert.False(result.IsSuccessful);
         Assert.Contains(result.Messages, m =>
             m.Severity == MessageSeverity.Error &&
-            m.ToString().Contains("method") &&
-            m.ToString().Contains("not allowed"));
+            (m.ToString() ?? "").Contains("method") &&
+            (m.ToString() ?? "").Contains("not allowed"));
     }
 
     #endregion
