@@ -738,6 +738,601 @@ public class StandardLibraryTests
         Assert.Equal(1, notDoneGroup.Length);
     }
 
+    #region First Function
+
+    [Fact]
+    public void First_ReturnsFirstElement()
+    {
+        var script = @"
+            var arr = [10, 20, 30]
+            Data.result = First(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(10.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void First_EmptyArray_ReturnsNull()
+    {
+        var script = @"
+            var arr = []
+            Data.result = First(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(data.GetProperty("result").IsNull);
+    }
+
+    [Fact]
+    public void First_SingleElement_ReturnsThatElement()
+    {
+        var script = @"
+            var arr = [42]
+            Data.result = First(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(42.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void First_DoesNotModifyArray()
+    {
+        var script = @"
+            var arr = [1, 2, 3]
+            var first = First(arr)
+            Data.length = Length(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3.0, ((JyroNumber)data.GetProperty("length")).Value);
+    }
+
+    [Fact]
+    public void First_WorksWithObjects()
+    {
+        var script = @"
+            var people = [
+                {""name"": ""Alice""},
+                {""name"": ""Bob""}
+            ]
+            Data.result = First(people).name
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("Alice", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    #endregion
+
+    #region Last Function
+
+    [Fact]
+    public void Last_ReturnsLastElement()
+    {
+        var script = @"
+            var arr = [10, 20, 30]
+            Data.result = Last(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(30.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Last_EmptyArray_ReturnsNull()
+    {
+        var script = @"
+            var arr = []
+            Data.result = Last(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(data.GetProperty("result").IsNull);
+    }
+
+    [Fact]
+    public void Last_SingleElement_ReturnsThatElement()
+    {
+        var script = @"
+            var arr = [42]
+            Data.result = Last(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(42.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Last_DoesNotModifyArray()
+    {
+        var script = @"
+            var arr = [1, 2, 3]
+            var last = Last(arr)
+            Data.length = Length(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3.0, ((JyroNumber)data.GetProperty("length")).Value);
+    }
+
+    [Fact]
+    public void Last_WorksWithStrings()
+    {
+        var script = @"
+            var colors = [""red"", ""green"", ""blue""]
+            Data.result = Last(colors)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("blue", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    #endregion
+
+    #region Pop Function
+
+    [Fact]
+    public void Pop_RemovesAndReturnsLastElement()
+    {
+        var script = @"
+            var arr = [10, 20, 30]
+            Data.popped = Pop(arr)
+            Data.length = Length(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(30.0, ((JyroNumber)data.GetProperty("popped")).Value);
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("length")).Value);
+    }
+
+    [Fact]
+    public void Pop_EmptyArray_ReturnsNull()
+    {
+        var script = @"
+            var arr = []
+            Data.result = Pop(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(data.GetProperty("result").IsNull);
+    }
+
+    [Fact]
+    public void Pop_SingleElement_ReturnsElementAndEmptiesArray()
+    {
+        var script = @"
+            var arr = [42]
+            Data.popped = Pop(arr)
+            Data.length = Length(arr)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(42.0, ((JyroNumber)data.GetProperty("popped")).Value);
+        Assert.Equal(0.0, ((JyroNumber)data.GetProperty("length")).Value);
+    }
+
+    [Fact]
+    public void Pop_ModifiesArrayInPlace()
+    {
+        var script = @"
+            var arr = [1, 2, 3, 4, 5]
+            Pop(arr)
+            Pop(arr)
+            Data.result = arr
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var arr = (JyroArray)data.GetProperty("result");
+        Assert.Equal(3, arr.Length);
+        Assert.Equal(1.0, ((JyroNumber)arr[0]).Value);
+        Assert.Equal(2.0, ((JyroNumber)arr[1]).Value);
+        Assert.Equal(3.0, ((JyroNumber)arr[2]).Value);
+    }
+
+    [Fact]
+    public void Pop_WorksWithObjects()
+    {
+        var script = @"
+            var people = [
+                {""name"": ""Alice""},
+                {""name"": ""Bob""}
+            ]
+            Data.popped = Pop(people)
+            Data.remaining = Length(people)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var popped = (JyroObject)data.GetProperty("popped");
+        Assert.Equal("Bob", ((JyroString)popped.GetProperty("name")).Value);
+        Assert.Equal(1.0, ((JyroNumber)data.GetProperty("remaining")).Value);
+    }
+
+    #endregion
+
+    #region Filter Function
+
+    [Fact]
+    public void Filter_EqualsOperator_FiltersMatching()
+    {
+        var script = @"
+            var items = [
+                {""status"": ""active"", ""name"": ""A""},
+                {""status"": ""inactive"", ""name"": ""B""},
+                {""status"": ""active"", ""name"": ""C""}
+            ]
+            Data.result = Filter(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var filtered = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, filtered.Length);
+    }
+
+    [Fact]
+    public void Filter_NotEqualsOperator_FiltersNonMatching()
+    {
+        var script = @"
+            var items = [
+                {""status"": ""active"", ""name"": ""A""},
+                {""status"": ""inactive"", ""name"": ""B""},
+                {""status"": ""active"", ""name"": ""C""}
+            ]
+            Data.result = Filter(items, ""status"", ""!="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var filtered = (JyroArray)data.GetProperty("result");
+        Assert.Equal(1, filtered.Length);
+        var item = (JyroObject)filtered[0];
+        Assert.Equal("B", ((JyroString)item.GetProperty("name")).Value);
+    }
+
+    [Fact]
+    public void Filter_LessThanOperator_FiltersNumbers()
+    {
+        var script = @"
+            var items = [
+                {""price"": 10},
+                {""price"": 25},
+                {""price"": 5},
+                {""price"": 30}
+            ]
+            Data.result = Filter(items, ""price"", ""<"", 20)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var filtered = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, filtered.Length);
+    }
+
+    [Fact]
+    public void Filter_LessThanOrEqualOperator()
+    {
+        var script = @"
+            var items = [
+                {""score"": 80},
+                {""score"": 90},
+                {""score"": 70},
+                {""score"": 100}
+            ]
+            Data.result = Filter(items, ""score"", ""<="", 80)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var filtered = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, filtered.Length);
+    }
+
+    [Fact]
+    public void Filter_GreaterThanOperator()
+    {
+        var script = @"
+            var items = [
+                {""age"": 18},
+                {""age"": 25},
+                {""age"": 16},
+                {""age"": 30}
+            ]
+            Data.result = Filter(items, ""age"", "">"", 18)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var filtered = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, filtered.Length);
+    }
+
+    [Fact]
+    public void Filter_GreaterThanOrEqualOperator()
+    {
+        var script = @"
+            var items = [
+                {""quantity"": 5},
+                {""quantity"": 10},
+                {""quantity"": 3},
+                {""quantity"": 15}
+            ]
+            Data.result = Filter(items, ""quantity"", "">="", 10)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var filtered = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, filtered.Length);
+    }
+
+    [Fact]
+    public void Filter_NestedFieldPath()
+    {
+        var script = @"
+            var items = [
+                {""name"": ""A"", ""address"": {""city"": ""NYC""}},
+                {""name"": ""B"", ""address"": {""city"": ""LA""}},
+                {""name"": ""C"", ""address"": {""city"": ""NYC""}}
+            ]
+            Data.result = Filter(items, ""address.city"", ""=="", ""NYC"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var filtered = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, filtered.Length);
+    }
+
+    [Fact]
+    public void Filter_EmptyArray_ReturnsEmptyArray()
+    {
+        var script = @"
+            var items = []
+            Data.result = Filter(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var filtered = (JyroArray)data.GetProperty("result");
+        Assert.Equal(0, filtered.Length);
+    }
+
+    [Fact]
+    public void Filter_NoMatches_ReturnsEmptyArray()
+    {
+        var script = @"
+            var items = [
+                {""status"": ""inactive""},
+                {""status"": ""pending""}
+            ]
+            Data.result = Filter(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var filtered = (JyroArray)data.GetProperty("result");
+        Assert.Equal(0, filtered.Length);
+    }
+
+    [Fact]
+    public void Filter_SkipsNonObjectElements()
+    {
+        var script = @"
+            var items = [
+                {""type"": ""A""},
+                ""not an object"",
+                42,
+                {""type"": ""A""},
+                null
+            ]
+            Data.result = Filter(items, ""type"", ""=="", ""A"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var filtered = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, filtered.Length);
+    }
+
+    [Fact]
+    public void Filter_DoesNotModifyOriginalArray()
+    {
+        var script = @"
+            var items = [
+                {""x"": 1},
+                {""x"": 2},
+                {""x"": 3}
+            ]
+            var filtered = Filter(items, ""x"", "">"", 1)
+            Data.originalLength = Length(items)
+            Data.filteredLength = Length(filtered)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3.0, ((JyroNumber)data.GetProperty("originalLength")).Value);
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("filteredLength")).Value);
+    }
+
+    #endregion
+
+    #region CountIf Function
+
+    [Fact]
+    public void CountIf_EqualsOperator_CountsMatching()
+    {
+        var script = @"
+            var items = [
+                {""status"": ""active""},
+                {""status"": ""inactive""},
+                {""status"": ""active""},
+                {""status"": ""active""}
+            ]
+            Data.result = CountIf(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void CountIf_NotEqualsOperator()
+    {
+        var script = @"
+            var items = [
+                {""type"": ""A""},
+                {""type"": ""B""},
+                {""type"": ""A""},
+                {""type"": ""C""}
+            ]
+            Data.result = CountIf(items, ""type"", ""!="", ""A"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void CountIf_LessThanOperator()
+    {
+        var script = @"
+            var items = [
+                {""score"": 50},
+                {""score"": 80},
+                {""score"": 30},
+                {""score"": 90}
+            ]
+            Data.result = CountIf(items, ""score"", ""<"", 60)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void CountIf_GreaterThanOrEqualOperator()
+    {
+        var script = @"
+            var items = [
+                {""price"": 100},
+                {""price"": 50},
+                {""price"": 150},
+                {""price"": 100}
+            ]
+            Data.result = CountIf(items, ""price"", "">="", 100)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void CountIf_EmptyArray_ReturnsZero()
+    {
+        var script = @"
+            var items = []
+            Data.result = CountIf(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(0.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void CountIf_NoMatches_ReturnsZero()
+    {
+        var script = @"
+            var items = [
+                {""value"": 1},
+                {""value"": 2},
+                {""value"": 3}
+            ]
+            Data.result = CountIf(items, ""value"", "">"", 100)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(0.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void CountIf_AllMatch()
+    {
+        var script = @"
+            var items = [
+                {""active"": true},
+                {""active"": true},
+                {""active"": true}
+            ]
+            Data.result = CountIf(items, ""active"", ""=="", true)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void CountIf_NestedFieldPath()
+    {
+        var script = @"
+            var items = [
+                {""person"": {""age"": 25}},
+                {""person"": {""age"": 30}},
+                {""person"": {""age"": 20}},
+                {""person"": {""age"": 35}}
+            ]
+            Data.result = CountIf(items, ""person.age"", "">="", 30)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void CountIf_SkipsNonObjectElements()
+    {
+        var script = @"
+            var items = [
+                {""x"": 1},
+                ""string"",
+                {""x"": 1},
+                42,
+                {""x"": 2}
+            ]
+            Data.result = CountIf(items, ""x"", ""=="", 1)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    #endregion
+
     #endregion
 
     #region Math Functions
@@ -1026,6 +1621,219 @@ public class StandardLibraryTests
         Assert.Equal(36, guid.Length); // Standard GUID format with hyphens
     }
 
+    [Fact]
+    public void Base64Encode_EncodesBasicString()
+    {
+        var script = @"Data.result = Base64Encode(""Hello, World!"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("SGVsbG8sIFdvcmxkIQ==", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Base64Encode_EncodesEmptyString()
+    {
+        var script = @"Data.result = Base64Encode("""")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Base64Encode_EncodesSpecialCharacters()
+    {
+        var script = @"Data.result = Base64Encode(""<>&'()"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var encoded = ((JyroString)data.GetProperty("result")).Value;
+        Assert.NotEmpty(encoded);
+        // Verify it's valid base64 (can be decoded)
+        var decoded = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(encoded));
+        Assert.Equal("<>&'()", decoded);
+    }
+
+    [Fact]
+    public void Base64Encode_EncodesUtf8Characters()
+    {
+        var script = @"Data.result = Base64Encode(""日本語"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var encoded = ((JyroString)data.GetProperty("result")).Value;
+        Assert.Equal("5pel5pys6Kqe", encoded);
+    }
+
+    [Fact]
+    public void Base64Decode_DecodesValidBase64()
+    {
+        var script = @"Data.result = Base64Decode(""SGVsbG8sIFdvcmxkIQ=="")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("Hello, World!", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Base64Decode_DecodesEmptyString()
+    {
+        var script = @"Data.result = Base64Decode("""")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Base64Decode_RoundTripWithEncode()
+    {
+        var script = @"
+            var original = ""The quick brown fox jumps over the lazy dog.""
+            var encoded = Base64Encode(original)
+            var decoded = Base64Decode(encoded)
+            Data.matches = decoded == original
+            Data.decoded = decoded
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("matches")).Value);
+        Assert.Equal("The quick brown fox jumps over the lazy dog.", ((JyroString)data.GetProperty("decoded")).Value);
+    }
+
+    [Fact]
+    public void Base64Decode_ThrowsOnInvalidBase64()
+    {
+        var script = @"Data.result = Base64Decode(""not-valid-base64!!!"")";
+        var result = TestHelpers.Execute(script, output: _output);
+
+        Assert.False(result.IsSuccessful);
+    }
+
+    [Fact]
+    public void CallScript_ExecutesChildScript()
+    {
+        // Create input object as property and pass it
+        var script = @"
+            var scriptSource = ""Data.x = Data.x * 2""
+            Data.input = {""x"": 21}
+            Data.result = CallScript(scriptSource, Data.input)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var resultObj = (JyroObject)data.GetProperty("result");
+        Assert.Equal(42.0, ((JyroNumber)resultObj.GetProperty("x")).Value);
+    }
+
+    [Fact]
+    public void CallScript_ModifiesData()
+    {
+        var script = @"
+            var scriptSource = ""Data.name = Upper(Data.name)""
+            Data.input = {""name"": ""alice""}
+            Data.result = CallScript(scriptSource, Data.input)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var resultObj = (JyroObject)data.GetProperty("result");
+        Assert.Equal("ALICE", ((JyroString)resultObj.GetProperty("name")).Value);
+    }
+
+    [Fact]
+    public void CallScript_ReturnsOriginalDataOnError()
+    {
+        var script = @"
+            var scriptSource = ""invalid syntax here!!!""
+            Data.input = {""original"": true}
+            Data.result = CallScript(scriptSource, Data.input)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var resultObj = (JyroObject)data.GetProperty("result");
+        Assert.True(((JyroBoolean)resultObj.GetProperty("original")).Value);
+    }
+
+    [Fact]
+    public void CallScript_NestedCallsWork()
+    {
+        // Parent script calls a child script that adds 10 to the value
+        var script = @"
+            var childScript = ""Data.value = Data.value + 10""
+            Data.input = {""value"": 5}
+            Data.result = CallScript(childScript, Data.input)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var resultObj = (JyroObject)data.GetProperty("result");
+        Assert.Equal(15.0, ((JyroNumber)resultObj.GetProperty("value")).Value);
+    }
+
+    [Fact]
+    public void ToNumber_ParsesInteger()
+    {
+        var script = @"Data.result = ToNumber(""42"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(42.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void ToNumber_ParsesDecimal()
+    {
+        var script = @"Data.result = ToNumber(""3.14159"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3.14159, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void ToNumber_ParsesNegativeNumber()
+    {
+        var script = @"Data.result = ToNumber(""-123.45"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(-123.45, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void ToNumber_ReturnsZeroForInvalidString()
+    {
+        var script = @"Data.result = ToNumber(""not a number"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(0.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void ToNumber_ReturnsZeroForEmptyString()
+    {
+        var script = @"Data.result = ToNumber("""")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(0.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void ToNumber_ParsesScientificNotation()
+    {
+        var script = @"Data.result = ToNumber(""1.5e3"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(1500.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
     #endregion
 
     #region Date/Time Functions
@@ -1060,6 +1868,271 @@ public class StandardLibraryTests
 
         var data = (JyroObject)result.Data;
         Assert.Equal("2024-01-15", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void ParseDate_ParsesIsoDate()
+    {
+        var script = @"Data.result = ParseDate(""2024-06-15"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var parsed = ((JyroString)data.GetProperty("result")).Value;
+        Assert.StartsWith("2024-06-15", parsed);
+    }
+
+    [Fact]
+    public void ParseDate_ParsesIsoDateWithTime()
+    {
+        var script = @"Data.result = ParseDate(""2024-06-15T14:30:00"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var parsed = ((JyroString)data.GetProperty("result")).Value;
+        Assert.Contains("2024-06-15", parsed);
+    }
+
+    [Fact]
+    public void ParseDate_ReturnsIsoFormat()
+    {
+        var script = @"Data.result = ParseDate(""2024-01-01"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var parsed = ((JyroString)data.GetProperty("result")).Value;
+        Assert.Contains("T", parsed);
+        Assert.EndsWith("Z", parsed);
+    }
+
+    [Fact]
+    public void DateAdd_AddsDays()
+    {
+        var script = @"Data.result = DateAdd(""2024-01-15"", ""days"", 10)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var dateStr = ((JyroString)data.GetProperty("result")).Value;
+        Assert.StartsWith("2024-01-25", dateStr);
+    }
+
+    [Fact]
+    public void DateAdd_SubtractsDays()
+    {
+        var script = @"Data.result = DateAdd(""2024-01-15"", ""days"", -5)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var dateStr = ((JyroString)data.GetProperty("result")).Value;
+        Assert.StartsWith("2024-01-10", dateStr);
+    }
+
+    [Fact]
+    public void DateAdd_AddsWeeks()
+    {
+        var script = @"Data.result = DateAdd(""2024-01-01"", ""weeks"", 2)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var dateStr = ((JyroString)data.GetProperty("result")).Value;
+        Assert.StartsWith("2024-01-15", dateStr);
+    }
+
+    [Fact]
+    public void DateAdd_AddsMonths()
+    {
+        var script = @"Data.result = DateAdd(""2024-01-31"", ""months"", 1)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var dateStr = ((JyroString)data.GetProperty("result")).Value;
+        Assert.StartsWith("2024-02-29", dateStr);
+    }
+
+    [Fact]
+    public void DateAdd_AddsYears()
+    {
+        var script = @"Data.result = DateAdd(""2024-06-15"", ""years"", 5)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var dateStr = ((JyroString)data.GetProperty("result")).Value;
+        Assert.StartsWith("2029-06-15", dateStr);
+    }
+
+    [Fact]
+    public void DateAdd_AddsHours()
+    {
+        var script = @"Data.result = DateAdd(""2024-01-15T10:00:00"", ""hours"", 5)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var dateStr = ((JyroString)data.GetProperty("result")).Value;
+        Assert.Contains("15:00:00", dateStr);
+    }
+
+    [Fact]
+    public void DateAdd_AddsMinutes()
+    {
+        var script = @"Data.result = DateAdd(""2024-01-15T10:00:00"", ""minutes"", 30)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var dateStr = ((JyroString)data.GetProperty("result")).Value;
+        Assert.Contains("10:30:00", dateStr);
+    }
+
+    [Fact]
+    public void DateAdd_SupportsSingularUnit()
+    {
+        var script = @"Data.result = DateAdd(""2024-01-15"", ""day"", 1)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var dateStr = ((JyroString)data.GetProperty("result")).Value;
+        Assert.StartsWith("2024-01-16", dateStr);
+    }
+
+    [Fact]
+    public void DateDiff_CalculatesDaysDifference()
+    {
+        var script = @"Data.result = DateDiff(""2024-01-20"", ""2024-01-15"", ""days"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(5.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void DateDiff_ReturnsNegativeForReversedDates()
+    {
+        var script = @"Data.result = DateDiff(""2024-01-15"", ""2024-01-20"", ""days"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(-5.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void DateDiff_CalculatesWeeksDifference()
+    {
+        var script = @"Data.result = DateDiff(""2024-01-22"", ""2024-01-08"", ""weeks"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(2.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void DateDiff_CalculatesHoursDifference()
+    {
+        var script = @"Data.result = DateDiff(""2024-01-15T15:00:00"", ""2024-01-15T10:00:00"", ""hours"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(5.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void DateDiff_CalculatesMinutesDifference()
+    {
+        var script = @"Data.result = DateDiff(""2024-01-15T10:30:00"", ""2024-01-15T10:00:00"", ""minutes"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(30.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void DateDiff_CalculatesApproximateYears()
+    {
+        var script = @"Data.result = DateDiff(""2026-01-15"", ""2024-01-15"", ""years"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var years = ((JyroNumber)data.GetProperty("result")).Value;
+        Assert.True((double)years > 1.9 && (double)years < 2.1);
+    }
+
+    [Fact]
+    public void DatePart_ExtractsYear()
+    {
+        var script = @"Data.result = DatePart(""2024-06-15"", ""year"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(2024.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void DatePart_ExtractsMonth()
+    {
+        var script = @"Data.result = DatePart(""2024-06-15"", ""month"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(6.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void DatePart_ExtractsDay()
+    {
+        var script = @"Data.result = DatePart(""2024-06-15"", ""day"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(15.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void DatePart_ExtractsHour()
+    {
+        var script = @"Data.result = DatePart(""2024-06-15T14:30:45"", ""hour"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(14.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void DatePart_ExtractsMinute()
+    {
+        var script = @"Data.result = DatePart(""2024-06-15T14:30:45"", ""minute"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(30.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void DatePart_ExtractsSecond()
+    {
+        var script = @"Data.result = DatePart(""2024-06-15T14:30:45"", ""second"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(45.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void DatePart_ExtractsDayOfWeek()
+    {
+        // June 15, 2024 is a Saturday (DayOfWeek = 6)
+        var script = @"Data.result = DatePart(""2024-06-15"", ""dayofweek"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(6.0, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void DatePart_ExtractsDayOfYear()
+    {
+        // January 15 is the 15th day of the year
+        var script = @"Data.result = DatePart(""2024-01-15"", ""dayofyear"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(15.0, ((JyroNumber)data.GetProperty("result")).Value);
     }
 
     #endregion

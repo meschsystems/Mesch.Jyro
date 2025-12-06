@@ -11,12 +11,26 @@ Jyro is a secure, sandboxed imperative scripting language designed for data tran
 - **Extensible**: Add custom host functions to expose your application's functionality to scripts
 - **ANTLR-Powered**: Fast parsing with clear error messages
 - **Strongly-Typed Runtime**: Type-safe execution with clear error messages
+- **VS Code Extension**: Full language support with syntax highlighting, error checking, and IntelliSense - [install from VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=meschsystems.jyro-vscode)
 
 ## Installation
 
 ```bash
 dotnet add package Mesch.Jyro
 ```
+
+## Resources
+
+| Resource | Link |
+|----------|------|
+| Homepage | https://www.jyro.dev/ |
+| Documentation | https://docs.mesch.cloud/jyro/ |
+| NuGet Package | https://www.nuget.org/packages/Mesch.Jyro/ |
+| VS Code Extension | https://marketplace.visualstudio.com/items?itemName=meschsystems.jyro-vscode |
+| Online Playpen | https://playpen.jyro.dev/ |
+| GitHub Repository | https://github.com/meschsystems/Mesch.Jyro |
+| CLI Tool | https://github.com/meschsystems/Mesch.Jyro.Cli |
+| Demo Web Server | https://github.com/meschsystems/Mesch.JyroWebServer |
 
 ## Quick Start
 
@@ -1419,4 +1433,7 @@ Copyright © Mesch Systems
 
 ## Support
 
-For issues, feature requests, or questions, please contact Mesch Systems or open an issue in the repository.
+For issues, feature requests, or questions:
+- Open an issue on [GitHub](https://github.com/meschsystems/Mesch.Jyro/issues)
+- Visit the [documentation](https://docs.mesch.cloud/jyro/)
+- Try the [online playpen](https://playpen.jyro.dev/) to experiment with Jyro
