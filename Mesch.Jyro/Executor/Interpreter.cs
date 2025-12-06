@@ -1043,6 +1043,15 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
 
             return function.Execute(args, _context);
         }
+        catch (JyroRuntimeException)
+        {
+            throw; // Already has location info
+        }
+        catch (Exception ex)
+        {
+            // Wrap with location from function call site
+            throw CreateException(MessageCode.RuntimeError, parentContext, ex.Message);
+        }
         finally
         {
             _context.Limiter.ExitCall();

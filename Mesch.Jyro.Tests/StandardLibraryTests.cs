@@ -828,11 +828,11 @@ public class StandardLibraryTests
     }
 
     [Fact]
-    public void Exists_ChecksForProperty()
+    public void Exists_ReturnsTrueForNonNullValue()
     {
         var script = @"
             var obj = {""name"": ""Alice""}
-            Data.result = Exists(obj, ""name"")
+            Data.result = Exists(obj.name)
         ";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
@@ -845,7 +845,7 @@ public class StandardLibraryTests
     {
         var script = @"
             var obj = {""name"": ""Alice""}
-            Data.result = Exists(obj, ""age"")
+            Data.result = Exists(obj.age)
         ";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
@@ -854,11 +854,11 @@ public class StandardLibraryTests
     }
 
     [Fact]
-    public void Exists_ReturnsFalseForNullProperty()
+    public void Exists_ReturnsFalseForNullValue()
     {
         var script = @"
             var obj = {""name"": null}
-            Data.result = Exists(obj, ""name"")
+            Data.result = Exists(obj.name)
         ";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
@@ -867,15 +867,15 @@ public class StandardLibraryTests
     }
 
     [Fact]
-    public void Exists_ReturnsFalseWhenFirstArgNotObject()
+    public void Exists_ReturnsTrueForNonNullString()
     {
         var script = @"
-            Data.result = Exists(""not an object"", ""property"")
+            Data.result = Exists(""hello"")
         ";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
         var data = (JyroObject)result.Data;
-        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
     }
 
     [Fact]
@@ -888,9 +888,9 @@ public class StandardLibraryTests
                     ""age"": 30
                 }
             }
-            Data.hasPerson = Exists(obj, ""person"")
-            Data.hasName = Exists(obj.person, ""name"")
-            Data.hasAddress = Exists(obj.person, ""address"")
+            Data.hasPerson = Exists(obj.person)
+            Data.hasName = Exists(obj.person.name)
+            Data.hasAddress = Exists(obj.person.address)
         ";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
@@ -905,7 +905,7 @@ public class StandardLibraryTests
     {
         var script = @"
             var obj = {""id"": 123}
-            if Exists(obj, ""id"") then
+            if Exists(obj.id) then
                 Data.result = ""found""
             else
                 Data.result = ""not found""
