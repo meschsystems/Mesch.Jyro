@@ -177,7 +177,7 @@ primaryExpr
     : literal
     | Identifier
     | typeKeyword
-    | DATA (memberOrIndex)+
+    | DATA (memberOrIndex)*
     | LPAREN expression RPAREN
     | objectLiteral
     | arrayLiteral

@@ -2360,4 +2360,105 @@ public class StandardLibraryTests
     }
 
     #endregion
+
+    #region CallScriptByName Tests
+
+    [Fact]
+    public void CallScriptByName_WithResolver_ExecutesScript()
+    {
+        var scriptSource = "Data.result = CallScriptByName(\"add-ten\", Data.input)";
+        var data = new JyroObject();
+        var inputObj = new JyroObject();
+        inputObj.SetProperty("value", new JyroNumber(5));
+        data.SetProperty("input", inputObj);
+
+        var result = JyroBuilder.Create()
+            .WithScript(scriptSource)
+            .WithData(data)
+            .WithStandardLibrary()
+            .WithResolver(name => name == "add-ten" ? "Data.value = Data.value + 10" : null)
+            .Run();
+
+        Assert.True(result.IsSuccessful);
+        var resultData = (JyroObject)result.Data;
+        var resultObj = (JyroObject)resultData.GetProperty("result");
+        Assert.Equal(15.0, ((JyroNumber)resultObj.GetProperty("value")).Value);
+    }
+
+    [Fact]
+    public void CallScriptByName_WithoutResolver_ThrowsError()
+    {
+        var script = "Data.result = CallScriptByName(\"some-script\", Data)";
+        var result = JyroBuilder.Create()
+            .WithScript(script)
+            .WithData(new JyroObject())
+            .WithStandardLibrary()
+            .Run();
+
+        Assert.False(result.IsSuccessful);
+        Assert.Contains(result.Messages, m => m.ToString()?.Contains("Script resolver not configured") ?? false);
+    }
+
+    [Fact]
+    public void CallScriptByName_ScriptNotFound_ThrowsError()
+    {
+        var script = "Data.result = CallScriptByName(\"nonexistent\", Data)";
+        var result = JyroBuilder.Create()
+            .WithScript(script)
+            .WithData(new JyroObject())
+            .WithStandardLibrary()
+            .WithResolver(name => null) // Always returns null
+            .Run();
+
+        Assert.False(result.IsSuccessful);
+        Assert.Contains(result.Messages, m => m.ToString()?.Contains("Script not found") ?? false);
+    }
+
+    #endregion
+
+    #region Bare Data Expression Tests
+
+    [Fact]
+    public void BareData_CanBePassedToFunction()
+    {
+        var script = @"
+            var scriptSource = ""Data.doubled = Data.value * 2""
+            Data.value = 21
+            Data.result = CallScript(scriptSource, Data)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var resultObj = (JyroObject)data.GetProperty("result");
+        Assert.Equal(42.0, ((JyroNumber)resultObj.GetProperty("doubled")).Value);
+    }
+
+    [Fact]
+    public void BareData_CanBeAssignedToVariable()
+    {
+        var script = @"
+            Data.name = ""test""
+            var copy = Data
+            Data.result = copy.name
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("test", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void BareData_CanBeUsedInExpression()
+    {
+        var script = @"
+            Data.value = 10
+            Data.result = TypeOf(Data)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("object", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    #endregion
 }

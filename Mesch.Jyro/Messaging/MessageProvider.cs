@@ -76,6 +76,8 @@ public sealed class MessageProvider : IMessageProvider
         // Function Error Templates
         { MessageCode.UndefinedFunctionRuntime, "Undefined function: '{0}'" },
         { MessageCode.InvalidFunctionTarget, "Only named functions can be called" },
+        { MessageCode.ScriptResolverNotConfigured, "Script resolver not configured - cannot use CallScriptByName" },
+        { MessageCode.ScriptNotFound, "Script not found: '{0}'" },
 
         // Internal/Syntax Error Templates
         { MessageCode.InvalidExpressionSyntax, "Invalid expression syntax: {0}" },

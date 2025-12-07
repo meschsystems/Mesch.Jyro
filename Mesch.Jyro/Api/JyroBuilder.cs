@@ -209,6 +209,7 @@ public sealed partial class JyroBuilder
 
             // Utility functions
             new CallScriptFunction(),
+            new CallScriptByNameFunction(),
             new EqualFunction(),
             new ExistsFunction(),
             new IsNullFunction(),

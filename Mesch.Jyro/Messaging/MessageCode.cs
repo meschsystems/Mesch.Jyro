@@ -285,6 +285,16 @@ public enum MessageCode
     /// </summary>
     InvalidFunctionTarget = 5401,
 
+    /// <summary>
+    /// CallScriptByName was called but no script resolver was configured on the execution context.
+    /// </summary>
+    ScriptResolverNotConfigured = 5402,
+
+    /// <summary>
+    /// CallScriptByName was called with a script name that the resolver could not find.
+    /// </summary>
+    ScriptNotFound = 5403,
+
     #endregion
 
     #region Internal/Syntax Errors (5500-5599)

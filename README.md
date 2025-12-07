@@ -542,6 +542,57 @@ var options = new JyroExecutionOptions
 };
 ```
 
+### Script Resolution
+
+Configure a script resolver to enable `CallScriptByName()` - allowing scripts to call other scripts by name rather than inline source code:
+
+```csharp
+var result = JyroBuilder.Create()
+    .WithScript("var result = CallScriptByName(\"validate-customer\", Data)")
+    .WithData(customerData)
+    .WithStdlib()
+    .WithResolver(name =>
+    {
+        // Return script source for the given name, or null if not found
+        return name switch
+        {
+            "validate-customer" => "Data.valid = Data.age >= 18 and Data.status == \"active\"",
+            "calculate-total" => "Data.total = Data.price * Data.quantity",
+            "apply-discount" => "Data.finalPrice = Data.total * (1 - Data.discountRate)",
+            _ => null
+        };
+    })
+    .Run();
+```
+
+The resolver is a delegate of type `JyroScriptResolver`:
+
+```csharp
+public delegate string? JyroScriptResolver(string name);
+```
+
+Common resolver patterns:
+
+```csharp
+// File-based resolver
+.WithResolver(name => File.Exists($"scripts/{name}.jyro")
+    ? File.ReadAllText($"scripts/{name}.jyro")
+    : null)
+
+// Dictionary-based resolver
+var scripts = new Dictionary<string, string>
+{
+    ["validate"] = "Data.valid = Data.value > 0",
+    ["transform"] = "Data.result = Upper(Data.input)"
+};
+.WithResolver(name => scripts.TryGetValue(name, out var source) ? source : null)
+
+// Database resolver (example pattern)
+.WithResolver(name => scriptRepository.GetScriptByName(name))
+```
+
+If `CallScriptByName()` is called without a resolver configured, or if the resolver returns `null` for the script name, a runtime error is thrown.
+
 ## API Reference
 
 ### Core Types
@@ -1080,6 +1131,7 @@ Miscellaneous functions for inspecting and testing data types, value generation,
 - [**Base64Decode**](stdlib/utility/base64decode) - Decode Base64-encoded string back to original format
 - [**Base64Encode**](stdlib/utility/base64encode) - Encode a string to Base64 format
 - [**CallScript**](stdlib/utility/callscript/) - Execute Jyro script with isolated data context
+- [**CallScriptByName**](stdlib/utility/callscriptbyname/) - Execute Jyro script by name using configured resolver
 - [**Equal**](stdlib/utility/equal/) - Test equality between two values
 - [**Exists**](stdlib/utility/exists/) - Test if value is not null
 - [**InvokeRestMethod**](stdlib/utility/invokerestmethod/) - Execute HTTP REST API requests with configurable security options
