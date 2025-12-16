@@ -39,8 +39,23 @@ public sealed class JyroObject : JyroValue, IEnumerable<KeyValuePair<string, Jyr
     public override JyroObject AsObject() => this;
 
     /// <summary>
+    /// Gets the value of the property with the specified key using literal key matching.
+    /// Does not interpret dots as path separators - use this for bracket notation access
+    /// to align with JSON/JavaScript behavior where obj["a.b"] accesses a literal key.
+    /// </summary>
+    /// <param name="key">The exact property key to retrieve.</param>
+    /// <returns>
+    /// The property value, or JyroNull.Instance if the property does not exist.
+    /// </returns>
+    public JyroValue GetPropertyLiteral(string key)
+    {
+        return _properties.TryGetValue(key, out var propertyValue) ? propertyValue : JyroNull.Instance;
+    }
+
+    /// <summary>
     /// Gets the value of the property with the specified key.
     /// Supports nested path notation using dots (e.g., "address.city").
+    /// For literal key access without path traversal, use <see cref="GetPropertyLiteral"/>.
     /// </summary>
     /// <param name="key">The property key or path to retrieve. Use dot notation for nested properties.</param>
     /// <returns>
@@ -90,6 +105,7 @@ public sealed class JyroObject : JyroValue, IEnumerable<KeyValuePair<string, Jyr
 
     /// <summary>
     /// Gets the property value for string-based indexing operations.
+    /// Uses literal key matching (no dot-path traversal) to align with JSON behavior.
     /// Returns JyroNull.Instance if the index is not a string.
     /// </summary>
     /// <param name="index">The index value used to access the property (must be a JyroString).</param>
@@ -98,7 +114,7 @@ public sealed class JyroObject : JyroValue, IEnumerable<KeyValuePair<string, Jyr
     {
         if (index is JyroString stringIndex)
         {
-            return GetProperty(stringIndex.Value);
+            return GetPropertyLiteral(stringIndex.Value);
         }
         return JyroNull.Instance;
     }

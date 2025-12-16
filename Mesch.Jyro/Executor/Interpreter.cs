@@ -992,7 +992,9 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             else if (target is JyroObject obj)
             {
                 var key = indexValue.ToStringValue();
-                return obj.GetProperty(key);
+                // Use literal key lookup for bracket notation to align with JSON behavior
+                // obj["a.b"] should access literal key "a.b", not traverse path a -> b
+                return obj.GetPropertyLiteral(key);
             }
             else if (target is JyroNull)
             {
@@ -1042,15 +1044,6 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             }
 
             return function.Execute(args, _context);
-        }
-        catch (JyroRuntimeException)
-        {
-            throw; // Already has location info
-        }
-        catch (Exception ex)
-        {
-            // Wrap with location from function call site
-            throw CreateException(MessageCode.RuntimeError, parentContext, ex.Message);
         }
         finally
         {

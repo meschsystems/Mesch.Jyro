@@ -684,4 +684,109 @@ public class BasicExpressionTests
     }
 
     #endregion
+
+    #region Bracket Notation with Dots (JSON Behavior)
+
+    [Fact]
+    public void BracketNotation_LiteralKeyWithDots_SetAndGet()
+    {
+        // Keys with dots should be treated literally in bracket notation (JSON behavior)
+        // obj["a.b"] should NOT traverse path a -> b
+        var script = @"
+            var obj = {}
+            obj[""address.city""] = ""New York""
+            Data.result = obj[""address.city""]
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("New York", ((JyroString)data.GetPropertyLiteral("result")).Value);
+    }
+
+    [Fact]
+    public void BracketNotation_EmailAsKey_SetAndGet()
+    {
+        // Email addresses contain dots - should work as literal keys
+        var script = @"
+            var map = {}
+            map[""john.doe@example.com""] = ""John Doe""
+            Data.result = map[""john.doe@example.com""]
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("John Doe", ((JyroString)data.GetPropertyLiteral("result")).Value);
+    }
+
+    [Fact]
+    public void BracketNotation_DynamicKeyWithDots_SetAndGet()
+    {
+        // Dynamic key variable containing dots should be treated literally
+        var script = @"
+            var map = {}
+            var email = ""user.name@company.org""
+            map[email] = ""User Name""
+            Data.result = map[email]
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("User Name", ((JyroString)data.GetPropertyLiteral("result")).Value);
+    }
+
+    [Fact]
+    public void BracketNotation_ArrayValueWithDottedKey()
+    {
+        // Should be able to store arrays under dotted keys
+        var script = @"
+            var map = {}
+            var key = ""category.subcategory""
+            map[key] = []
+            Append(map[key], ""item1"")
+            Append(map[key], ""item2"")
+            Data.count = Length(map[key])
+            Data.first = map[key][0]
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(2.0, ((JyroNumber)data.GetPropertyLiteral("count")).Value);
+        Assert.Equal("item1", ((JyroString)data.GetPropertyLiteral("first")).Value);
+    }
+
+    [Fact]
+    public void BracketNotation_DistinguishFromDotNotation()
+    {
+        // Bracket notation with "a.b" should be different from dot notation a.b
+        var script = @"
+            var obj = {}
+            obj.a = {}
+            obj.a.b = ""nested""
+            obj[""a.b""] = ""literal""
+            Data.nestedValue = obj.a.b
+            Data.literalValue = obj[""a.b""]
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("nested", ((JyroString)data.GetPropertyLiteral("nestedValue")).Value);
+        Assert.Equal("literal", ((JyroString)data.GetPropertyLiteral("literalValue")).Value);
+    }
+
+    [Fact]
+    public void BracketNotation_MultipleDotsInKey()
+    {
+        // Keys with multiple dots should work
+        var script = @"
+            var obj = {}
+            obj[""a.b.c.d""] = ""deep""
+            Data.result = obj[""a.b.c.d""]
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("deep", ((JyroString)data.GetPropertyLiteral("result")).Value);
+    }
+
+    #endregion
 }
