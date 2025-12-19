@@ -1,6 +1,6 @@
 # Mesch.Jyro
 
-Jyro is a secure, sandboxed imperative scripting language designed for data transformation and ETL operations on JSON-like data structures. Built for .NET 8+, it provides a safe runtime environment for executing user-provided scripts with comprehensive resource limits and fail-fast error handling.
+Jyro is a secure, sandboxed scripting language for .NET 8+ that lets you safely execute user-provided scripts while enforcing strict isolation that keeps the host safe from buggy, malicious or runaway code. With configurable resource limits, fail-fast error handling, and linear, predictable, run-to-completion execution, Jyro delivers real-world scripting capability without compromise.
 
 ## Features
 
@@ -11,7 +11,95 @@ Jyro is a secure, sandboxed imperative scripting language designed for data tran
 - **Extensible**: Add custom host functions to expose your application's functionality to scripts
 - **ANTLR-Powered**: Fast parsing with clear error messages
 - **Strongly-Typed Runtime**: Type-safe execution with clear error messages
-- **VS Code Extension**: Full language support with syntax highlighting, error checking, and IntelliSense - [install from VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=meschsystems.jyro-vscode)
+- **VS Code Extension**: Full language support with syntax highlighting, error checking, and IntelliSense
+
+## First Look
+
+Here's a sample Jyro script that demonstrates:
+
+- Variable declarations
+- String concatenation and operations
+- Property access with dot notation
+- Basic conditionals
+- Simple array manipulation
+
+```jyro
+# Create a personalized greeting
+var greeting = "Hello, " + Data.name + "!"
+Data.greeting = greeting
+
+# Build location string
+var fullLocation = Data.city + ", " + Data.country
+Data.fullLocation = fullLocation
+
+# Check if person is an adult
+if Data.age >= 18 then
+    Data.isAdult = true
+    Data.ageCategory = "Adult"
+else
+    Data.isAdult = false
+    Data.ageCategory = "Minor"
+end
+
+# Create a fun fact using string concatenation
+var funFact = Data.name + " is " + Data.age + " years old and loves the color " + Data.favoriteColor
+Data.funFact = funFact
+
+# Process hobbies - convert to uppercase
+Data.processedHobbies = []
+foreach hobby in Data.hobbies do
+    var upperHobby = Upper(hobby)
+    Append(Data.processedHobbies, upperHobby)
+end
+
+# Count hobbies
+Data.hobbyCount = Length(Data.hobbies)
+```
+
+Given this JSON input
+
+```json
+{
+  "name": "Alice Johnson",
+  "age": 28,
+  "city": "Seattle",
+  "country": "USA",
+  "favoriteColor": "blue",
+  "hobbies": [
+    "reading",
+    "gaming",
+    "cooking"
+  ]
+}
+```
+
+The script produces
+
+```json
+{
+  "name": "Alice Johnson",
+  "age": 28,
+  "city": "Seattle",
+  "country": "USA",
+  "favoriteColor": "blue",
+  "hobbies": [
+    "reading",
+    "gaming",
+    "cooking"
+  ],
+  "greeting": "Hello, Alice Johnson!",
+  "fullLocation": "Seattle, USA",
+  "isAdult": true,
+  "ageCategory": "Adult",
+  "funFact": "Alice Johnson is 28 years old and loves the color blue",
+  "processedHobbies": [
+    "READING",
+    "GAMING",
+    "COOKING"
+  ],
+  "hobbyCount": 3
+}
+```
 
 ## Installation
 
@@ -49,7 +137,7 @@ data.SetProperty("age", new JyroNumber(25));
 
 // Define a script
 var script = @"
-    Data.greeting = 'Hello, ' + Data.name + '!'
+    Data.greeting = ""Hello, "" + Data.name + ""!""
     Data.canVote = Data.age >= 18
 ";
 
@@ -96,6 +184,7 @@ var inputJson = @"{
     }
 }";
 
+// We can get inputJson from anywhere - file, database, REST API etc.
 var data = JyroValue.FromJson(inputJson);
 
 var script = @"
@@ -158,7 +247,9 @@ var outputObject = result.Data.ToObjectValue();
 // outputObject is a Dictionary<string, object?> with all properties
 ```
 
-## Supported Scenarios
+## Typical Scenarios
+
+The following sections demonstrate Jyro's key capabilities and versatility.
 
 ### 1. Data Transformation & ETL
 
@@ -189,18 +280,39 @@ var script = @"
         var finalPrice = subtotal + shippingCost
 
         Append(Data.orders, {
-            'orderId': order.id,
-            'originalPrice': order.total,
-            'discount': discount * 100,
-            'shippingCost': shippingCost,
-            'finalPrice': finalPrice
+            ""orderId"": order.id,
+            ""originalPrice"": order.total,
+            ""discount"": discount * 100,
+            ""shippingCost"": shippingCost,
+            ""finalPrice"": finalPrice
         })
     end
 ";
 
 var inputData = new JyroObject();
 var rawOrders = new JyroArray();
-// ... populate rawOrders with order data
+
+// Sample order 1: Small order (no discount, standard shipping)
+var order1 = new JyroObject();
+order1.SetProperty("id", new JyroString("ORD-001"));
+order1.SetProperty("quantity", new JyroNumber(2));
+order1.SetProperty("total", new JyroNumber(45.00));
+rawOrders.Add(order1);
+
+// Sample order 2: Medium order (10% discount, standard shipping)
+var order2 = new JyroObject();
+order2.SetProperty("id", new JyroString("ORD-002"));
+order2.SetProperty("quantity", new JyroNumber(7));
+order2.SetProperty("total", new JyroNumber(85.00));
+rawOrders.Add(order2);
+
+// Sample order 3: Large order (15% discount, free shipping)
+var order3 = new JyroObject();
+order3.SetProperty("id", new JyroString("ORD-003"));
+order3.SetProperty("quantity", new JyroNumber(12));
+order3.SetProperty("total", new JyroNumber(250.00));
+rawOrders.Add(order3);
+
 inputData.SetProperty("rawOrders", rawOrders);
 
 var result = JyroBuilder
@@ -216,11 +328,21 @@ var result = JyroBuilder
 Execute user-defined business rules safely:
 
 ```csharp
+// {
+//  "customer": {
+//    "paymentHistory": "poor",
+//    "accountAge": 20
+//  },
+//  "order": {
+//    "amount": 100
+//  }
+// }
+
 var ruleScript = @"
     # Calculate risk score based on multiple factors
     var riskScore = 0
 
-    if Data.customer.paymentHistory == 'poor' then
+    if Data.customer.paymentHistory == ""poor"" then
         riskScore = riskScore + 30
     end
 
@@ -288,7 +410,7 @@ public class SendEmailFunction : JyroFunctionBase
 // Use the custom function
 var script = @"
     if Data.sendNotification == true then
-        var sent = SendEmail(Data.email, 'Order Confirmation', Data.message)
+        var sent = SendEmail(Data.email, ""Order Confirmation"", Data.message)
         Data.emailSent = sent
     end
 ";
@@ -323,7 +445,9 @@ public class GreetFunction : JyroFunctionBase
         return new JyroString($"Hello, {name}! Welcome to Jyro plugins!");
     }
 }
+```
 
+```csharp
 // Load from a single DLL file
 var pluginPath = "path/to/MyPlugins.dll";
 var result = JyroBuilder
@@ -375,15 +499,15 @@ Load and process configuration with scripts:
 var configScript = @"
     # Transform configuration values
     Data.processedConfig = {
-        'apiUrl': Data.rawConfig.baseUrl + '/api/v1',
-        'timeout': Data.rawConfig.timeoutSeconds * 1000,
-        'retries': Data.rawConfig.maxRetries,
-        'enableCache': Data.rawConfig.cacheEnabled == true
+        ""apiUrl"": Data.rawConfig.baseUrl + ""/api/v1"",
+        ""timeout"": Data.rawConfig.timeoutSeconds * 1000,
+        ""retries"": Data.rawConfig.maxRetries,
+        ""enableCache"": Data.rawConfig.cacheEnabled == true
     }
 
     # Validate configuration
     if Length(Data.processedConfig.apiUrl) == 0 then
-        Data.errors = ['API URL is required']
+        Data.errors = [""API URL is required""]
     end
 ";
 ```
@@ -432,7 +556,7 @@ public class ScriptController : ControllerBase
             {
                 success = true,
                 data = JsonDocument.Parse(outputJson),
-                executionTime = result.Metadata.ProcessingTime  // Note: ProcessingTime, not ExecutionTime
+                executionTime = result.Metadata.ProcessingTime
             });
         }
         catch (JsonException ex)
@@ -544,7 +668,7 @@ var options = new JyroExecutionOptions
 
 ### Script Resolution
 
-Configure a script resolver to enable `CallScriptByName()` - allowing scripts to call other scripts by name rather than inline source code:
+Jyro provides a `JyroScriptResolver` that can allow scripts to call other scripts by name.
 
 ```csharp
 var result = JyroBuilder.Create()
@@ -622,7 +746,7 @@ public JyroExecutionResult(
 Contains performance and statistical information about script execution.
 
 **Properties:**
-- `TimeSpan ProcessingTime` - Total execution time ⚠️ **Note:** Named `ProcessingTime`, not `ExecutionTime`
+- `TimeSpan ProcessingTime` - Total execution time
 - `int StatementCount` - Number of statements executed
 - `int LoopCount` - Total loop iterations performed
 - `int FunctionCallCount` - Number of function calls made
@@ -652,8 +776,6 @@ Diagnostic message interface for compilation and runtime errors.
 - `int ColumnPosition` - Source column position (1-based)
 - `IReadOnlyList<string> Arguments` - Message arguments for formatting
 
-⚠️ **Important:** `IMessage` does **not** have a `Text` or `Message` property. Error details are conveyed through the `Code` enum and `Arguments` array.
-
 **Implementation (Message class):**
 ```csharp
 public Message(
@@ -667,7 +789,7 @@ public Message(
 
 #### MessageCode Enum
 
-Standardized diagnostic codes organized by processing stage:
+Jyro has a standardized set of diagnostic codes organized by processing stage:
 
 **Lexical Analysis (1000-1999):**
 - `UnknownLexerError` (1000)
@@ -818,7 +940,7 @@ obj.SetProperty("age", new JyroNumber(25));
 JyroValue name = obj.GetProperty("name");  // Returns JyroNull.Instance if not found
 
 // Check if object has properties
-int propertyCount = obj.Count;  // ⚠️ Use Count, not GetProperties()
+int propertyCount = obj.Count;
 
 // Indexer access
 obj["name"] = new JyroString("Bob");
@@ -851,14 +973,14 @@ Fluent API for building and executing Jyro scripts.
 var result = JyroBuilder
     .Create(loggerFactory)           // Required: ILoggerFactory
     .WithScript(scriptSource)        // Required: Script source code
-    .WithData(dataObject)            // Required: Input data
+    .WithData(dataObject)            // Required: Input data (can be empty)
     .WithStandardLibrary()           // Optional: Include standard functions
     .WithFunction(customFunction)    // Optional: Add custom functions
     .WithOptions(executionOptions)   // Optional: Configure resource limits
     .Run(cancellationToken);         // Optional: CancellationToken
 ```
 
-**Important:** `JyroBuilder.Create()` requires an `ILoggerFactory` parameter. Use `NullLoggerFactory.Instance` for no logging.
+`JyroBuilder.Create()` requires an `ILoggerFactory` parameter. Use `NullLoggerFactory.Instance` for no logging.
 
 #### Compile() - Compilation Only
 
@@ -898,7 +1020,7 @@ var result = JyroBuilder
     .Execute(cancellationToken);     // Optional: CancellationToken
 ```
 
-**Performance benefit:** Avoids redundant parsing, validation, and linking. Typically 5x-10x faster than `Run()` for cached programs.
+This pattern avoids redundant parsing, validation, and linking.
 
 #### WithCompiledProgram() - Set Pre-compiled Program
 
@@ -908,24 +1030,7 @@ Configures the builder to use a pre-compiled `LinkedProgram` from a previous `Co
 JyroBuilder WithCompiledProgram(LinkedProgram program)
 ```
 
-**Example:**
-```csharp
-// Compile once
-var linkingResult = JyroBuilder.Create(loggerFactory)
-    .WithScript(script)
-    .Compile();
-
-var program = linkingResult.Program;
-
-// Execute many times
-for (int i = 0; i < 1000; i++)
-{
-    var result = JyroBuilder.Create(loggerFactory)
-        .WithCompiledProgram(program)
-        .WithData(GenerateData(i))
-        .Execute();
-}
-```
+> **See [Compile Once, Execute Many Times](#compile-once-execute-many-times)** in Performance Considerations for complete examples including error handling, hot-reload with FileSystemWatcher, and ASP.NET Core integration.
 
 #### WithFunctionsFromAssembly() - Load Functions from Assembly
 
@@ -1030,7 +1135,7 @@ var result = JyroBuilder.Create(loggerFactory)
 
 ### Creating Error Results
 
-When manually creating error results (e.g., for script-not-found scenarios):
+You can manually create error results (e.g., for script-not-found scenarios):
 
 ```csharp
 private JyroExecutionResult CreateErrorResult(string errorMessage)
@@ -1060,87 +1165,87 @@ private JyroExecutionResult CreateErrorResult(string errorMessage)
 
 ## Standard Library Functions
 
-The Jyro standard library provides a comprehensive set of functions organized into logical categories for efficient data transformation and processing tasks.
+The Jyro standard library provides a [comprehensive set of functions](https://docs.mesch.cloud/jyro/functions/stdlib) organized into logical categories for efficient data transformation and processing tasks.
 
 ### Mathematical Functions
 
 Functions for numeric calculations and mathematical operations.
 
-- [**Abs**](stdlib/math/abs/) - Calculate absolute value of a number
-- [**Max**](stdlib/math/max/) - Find maximum value from multiple arguments
-- [**Min**](stdlib/math/min/) - Find minimum value from multiple arguments
-- [**RandomInt**](stdlib/math/randomint/) - Generate cryptographically secure random integer within range
-- [**Round**](stdlib/math/round/) - Round number to specified decimal places
-- [**Sum**](stdlib/math/sum/) - Calculate sum of multiple numeric arguments
+- [**Abs**](https://docs.mesch.cloud/jyro/functions/stdlib/math/abs/) - Calculate absolute value of a number
+- [**Max**](https://docs.mesch.cloud/jyro/functions/stdlib/math/max/) - Find maximum value from multiple arguments
+- [**Min**](https://docs.mesch.cloud/jyro/functions/stdlib/math/min/) - Find minimum value from multiple arguments
+- [**RandomInt**](https://docs.mesch.cloud/jyro/functions/stdlib/math/randomint/) - Generate cryptographically secure random integer within range
+- [**Round**](https://docs.mesch.cloud/jyro/functions/stdlib/math/round/) - Round number to specified decimal places
+- [**Sum**](https://docs.mesch.cloud/jyro/functions/stdlib/math/sum/) - Calculate sum of multiple numeric arguments
 
 ### String Manipulation
 
 Functions for processing and transforming text data.
 
-- [**Contains**](stdlib/string/contains/) - Test if string contains substring or array contains value
-- [**EndsWith**](stdlib/string/endswith/) - Test if string ends with specified suffix
-- [**Join**](stdlib/string/join/) - Join array elements into single string with delimiter
-- [**Lower**](stdlib/string/lower/) - Convert string to lowercase
-- [**RandomString**](stdlib/string/randomstring/) - Generate cryptographically secure random string from character set
-- [**Replace**](stdlib/string/replace/) - Replace all occurrences of substring with replacement
-- [**Split**](stdlib/string/split/) - Split string into array using delimiter
-- [**StartsWith**](stdlib/string/startswith/) - Test if string begins with specified prefix
-- [**Trim**](stdlib/string/trim/) - Remove leading and trailing whitespace
-- [**Upper**](stdlib/string/upper/) - Convert string to uppercase
-- [**ToNumber**](stdlib/string/tonumber/) - Convert a string to a number
+- [**Contains**](https://docs.mesch.cloud/jyro/functions/stdlib/string/contains/) - Test if string contains substring or array contains value
+- [**EndsWith**](https://docs.mesch.cloud/jyro/functions/stdlib/string/endswith/) - Test if string ends with specified suffix
+- [**Join**](https://docs.mesch.cloud/jyro/functions/stdlib/string/join/) - Join array elements into single string with delimiter
+- [**Lower**](https://docs.mesch.cloud/jyro/functions/stdlib/string/lower/) - Convert string to lowercase
+- [**RandomString**](https://docs.mesch.cloud/jyro/functions/stdlib/string/randomstring/) - Generate cryptographically secure random string from character set
+- [**Replace**](https://docs.mesch.cloud/jyro/functions/stdlib/string/replace/) - Replace all occurrences of substring with replacement
+- [**Split**](https://docs.mesch.cloud/jyro/functions/stdlib/string/split/) - Split string into array using delimiter
+- [**StartsWith**](https://docs.mesch.cloud/jyro/functions/stdlib/string/startswith/) - Test if string begins with specified prefix
+- [**Trim**](https://docs.mesch.cloud/jyro/functions/stdlib/string/trim/) - Remove leading and trailing whitespace
+- [**Upper**](https://docs.mesch.cloud/jyro/functions/stdlib/string/upper/) - Convert string to uppercase
+- [**ToNumber**](https://docs.mesch.cloud/jyro/functions/stdlib/string/tonumber/) - Convert a string to a number
 
 ### Array Operations
 
 Functions for manipulating and processing array data structures.
 
-- [**Append**](stdlib/array/append/) - Add value to end of array
-- [**Clear**](stdlib/array/clear/) - Remove all elements from array
-- [**CountIf**](stdlib/array/countif/) - Count elements where field matches value using comparison operator
-- [**Filter**](stdlib/array/filter/) - Return new array with elements matching field comparison criteria
-- [**First**](stdlib/array/first/) - Return first element of array without modifying it
-- [**GroupBy**](stdlib/array/groupby/) - Group array of objects by field value into keyed object
-- [**IndexOf**](stdlib/array/indexof/) - Find index of element in array using deep equality
-- [**Insert**](stdlib/array/insert/) - Insert value at specific array index
-- [**Last**](stdlib/array/last/) - Return last element of array without modifying it
-- [**MergeArrays**](stdlib/array/mergearrays/) - Combine multiple arrays into single array
-- [**Pop**](stdlib/array/pop/) - Remove and return last array element
-- [**RandomChoice**](stdlib/array/randomchoice/) - Select random element from array using cryptographically secure randomization
-- [**RemoveAt**](stdlib/array/removeat/) - Remove element at specific index and return modified array
-- [**RemoveLast**](stdlib/array/removelast/) - Remove last element and return modified array
-- [**Reverse**](stdlib/array/reverse/) - Return new array with elements in reversed order
-- [**Sort**](stdlib/array/sort/) - Return new sorted array using type-aware comparison
-- [**SortByField**](stdlib/array/sortbyfield/) - Sort array of objects by specified field
-- [**Take**](stdlib/array/take/) - Return new array containing first n elements without modifying original
+- [**Append**](https://docs.mesch.cloud/jyro/functions/stdlib/array/append/) - Add value to end of array
+- [**Clear**](https://docs.mesch.cloud/jyro/functions/stdlib/array/clear/) - Remove all elements from array
+- [**CountIf**](https://docs.mesch.cloud/jyro/functions/stdlib/array/countif/) - Count elements where field matches value using comparison operator
+- [**Filter**](https://docs.mesch.cloud/jyro/functions/stdlib/array/filter/) - Return new array with elements matching field comparison criteria
+- [**First**](https://docs.mesch.cloud/jyro/functions/stdlib/array/first/) - Return first element of array without modifying it
+- [**GroupBy**](https://docs.mesch.cloud/jyro/functions/stdlib/array/groupby/) - Group array of objects by field value into keyed object
+- [**IndexOf**](https://docs.mesch.cloud/jyro/functions/stdlib/array/indexof/) - Find index of element in array using deep equality
+- [**Insert**](https://docs.mesch.cloud/jyro/functions/stdlib/array/insert/) - Insert value at specific array index
+- [**Last**](https://docs.mesch.cloud/jyro/functions/stdlib/array/last/) - Return last element of array without modifying it
+- [**MergeArrays**](https://docs.mesch.cloud/jyro/functions/stdlib/array/mergearrays/) - Combine multiple arrays into single array
+- [**Pop**](https://docs.mesch.cloud/jyro/functions/stdlib/array/pop/) - Remove and return last array element
+- [**RandomChoice**](https://docs.mesch.cloud/jyro/functions/stdlib/array/randomchoice/) - Select random element from array using cryptographically secure randomization
+- [**RemoveAt**](https://docs.mesch.cloud/jyro/functions/stdlib/array/removeat/) - Remove element at specific index and return modified array
+- [**RemoveLast**](https://docs.mesch.cloud/jyro/functions/stdlib/array/removelast/) - Remove last element and return modified array
+- [**Reverse**](https://docs.mesch.cloud/jyro/functions/stdlib/array/reverse/) - Return new array with elements in reversed order
+- [**Sort**](https://docs.mesch.cloud/jyro/functions/stdlib/array/sort/) - Return new sorted array using type-aware comparison
+- [**SortByField**](https://docs.mesch.cloud/jyro/functions/stdlib/array/sortbyfield/) - Sort array of objects by specified field
+- [**Take**](https://docs.mesch.cloud/jyro/functions/stdlib/array/take/) - Return new array containing first n elements without modifying original
 
 ### Date and Time Functions
 
 Functions for handling date parsing, formatting, and calculations.
 
-- [**DateAdd**](stdlib/dateandtime/dateadd/) - Add time interval to date
-- [**DateDiff**](stdlib/dateandtime/datediff/) - Calculate difference between two dates
-- [**DatePart**](stdlib/dateandtime/datepart/) - Extract specific component from date
-- [**FormatDate**](stdlib/dateandtime/formatdate/) - Format date using specified pattern
-- [**Now**](stdlib/dateandtime/now/) - Get current date and time in UTC
-- [**ParseDate**](stdlib/dateandtime/parsedate/) - Parse date string into normalized format
-- [**Today**](stdlib/dateandtime/today/) - Get current date without time components
+- [**DateAdd**](https://docs.mesch.cloud/jyro/functions/stdlib/dateandtime/dateadd/) - Add time interval to date
+- [**DateDiff**](https://docs.mesch.cloud/jyro/functions/stdlib/dateandtime/datediff/) - Calculate difference between two dates
+- [**DatePart**](https://docs.mesch.cloud/jyro/functions/stdlib/dateandtime/datepart/) - Extract specific component from date
+- [**FormatDate**](https://docs.mesch.cloud/jyro/functions/stdlib/dateandtime/formatdate/) - Format date using specified pattern
+- [**Now**](https://docs.mesch.cloud/jyro/functions/stdlib/dateandtime/now/) - Get current date and time in UTC
+- [**ParseDate**](https://docs.mesch.cloud/jyro/functions/stdlib/dateandtime/parsedate/) - Parse date string into normalized format
+- [**Today**](https://docs.mesch.cloud/jyro/functions/stdlib/dateandtime/today/) - Get current date without time components
 
 ### Utility Functions
 
 Miscellaneous functions for inspecting and testing data types, value generation, and calling scripts.
 
-- [**Base64Decode**](stdlib/utility/base64decode) - Decode Base64-encoded string back to original format
-- [**Base64Encode**](stdlib/utility/base64encode) - Encode a string to Base64 format
-- [**CallScript**](stdlib/utility/callscript/) - Execute Jyro script with isolated data context
-- [**CallScriptByName**](stdlib/utility/callscriptbyname/) - Execute Jyro script by name using configured resolver
-- [**Equal**](stdlib/utility/equal/) - Test equality between two values
-- [**Exists**](stdlib/utility/exists/) - Test if value is not null
-- [**InvokeRestMethod**](stdlib/utility/invokerestmethod/) - Execute HTTP REST API requests with configurable security options
-- [**IsNull**](stdlib/utility/isnull/) - Test if value is null
-- [**Keys**](stdlib/utility/keys/) - Get array of property names from an object
-- [**Length**](stdlib/utility/length/) - Get length/count of strings, arrays, or objects
-- [**NewGuid**](stdlib/utility/newguid) - Generate a new globally unique identifier (GUID)
-- [**NotEqual**](stdlib/utility/notequal/) - Test inequality between two values
-- [**TypeOf**](stdlib/utility/typeof/) - Get type name of value as string
+- [**Base64Decode**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/base64decode) - Decode Base64-encoded string back to original format
+- [**Base64Encode**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/base64encode) - Encode a string to Base64 format
+- [**CallScript**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/callscript/) - Execute Jyro script with isolated data context
+- [**CallScriptByName**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/callscriptbyname/) - Execute Jyro script by name using configured resolver
+- [**Equal**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/equal/) - Test equality between two values
+- [**Exists**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/exists/) - Test if value is not null
+- [**InvokeRestMethod**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/invokerestmethod/) - Execute HTTP REST API requests with configurable security options
+- [**IsNull**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/isnull/) - Test if value is null
+- [**Keys**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/keys/) - Get array of property names from an object
+- [**Length**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/length/) - Get length/count of strings, arrays, or objects
+- [**NewGuid**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/newguid) - Generate a new globally unique identifier (GUID)
+- [**NotEqual**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/notequal/) - Test inequality between two values
+- [**TypeOf**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/typeof/) - Get type name of value as string
 
 ### Usage Patterns
 
@@ -1182,15 +1287,22 @@ while count < 100 do
 end
 
 # Foreach loop (arrays)
+Data.total = 0
+
 foreach item in Data.items do
     Data.total = Data.total + item.price
 end
 
 # Foreach loop (object keys)
 var obj = { "a": 1, "b": 2, "c": 3 }
+
+Data.pairs = []
+
 foreach key in obj do
-    # key is a string ("a", "b", "c")
-    var value = obj[key]
+    Append(Data.pairs, {
+        "key": key,
+        "value": obj[key]
+    })
 end
 ```
 
@@ -1212,8 +1324,10 @@ var firstNumber = numbers[0]
 ```
 
 ### Logical Operators
+
+Jyro uses word based operators.
+
 ```jyro
-# Use word-based operators
 if isActive and age > 18 then
     # ...
 end
@@ -1329,7 +1443,7 @@ for (int i = 1; i <= 5; i++)
 }
 ```
 
-**Performance improvement**: Typically 20-50x faster for cached executions compared to full compilation on every request.
+**Performance improvement**: Typically 5-10x faster for cached executions compared to full compilation on every request.
 
 #### Hot-Reload with FileSystemWatcher
 
@@ -1473,9 +1587,10 @@ Jyro is designed for safe execution of untrusted scripts:
 - ✅ **Resource limits** - Prevent infinite loops and resource exhaustion
 - ✅ **Type safety** - Strong typing prevents type confusion attacks
 - ✅ **No reflection** - Scripts cannot access .NET reflection APIs
+- ✅ **Linear, predictable execution** - Scripts run atomically from start to finish; No yields, callbacks, coroutines, or continuations; no async/await, no multithreading, no way to pause and resume with a potentially tampered state
 - ✅ **Fail-fast** - Runtime errors stop execution immediately
 
-**Important**: Host functions are the primary extension point. Ensure your custom functions validate inputs and don't expose sensitive functionality.
+Host functions are the primary extension point. Ensure your custom functions validate inputs and don't expose sensitive functionality.
 
 ## License
 
