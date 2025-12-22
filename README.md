@@ -432,7 +432,7 @@ public class ScriptController : ControllerBase
             {
                 success = true,
                 data = JsonDocument.Parse(outputJson),
-                executionTime = result.Metadata.ProcessingTime  // Note: ProcessingTime, not ExecutionTime
+                executionTime = result.Metadata.ProcessingTime
             });
         }
         catch (JsonException ex)
@@ -622,7 +622,7 @@ public JyroExecutionResult(
 Contains performance and statistical information about script execution.
 
 **Properties:**
-- `TimeSpan ProcessingTime` - Total execution time ⚠️ **Note:** Named `ProcessingTime`, not `ExecutionTime`
+- `TimeSpan ProcessingTime` - Total execution time
 - `int StatementCount` - Number of statements executed
 - `int LoopCount` - Total loop iterations performed
 - `int FunctionCallCount` - Number of function calls made
@@ -699,11 +699,12 @@ Standardized diagnostic codes organized by processing stage:
 **Execution (5000-5999):**
 
 *General Execution Errors (5000-5099):*
-- `UnknownExecutorError` (5000)
-- `RuntimeError` (5001)
-- `CancelledByHost` (5002)
-- `InvalidType` (5003)
-- `InvalidArgumentType` (5004)
+- `ScriptReturn` (5000) - Script explicitly called `return` with a message
+- `UnknownExecutorError` (5001)
+- `RuntimeError` (5002)
+- `CancelledByHost` (5003)
+- `InvalidType` (5004)
+- `InvalidArgumentType` (5005)
 
 *Arithmetic Errors (5100-5199):*
 - `DivisionByZero` (5100)
@@ -742,6 +743,9 @@ Standardized diagnostic codes organized by processing stage:
 
 *Parse Errors (5700-5799):*
 - `InvalidNumberParse` (5700)
+
+*Script Termination (5999):*
+- `ScriptFailure` (5999) - Script explicitly called `fail` (business logic failure)
 
 #### MessageSeverity Enum
 
@@ -1222,6 +1226,83 @@ if not isDeleted or isArchived then
     # ...
 end
 ```
+
+### Script Termination: return and fail
+
+Jyro provides two keywords for explicit script termination with optional messages:
+
+#### return - Successful Exit
+```jyro
+# Exit immediately with success
+return
+
+# Exit with a success message (available in result.Messages)
+return "Operation completed successfully"
+
+# Message can be an expression
+return "Processed " + Length(Data.items) + " items"
+```
+
+#### fail - Business Logic Failure
+```jyro
+# Exit immediately with failure (IsSuccessful = false)
+fail
+
+# Exit with an error message
+fail "Validation failed: email is required"
+
+# Conditional failure
+if Data.age < 18 then
+    fail "Must be 18 or older to proceed"
+end
+
+# Message can be an expression
+fail "Invalid value: " + Data.input + " is not allowed"
+```
+
+**Behavior:**
+
+| Keyword | `IsSuccessful` | Message Severity | MessageCode |
+|---------|----------------|------------------|-------------|
+| `return` | `true` | (no message) | - |
+| `return "msg"` | `true` | Info | `ScriptReturn` (5000) |
+| `fail` | `false` | Error | `ScriptFailure` (5999) |
+| `fail "msg"` | `false` | Error | `ScriptFailure` (5999) |
+
+**Accessing messages in the host:**
+```csharp
+var result = JyroBuilder.Create(loggerFactory)
+    .WithScript(script)
+    .WithData(data)
+    .WithStandardLibrary()
+    .Run();
+
+if (!result.IsSuccessful)
+{
+    // Check for explicit script failure
+    var failMessage = result.Messages
+        .FirstOrDefault(m => m.Code == MessageCode.ScriptFailure);
+
+    if (failMessage != null)
+    {
+        // Script explicitly called fail
+        Console.WriteLine($"Script failed: {string.Join(" ", failMessage.Arguments)}");
+    }
+}
+else
+{
+    // Check for return message
+    var returnMessage = result.Messages
+        .FirstOrDefault(m => m.Code == MessageCode.ScriptReturn);
+
+    if (returnMessage != null)
+    {
+        Console.WriteLine($"Script returned: {string.Join(" ", returnMessage.Arguments)}");
+    }
+}
+```
+
+The message expression must be on the same line as the `return` or `fail` keyword.
 
 ## Error Handling
 

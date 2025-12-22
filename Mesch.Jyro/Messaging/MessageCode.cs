@@ -155,34 +155,39 @@ public enum MessageCode
     #region General Execution Errors (5000-5099)
 
     /// <summary>
+    /// The `return` keyword was used, indicating normal/successful script return
+    /// </summary>
+    ScriptReturn = 5000,
+
+    /// <summary>
     /// An unexpected error occurred during execution that doesn't fit other categories.
     /// This typically indicates an internal executor error or system-level issue.
     /// </summary>
-    UnknownExecutorError = 5000,
+    UnknownExecutorError = 5001,
 
     /// <summary>
     /// A general runtime error occurred during script execution.
     /// This is a catch-all category for execution-time issues that don't fit specific categories.
     /// </summary>
-    RuntimeError = 5001,
+    RuntimeError = 5002,
 
     /// <summary>
     /// Script execution was cancelled by the host application or execution environment.
     /// This occurs when external systems terminate execution before natural completion.
     /// </summary>
-    CancelledByHost = 5002,
+    CancelledByHost = 5003,
 
     /// <summary>
     /// An operation was attempted on a value of an incompatible type.
     /// This error occurs at runtime when type checking reveals incompatible operations.
     /// </summary>
-    InvalidType = 5003,
+    InvalidType = 5004,
 
     /// <summary>
     /// A function was called with an argument of an incorrect type for the expected parameter.
     /// This error enforces type safety at function call boundaries during execution.
     /// </summary>
-    InvalidArgumentType = 5004,
+    InvalidArgumentType = 5005,
 
     #endregion
 
@@ -346,7 +351,16 @@ public enum MessageCode
     /// <summary>
     /// A numeric literal could not be parsed into a valid number at runtime.
     /// </summary>
-    InvalidNumberParse = 5700
+    InvalidNumberParse = 5700,
+
+    #endregion
+
+    #region Fail keyword
+
+    /// <summary>
+    /// The `fail` keyword was used, indicating a business-logic failure and early (unsuccessful) return
+    /// </summary>
+    ScriptFailure = 5999
 
     #endregion
 

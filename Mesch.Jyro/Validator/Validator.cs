@@ -289,7 +289,19 @@ public sealed class Validator
 
         public override object? VisitReturnStmt(JyroParser.ReturnStmtContext context)
         {
-            // Return statements are always valid (they may have no value in Jyro)
+            if (context.expression() != null)
+            {
+                Visit(context.expression());
+            }
+            return null;
+        }
+
+        public override object? VisitFailStmt(JyroParser.FailStmtContext context)
+        {
+            if (context.expression() != null)
+            {
+                Visit(context.expression());
+            }
             return null;
         }
 
@@ -418,7 +430,8 @@ public sealed class Validator
         {
             return statement.breakStmt() != null ||
                    statement.continueStmt() != null ||
-                   statement.returnStmt() != null;
+                   statement.returnStmt() != null ||
+                   statement.failStmt() != null;
         }
 
         // Helper methods for parsing if/switch statement structures

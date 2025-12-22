@@ -47,7 +47,26 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             if (returnException.ReturnValue != null)
             {
                 _context.Variables.Declare("Return", returnException.ReturnValue);
+
+                _context.Messages.Add(new Message(
+                    MessageCode.ScriptReturn,
+                    returnException.LineNumber,
+                    returnException.ColumnPosition,
+                    MessageSeverity.Info,
+                    ProcessingStage.Execution,
+                    returnException.ReturnValue.ToStringValue()));
             }
+        }
+        catch (FailControlFlowException failException)
+        {
+            var messageText = failException.FailureMessage?.ToStringValue() ?? "Script failed";
+            _context.Messages.Add(new Message(
+                MessageCode.ScriptFailure,
+                failException.LineNumber,
+                failException.ColumnPosition,
+                MessageSeverity.Error,
+                ProcessingStage.Execution,
+                messageText));
         }
         catch (OperationCanceledException)
         {
@@ -417,7 +436,43 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         _context.Limiter.CheckAndCountStatement();
         _metrics.StatementCount++;
 
-        throw new ReturnControlFlowException(null);
+        JyroValue? returnValue = null;
+        var exprContext = context.expression();
+
+        // Only evaluate the expression if it's on the same line as the return keyword
+        // This handles the grammar ambiguity where the parser might greedily consume
+        // the next statement as the return expression
+        if (exprContext != null && exprContext.Start.Line == context.Start.Line)
+        {
+            returnValue = Visit(exprContext);
+        }
+
+        var line = context.Start?.Line ?? 0;
+        var column = (context.Start?.Column ?? -1) + 1;
+
+        throw new ReturnControlFlowException(returnValue, line, column);
+    }
+
+    public override JyroValue VisitFailStmt(JyroParser.FailStmtContext context)
+    {
+        _context.Limiter.CheckAndCountStatement();
+        _metrics.StatementCount++;
+
+        JyroValue? failureMessage = null;
+        var exprContext = context.expression();
+
+        // Only evaluate the expression if it's on the same line as the fail keyword
+        // This handles the grammar ambiguity where the parser might greedily consume
+        // the next statement as the fail expression
+        if (exprContext != null && exprContext.Start.Line == context.Start.Line)
+        {
+            failureMessage = Visit(exprContext);
+        }
+
+        var line = context.Start?.Line ?? 0;
+        var column = (context.Start?.Column ?? -1) + 1;
+
+        throw new FailControlFlowException(failureMessage, line, column);
     }
 
     public override JyroValue VisitBreakStmt(JyroParser.BreakStmtContext context)
@@ -1483,6 +1538,28 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
     internal sealed class ReturnControlFlowException : Exception
     {
         public JyroValue? ReturnValue { get; }
-        public ReturnControlFlowException(JyroValue? returnValue = null) => ReturnValue = returnValue;
+        public int LineNumber { get; }
+        public int ColumnPosition { get; }
+
+        public ReturnControlFlowException(JyroValue? returnValue, int lineNumber, int columnPosition)
+        {
+            ReturnValue = returnValue;
+            LineNumber = lineNumber;
+            ColumnPosition = columnPosition;
+        }
+    }
+
+    internal sealed class FailControlFlowException : Exception
+    {
+        public JyroValue? FailureMessage { get; }
+        public int LineNumber { get; }
+        public int ColumnPosition { get; }
+
+        public FailControlFlowException(JyroValue? failureMessage, int lineNumber, int columnPosition)
+        {
+            FailureMessage = failureMessage;
+            LineNumber = lineNumber;
+            ColumnPosition = columnPosition;
+        }
     }
 }

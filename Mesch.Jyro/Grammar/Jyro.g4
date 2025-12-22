@@ -16,6 +16,7 @@ statement
     | whileStmt
     | forEachStmt
     | returnStmt
+    | failStmt
     | breakStmt
     | continueStmt
     | incDecStmt
@@ -66,7 +67,11 @@ forEachStmt
     ;
 
 returnStmt
-    : RETURN
+    : RETURN expression?
+    ;
+
+failStmt
+    : FAIL expression?
     ;
 
 breakStmt
@@ -163,6 +168,7 @@ propertyName
     | FOREACH
     | IN
     | RETURN
+    | FAIL
     | BREAK
     | CONTINUE
     | AND
@@ -241,6 +247,7 @@ WHILE      : 'while';
 FOREACH    : 'foreach';
 IN         : 'in';
 RETURN     : 'return';
+FAIL       : 'fail';
 BREAK      : 'break';
 CONTINUE   : 'continue';
 
