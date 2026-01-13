@@ -17,11 +17,11 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
     /// <summary>
     /// Creates a JyroRuntimeException with proper location information from a parse context.
     /// </summary>
-    private static JyroRuntimeException CreateException(MessageCode code, ParserRuleContext? context, string message)
+    private static JyroRuntimeException CreateException(MessageCode code, ParserRuleContext? context, params string[] arguments)
     {
         var line = context?.Start?.Line ?? 0;
         var column = (context?.Start?.Column ?? -1) + 1; // Convert 0-based ANTLR column to 1-based display
-        return new JyroRuntimeException(code, line, column, message);
+        return new JyroRuntimeException(code, line, column, arguments);
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
                 ex.ColumnPosition,
                 MessageSeverity.Error,
                 ProcessingStage.Execution,
-                ex.Message));
+                ex.Arguments.ToArray()));
         }
         catch (Exception unexpectedException)
         {
@@ -159,7 +159,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         if (currentValue is not JyroNumber num)
         {
             throw CreateException(MessageCode.IncrementDecrementNonNumber, context,
-                $"Cannot increment/decrement non-number value of type '{currentValue.Type}'");
+                currentValue.Type.ToString());
         }
 
         var newValue = context.INCR() != null
@@ -425,7 +425,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         else
         {
             throw CreateException(MessageCode.NotIterable, context,
-                $"Cannot iterate over non-iterable value of type '{collection.Type}'");
+                collection.Type.ToString());
         }
 
         return JyroNull.Instance;
@@ -587,7 +587,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             var child = context.GetChild(i * 2 - 1);
             if (child == null)
             {
-                throw CreateException(MessageCode.InvalidExpressionSyntax, context, "Invalid equality expression syntax");
+                throw CreateException(MessageCode.InvalidExpressionSyntax, context, "equality");
             }
 
             var op = child.GetText();
@@ -597,7 +597,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             {
                 "==" => JyroBoolean.FromBoolean(AreEqual(left, right)),
                 "!=" => JyroBoolean.FromBoolean(!AreEqual(left, right)),
-                _ => throw CreateException(MessageCode.UnknownOperator, context, $"Unknown equality operator: {op}")
+                _ => throw CreateException(MessageCode.UnknownOperator, context, op)
             };
         }
 
@@ -613,7 +613,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             var child = context.GetChild(i * 2 - 1);
             if (child == null)
             {
-                throw CreateException(MessageCode.InvalidExpressionSyntax, context, "Invalid relational expression syntax");
+                throw CreateException(MessageCode.InvalidExpressionSyntax, context, "relational");
             }
 
             var op = child.GetText();
@@ -645,7 +645,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             var child = context.GetChild(i * 2 - 1);
             if (child == null)
             {
-                throw CreateException(MessageCode.InvalidExpressionSyntax, context, "Invalid additive expression syntax");
+                throw CreateException(MessageCode.InvalidExpressionSyntax, context, "additive");
             }
 
             var op = child.GetText();
@@ -655,7 +655,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             {
                 "+" => Add(left, right, context),
                 "-" => Subtract(left, right, context),
-                _ => throw CreateException(MessageCode.UnknownOperator, context, $"Unknown additive operator: {op}")
+                _ => throw CreateException(MessageCode.UnknownOperator, context, op)
             };
         }
 
@@ -671,7 +671,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             var child = context.GetChild(i * 2 - 1);
             if (child == null)
             {
-                throw CreateException(MessageCode.InvalidExpressionSyntax, context, "Invalid multiplicative expression syntax");
+                throw CreateException(MessageCode.InvalidExpressionSyntax, context, "multiplicative");
             }
 
             var op = child.GetText();
@@ -682,7 +682,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
                 "*" => Multiply(left, right, context),
                 "/" => Divide(left, right, context),
                 "%" => Modulo(left, right, context),
-                _ => throw CreateException(MessageCode.UnknownOperator, context, $"Unknown multiplicative operator: {op}")
+                _ => throw CreateException(MessageCode.UnknownOperator, context, op)
             };
         }
 
@@ -705,7 +705,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
                 return new JyroNumber(-num.Value);
             }
             throw CreateException(MessageCode.NegateNonNumber, context,
-                $"Cannot negate non-number value of type '{operand.Type}'");
+                operand.Type.ToString());
         }
 
         return Visit(context.postfixExpr());
@@ -841,7 +841,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         {
             return new JyroNumber(number);
         }
-        throw CreateException(MessageCode.InvalidNumberParse, context, $"Invalid number: '{text}'");
+        throw CreateException(MessageCode.InvalidNumberParse, context, text);
     }
 
     public override JyroValue VisitStringLiteral(JyroParser.StringLiteralContext context)
@@ -969,7 +969,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             else
             {
                 throw CreateException(MessageCode.PropertyAccessInvalidType, lastAccessor,
-                    $"Cannot set property '{memberName}' on type '{target.Type}'");
+                    memberName, target.Type.ToString());
             }
         }
         else if (lastAccessor.LBRACK() != null)
@@ -985,7 +985,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
                 else
                 {
                     throw CreateException(MessageCode.IndexOutOfRange, lastAccessor,
-                        $"Array index {index} is out of bounds (array length: {arr.Length})");
+                        index.ToString(), arr.Length.ToString());
                 }
             }
             else if (target is JyroObject obj)
@@ -996,7 +996,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             else
             {
                 throw CreateException(MessageCode.InvalidIndexTarget, lastAccessor,
-                    $"Cannot index type '{target.Type}'");
+                    target.Type.ToString());
             }
         }
     }
@@ -1010,7 +1010,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             if (target is JyroNull)
             {
                 throw CreateException(MessageCode.PropertyAccessOnNull, parentContext,
-                    $"Cannot access property '{memberName}' on null");
+                    memberName);
             }
 
             if (target is JyroObject obj)
@@ -1019,7 +1019,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             }
 
             throw CreateException(MessageCode.PropertyAccessInvalidType, parentContext,
-                $"Cannot access property '{memberName}' on type '{target.Type}'");
+                memberName, target.Type.ToString());
         }
 
         if (context.LBRACK() != null)
@@ -1033,13 +1033,13 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
                 if (index < 0)
                 {
                     throw CreateException(MessageCode.NegativeIndex, parentContext,
-                        $"Array index cannot be negative: {index}");
+                        index.ToString());
                 }
 
                 if (index >= arr.Length)
                 {
                     throw CreateException(MessageCode.IndexOutOfRange, parentContext,
-                        $"Array index {index} is out of bounds (array length: {arr.Length})");
+                        index.ToString(), arr.Length.ToString());
                 }
 
                 return arr[index];
@@ -1053,12 +1053,11 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             }
             else if (target is JyroNull)
             {
-                throw CreateException(MessageCode.IndexAccessOnNull, parentContext,
-                    "Cannot access index on null");
+                throw CreateException(MessageCode.IndexAccessOnNull, parentContext);
             }
 
             throw CreateException(MessageCode.InvalidIndexTarget, parentContext,
-                $"Cannot access index on type '{target.Type}'");
+                target.Type.ToString());
         }
 
         return JyroNull.Instance;
@@ -1079,14 +1078,13 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
 
             if (target is not JyroString functionName)
             {
-                throw CreateException(MessageCode.InvalidFunctionTarget, parentContext,
-                    "Only named functions can be called");
+                throw CreateException(MessageCode.InvalidFunctionTarget, parentContext);
             }
 
             if (!_context.Functions.TryGetValue(functionName.Value, out var function))
             {
                 throw CreateException(MessageCode.UndefinedFunctionRuntime, parentContext,
-                    $"Undefined function: '{functionName.Value}'");
+                    functionName.Value);
             }
 
             var args = new List<JyroValue>();
@@ -1160,7 +1158,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         if (typeValue is not JyroString typeName)
         {
             throw CreateException(MessageCode.InvalidTypeCheck, context,
-                $"Type check requires a string type name, got '{typeValue.Type}'");
+                typeValue.Type.ToString());
         }
 
         return typeName.Value.ToLowerInvariant() switch
@@ -1172,7 +1170,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             "array" => value is JyroArray,
             "null" => value is JyroNull,
             _ => throw CreateException(MessageCode.UnknownTypeName, context,
-                $"Unknown type name: '{typeName.Value}'")
+                typeName.Value)
         };
     }
 
@@ -1186,7 +1184,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
                 "<=" => JyroBoolean.FromBoolean(ln.Value <= rn.Value),
                 ">" => JyroBoolean.FromBoolean(ln.Value > rn.Value),
                 ">=" => JyroBoolean.FromBoolean(ln.Value >= rn.Value),
-                _ => throw CreateException(MessageCode.UnknownOperator, context, $"Unknown relational operator: '{op}'")
+                _ => throw CreateException(MessageCode.UnknownOperator, context, op)
             };
         }
 
@@ -1199,12 +1197,12 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
                 "<=" => JyroBoolean.FromBoolean(cmp <= 0),
                 ">" => JyroBoolean.FromBoolean(cmp > 0),
                 ">=" => JyroBoolean.FromBoolean(cmp >= 0),
-                _ => throw CreateException(MessageCode.UnknownOperator, context, $"Unknown relational operator: '{op}'")
+                _ => throw CreateException(MessageCode.UnknownOperator, context, op)
             };
         }
 
         throw CreateException(MessageCode.IncompatibleComparison, context,
-            $"Cannot compare types '{left.Type}' and '{right.Type}'");
+            left.Type.ToString(), right.Type.ToString());
     }
 
     private JyroValue Add(JyroValue left, JyroValue right, ParserRuleContext context)
@@ -1220,7 +1218,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         }
 
         throw CreateException(MessageCode.IncompatibleOperandTypes, context,
-            $"Cannot add types '{left.Type}' and '{right.Type}'");
+            "add", left.Type.ToString(), right.Type.ToString());
     }
 
     private JyroValue Subtract(JyroValue left, JyroValue right, ParserRuleContext context)
@@ -1231,7 +1229,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         }
 
         throw CreateException(MessageCode.IncompatibleOperandTypes, context,
-            $"Cannot subtract types '{left.Type}' and '{right.Type}'");
+            "subtract", left.Type.ToString(), right.Type.ToString());
     }
 
     private JyroValue Multiply(JyroValue left, JyroValue right, ParserRuleContext context)
@@ -1242,7 +1240,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         }
 
         throw CreateException(MessageCode.IncompatibleOperandTypes, context,
-            $"Cannot multiply types '{left.Type}' and '{right.Type}'");
+            "multiply", left.Type.ToString(), right.Type.ToString());
     }
 
     private JyroValue Divide(JyroValue left, JyroValue right, ParserRuleContext context)
@@ -1251,13 +1249,13 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         {
             if (Math.Abs(rn.Value) < double.Epsilon)
             {
-                throw CreateException(MessageCode.DivisionByZero, context, "Division by zero");
+                throw CreateException(MessageCode.DivisionByZero, context);
             }
             return new JyroNumber(ln.Value / rn.Value);
         }
 
         throw CreateException(MessageCode.IncompatibleOperandTypes, context,
-            $"Cannot divide types '{left.Type}' and '{right.Type}'");
+            "divide", left.Type.ToString(), right.Type.ToString());
     }
 
     private JyroValue Modulo(JyroValue left, JyroValue right, ParserRuleContext context)
@@ -1266,13 +1264,13 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         {
             if (Math.Abs(rn.Value) < double.Epsilon)
             {
-                throw CreateException(MessageCode.DivisionByZero, context, "Division by zero");
+                throw CreateException(MessageCode.DivisionByZero, context);
             }
             return new JyroNumber(ln.Value % rn.Value);
         }
 
         throw CreateException(MessageCode.IncompatibleOperandTypes, context,
-            $"Cannot modulo types '{left.Type}' and '{right.Type}'");
+            "modulo", left.Type.ToString(), right.Type.ToString());
     }
 
     private string UnescapeString(string escaped)

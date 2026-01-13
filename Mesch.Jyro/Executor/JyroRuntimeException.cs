@@ -23,19 +23,26 @@ public sealed class JyroRuntimeException : Exception
     public int ColumnPosition { get; }
 
     /// <summary>
+    /// Gets the collection of arguments that provide context-specific information for this error.
+    /// These arguments are used for template substitution during message formatting.
+    /// </summary>
+    public IReadOnlyList<string> Arguments { get; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="JyroRuntimeException"/> class
-    /// with complete diagnostic information including error code and source location.
+    /// with complete diagnostic information including error code, source location, and formatting arguments.
     /// </summary>
     /// <param name="code">The diagnostic code identifying the specific error type.</param>
     /// <param name="lineNumber">The 1-based line number where the error occurred.</param>
     /// <param name="columnPosition">The 1-based column position where the error occurred.</param>
-    /// <param name="errorMessage">The message that describes the runtime error.</param>
-    public JyroRuntimeException(MessageCode code, int lineNumber, int columnPosition, string errorMessage)
-        : base(errorMessage)
+    /// <param name="arguments">Arguments for message template substitution.</param>
+    public JyroRuntimeException(MessageCode code, int lineNumber, int columnPosition, params string[] arguments)
+        : base(arguments.Length > 0 ? string.Join(", ", arguments) : code.ToString())
     {
         Code = code;
         LineNumber = lineNumber;
         ColumnPosition = columnPosition;
+        Arguments = arguments;
     }
 
     /// <summary>
@@ -51,6 +58,7 @@ public sealed class JyroRuntimeException : Exception
         Code = MessageCode.RuntimeError;
         LineNumber = 0;
         ColumnPosition = 0;
+        Arguments = [errorMessage];
     }
 
     /// <summary>
@@ -69,5 +77,6 @@ public sealed class JyroRuntimeException : Exception
         Code = MessageCode.RuntimeError;
         LineNumber = 0;
         ColumnPosition = 0;
+        Arguments = [errorMessage];
     }
 }

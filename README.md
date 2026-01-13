@@ -883,6 +883,122 @@ Jyro has a standardized set of diagnostic codes organized by processing stage:
 - `Linking` - Reference resolution stage
 - `Execution` - Runtime stage
 
+### Message Formatting
+
+#### IMessageProvider Interface
+
+Defines the contract for formatting diagnostic messages into human-readable strings. Enables localization and custom formatting.
+
+```csharp
+public interface IMessageProvider
+{
+    string Format(IMessage message);
+    string? GetTemplate(MessageCode code);
+}
+```
+
+#### MessageProvider Class
+
+The default implementation provides English-language templates with standardized formatting:
+
+```csharp
+var messageProvider = new MessageProvider();
+var formattedMessage = messageProvider.Format(message);
+// Output: "Line 10, Column 5, JM5230: Cannot access index on type 'String'"
+```
+
+**Using MessageProvider for formatted output:**
+
+```csharp
+if (!result.IsSuccessful)
+{
+    var messageProvider = new MessageProvider();
+    foreach (var msg in result.Messages)
+    {
+        Console.WriteLine(messageProvider.Format(msg));
+    }
+}
+```
+
+#### Custom Message Providers (Localization)
+
+Implement `IMessageProvider` to customize error message formatting for different languages or formats:
+
+```csharp
+public class FrenchMessageProvider : IMessageProvider
+{
+    private readonly Dictionary<MessageCode, string> _templates = new()
+    {
+        { MessageCode.DivisionByZero, "Division par zéro" },
+        { MessageCode.InvalidIndexTarget, "Accès à l'index impossible sur le type '{0}'" },
+        { MessageCode.PropertyAccessOnNull, "Impossible d'accéder à la propriété '{0}' sur null" },
+        // ... other templates
+    };
+
+    public string Format(IMessage message)
+    {
+        var template = GetTemplate(message.Code) ?? message.Code.ToString();
+        var text = message.Arguments.Count > 0
+            ? string.Format(template, message.Arguments.ToArray())
+            : template;
+        return $"Ligne {message.LineNumber}, Colonne {message.ColumnPosition}: {text}";
+    }
+
+    public string? GetTemplate(MessageCode code) =>
+        _templates.TryGetValue(code, out var t) ? t : null;
+}
+```
+
+**Configuring a custom provider:**
+
+```csharp
+var options = new JyroExecutionOptions
+{
+    MessageProvider = new FrenchMessageProvider()
+};
+
+var result = JyroBuilder
+    .Create(loggerFactory)
+    .WithScript(script)
+    .WithData(data)
+    .WithOptions(options)
+    .Run();
+```
+
+**Alternative formats:**
+
+```csharp
+// Error code only
+public class CodeOnlyMessageProvider : IMessageProvider
+{
+    public string Format(IMessage message) => $"JM{(int)message.Code:D4}";
+    public string? GetTemplate(MessageCode code) => null;
+}
+
+// JSON format for API responses
+public class JsonMessageProvider : IMessageProvider
+{
+    public string Format(IMessage message) => JsonSerializer.Serialize(new
+    {
+        code = $"JM{(int)message.Code:D4}",
+        line = message.LineNumber,
+        column = message.ColumnPosition,
+        message = FormatText(message)
+    });
+
+    private string FormatText(IMessage message)
+    {
+        var provider = new MessageProvider();
+        var template = provider.GetTemplate(message.Code) ?? message.Code.ToString();
+        return message.Arguments.Count > 0
+            ? string.Format(template, message.Arguments.ToArray())
+            : template;
+    }
+
+    public string? GetTemplate(MessageCode code) => null;
+}
+```
+
 ### JyroValue Types
 
 #### JyroNull
