@@ -804,12 +804,14 @@ Jyro has a standardized set of diagnostic codes organized by processing stage:
 
 **Validation (3000-3999):**
 - `UnknownValidatorError` (3000)
-- `InvalidVariableReference` (3001)
+- `UndeclaredVariable` (3001)
 - `InvalidAssignmentTarget` (3002)
 - `TypeMismatch` (3003)
 - `LoopStatementOutsideOfLoop` (3004)
 - `ExcessiveLoopNesting` (3005)
 - `UnreachableCode` (3006)
+- `ReservedIdentifier` (3007)
+- `VariableAlreadyDeclared` (3008)
 
 **Linking (4000-4999):**
 - `UnknownLinkerError` (4000)
@@ -817,6 +819,8 @@ Jyro has a standardized set of diagnostic codes organized by processing stage:
 - `DuplicateFunction` (4002)
 - `FunctionOverride` (4003)
 - `InvalidNumberArguments` (4004)
+- `TooFewArguments` (4005)
+- `TooManyArguments` (4006)
 
 **Execution (5000-5999):**
 

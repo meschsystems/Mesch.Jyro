@@ -133,12 +133,12 @@ public sealed class Linker
                         functionReference.Name, signature.MinimumArgumentCount, actualCount);
 
                     diagnosticMessages.Add(new Message(
-                        MessageCode.InvalidNumberArguments,
+                        MessageCode.TooFewArguments,
                         functionReference.LineNumber, functionReference.ColumnPosition,
                         MessageSeverity.Error,
                         ProcessingStage.Linking,
                         functionReference.Name,
-                        $"at least {signature.MinimumArgumentCount}",
+                        signature.MinimumArgumentCount.ToString(),
                         actualCount.ToString()));
                 }
                 else if (actualCount > signature.MaximumArgumentCount)
@@ -148,12 +148,12 @@ public sealed class Linker
                         functionReference.Name, signature.MaximumArgumentCount, actualCount);
 
                     diagnosticMessages.Add(new Message(
-                        MessageCode.InvalidNumberArguments,
+                        MessageCode.TooManyArguments,
                         functionReference.LineNumber, functionReference.ColumnPosition,
                         MessageSeverity.Error,
                         ProcessingStage.Linking,
                         functionReference.Name,
-                        $"at most {signature.MaximumArgumentCount}",
+                        signature.MaximumArgumentCount.ToString(),
                         actualCount.ToString()));
                 }
             }

@@ -114,7 +114,7 @@ public sealed class Validator
                         next.Start.Column,
                         MessageSeverity.Warning,
                         ProcessingStage.Validation,
-                        "Unreachable code after break/continue"));
+                        "break/continue"));
                 }
             }
 
@@ -130,12 +130,12 @@ public sealed class Validator
             if (_builtins.Contains(name))
             {
                 _messages.Add(new Message(
-                    MessageCode.InvalidVariableReference,
+                    MessageCode.ReservedIdentifier,
                     context.Start.Line,
                     context.Start.Column,
                     MessageSeverity.Error,
                     ProcessingStage.Validation,
-                    $"Cannot declare variable with reserved name: {name}"));
+                    name));
                 return null;
             }
 
@@ -143,12 +143,12 @@ public sealed class Validator
             if (_context.IsCurrentScopeVariable(name))
             {
                 _messages.Add(new Message(
-                    MessageCode.InvalidVariableReference,
+                    MessageCode.VariableAlreadyDeclared,
                     context.Start.Line,
                     context.Start.Column,
                     MessageSeverity.Error,
                     ProcessingStage.Validation,
-                    $"Variable '{name}' is already declared in this scope"));
+                    name));
                 return null;
             }
 
@@ -267,7 +267,7 @@ public sealed class Validator
                     context.Start.Column,
                     MessageSeverity.Error,
                     ProcessingStage.Validation,
-                    "break statement outside of loop or switch"));
+                    "break"));
             }
             return null;
         }
@@ -282,7 +282,7 @@ public sealed class Validator
                     context.Start.Column,
                     MessageSeverity.Error,
                     ProcessingStage.Validation,
-                    "continue statement outside of loop"));
+                    "continue"));
             }
             return null;
         }
@@ -323,7 +323,7 @@ public sealed class Validator
                         target.Start.Column,
                         MessageSeverity.Error,
                         ProcessingStage.Validation,
-                        "Cannot reassign Data"));
+                        "Data"));
                     return null;
                 }
 
@@ -401,11 +401,11 @@ public sealed class Validator
                 !_builtins.Contains(name))
             {
                 _messages.Add(new Message(
-                    MessageCode.InvalidVariableReference,
+                    MessageCode.UndeclaredVariable,
                     line, column,
                     MessageSeverity.Error,
                     ProcessingStage.Validation,
-                    $"Undeclared variable: {name}"));
+                    name));
             }
         }
 
@@ -422,7 +422,7 @@ public sealed class Validator
                     token?.Column ?? 0,
                     MessageSeverity.Warning,
                     ProcessingStage.Validation,
-                    $"Loop nesting depth ({_context.LoopDepth}) exceeds recommended maximum ({MaxRecommendedNesting})"));
+                    MaxRecommendedNesting.ToString()));
             }
         }
 

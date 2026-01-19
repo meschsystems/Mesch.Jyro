@@ -82,7 +82,7 @@ public enum MessageCode
     /// A variable was referenced that has not been declared in any accessible scope.
     /// This error enforces proper variable declaration before use.
     /// </summary>
-    InvalidVariableReference = 3001,
+    UndeclaredVariable = 3001,
 
     /// <summary>
     /// An assignment was attempted to an expression that cannot be assigned to.
@@ -113,6 +113,16 @@ public enum MessageCode
     /// This typically occurs after return statements or unconditional branches.
     /// </summary>
     UnreachableCode = 3006,
+
+    /// <summary>
+    /// A variable name conflicts with a reserved identifier (built-in function or keyword).
+    /// </summary>
+    ReservedIdentifier = 3007,
+
+    /// <summary>
+    /// A variable was declared that already exists in the current scope.
+    /// </summary>
+    VariableAlreadyDeclared = 3008,
 
     #endregion
 
@@ -147,6 +157,16 @@ public enum MessageCode
     /// This error enforces proper function call syntax and parameter matching.
     /// </summary>
     InvalidNumberArguments = 4004,
+
+    /// <summary>
+    /// A function was called with fewer arguments than the minimum required.
+    /// </summary>
+    TooFewArguments = 4005,
+
+    /// <summary>
+    /// A function was called with more arguments than the maximum allowed.
+    /// </summary>
+    TooManyArguments = 4006,
 
     #endregion
 

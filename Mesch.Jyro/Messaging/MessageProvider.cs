@@ -34,7 +34,9 @@ public sealed class MessageProvider : IMessageProvider
         { MessageCode.InvalidNumberFormat, "Invalid number format: '{0}'" },
         
         // Validation Templates
-        { MessageCode.InvalidVariableReference, "Invalid variable reference '{0}'" },
+        { MessageCode.UndeclaredVariable, "Undeclared variable '{0}'" },
+        { MessageCode.ReservedIdentifier, "Cannot use reserved name '{0}' as variable" },
+        { MessageCode.VariableAlreadyDeclared, "Variable '{0}' is already declared in this scope" },
         { MessageCode.InvalidAssignmentTarget, "Invalid assignment target '{0}'" },
         { MessageCode.TypeMismatch, "Type mismatch: expected {0}, got {1}" },
         { MessageCode.LoopStatementOutsideOfLoop, "Loop control statement '{0}' used outside of loop context" },
@@ -46,7 +48,9 @@ public sealed class MessageProvider : IMessageProvider
         { MessageCode.DuplicateFunction, "Duplicate function definition '{0}'" },
         { MessageCode.FunctionOverride, "Function '{0}' overrides existing definition" },
         { MessageCode.InvalidNumberArguments, "Function '{0}' expects {1} arguments, but {2} were provided" },
-        
+        { MessageCode.TooFewArguments, "Function '{0}' expects at least {1} arguments, but {2} were provided" },
+        { MessageCode.TooManyArguments, "Function '{0}' expects at most {1} arguments, but {2} were provided" },
+
         // Execution Templates (General)
         { MessageCode.RuntimeError, "Runtime error: {0}" },
         { MessageCode.CancelledByHost, "Execution was cancelled by the host application" },

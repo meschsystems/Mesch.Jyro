@@ -560,7 +560,7 @@ public class ErrorHandlingTests
 
         Assert.False(result.IsSuccessful);
         Assert.Contains(result.Messages, m =>
-            m.Code == MessageCode.InvalidNumberArguments &&
+            m.Code == MessageCode.TooFewArguments &&
             m.Stage == ProcessingStage.Linking);
     }
 
@@ -574,7 +574,7 @@ public class ErrorHandlingTests
 
         Assert.False(result.IsSuccessful);
         Assert.Contains(result.Messages, m =>
-            m.Code == MessageCode.InvalidNumberArguments &&
+            m.Code == MessageCode.TooManyArguments &&
             m.Stage == ProcessingStage.Linking);
     }
 
