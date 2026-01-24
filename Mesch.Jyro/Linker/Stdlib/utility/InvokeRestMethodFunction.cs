@@ -14,6 +14,9 @@ public sealed class InvokeRestMethodFunction : JyroFunctionBase
     private int _currentConcurrentRequests;
     private readonly object _concurrencyLock = new();
 
+    // Key for storing per-execution rate limiting state
+    private const string LastRequestCompletedKey = "InvokeRestMethod.LastRequestCompleted";
+
     public InvokeRestMethodFunction(RestApiOptions options) : base(
         new JyroFunctionSignature(
             "InvokeRestMethod",
@@ -21,7 +24,8 @@ public sealed class InvokeRestMethodFunction : JyroFunctionBase
                 new Parameter("url", ParameterType.String),
                 new Parameter("method", ParameterType.String, isOptionalParameter: true),
                 new Parameter("headers", ParameterType.Object, isOptionalParameter: true),
-                new Parameter("body", ParameterType.Any, isOptionalParameter: true)
+                new Parameter("body", ParameterType.Any, isOptionalParameter: true),
+                new Parameter("delayMs", ParameterType.Number, isOptionalParameter: true)
             ],
             ParameterType.Object))
     {
@@ -46,6 +50,9 @@ public sealed class InvokeRestMethodFunction : JyroFunctionBase
         var body = arguments.Count > 3 && !arguments[3].IsNull
             ? arguments[3]
             : null;
+        var delayMs = arguments.Count > 4 && !arguments[4].IsNull
+            ? (int)GetNumberArgument(arguments, 4)
+            : 0;
 
         // Validate URL
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
@@ -84,6 +91,31 @@ public sealed class InvokeRestMethodFunction : JyroFunctionBase
             _currentConcurrentRequests++;
         }
 
+        // Apply rate limiting delay if specified
+        if (delayMs > 0)
+        {
+            if (delayMs > _options.MaxRequestDelayMs)
+            {
+                throw new JyroRuntimeException(
+                    $"Request delay ({delayMs}ms) exceeds maximum allowed ({_options.MaxRequestDelayMs}ms)");
+            }
+
+            // Get last request completion time from per-execution state (no lock needed - single-threaded)
+            var lastRequestCompleted = DateTime.MinValue;
+            if (executionContext.FunctionState.TryGetValue(LastRequestCompletedKey, out var stored))
+            {
+                lastRequestCompleted = (DateTime)stored;
+            }
+
+            var elapsed = (DateTime.UtcNow - lastRequestCompleted).TotalMilliseconds;
+            var remainingDelayMs = (int)(delayMs - elapsed);
+
+            if (remainingDelayMs > 0)
+            {
+                Thread.Sleep(remainingDelayMs);
+            }
+        }
+
         try
         {
             // Execute the HTTP request synchronously
@@ -100,6 +132,8 @@ public sealed class InvokeRestMethodFunction : JyroFunctionBase
             {
                 _currentConcurrentRequests--;
             }
+            // Store completion time in per-execution state (no lock needed - single-threaded)
+            executionContext.FunctionState[LastRequestCompletedKey] = DateTime.UtcNow;
         }
     }
 

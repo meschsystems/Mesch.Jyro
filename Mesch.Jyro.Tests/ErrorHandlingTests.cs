@@ -299,7 +299,7 @@ public class ErrorHandlingTests
         var script = @"
             if true then
                 var x = 1
-            else if true then
+            elseif true then
                 y = undeclaredVar
             end
         ";
@@ -376,7 +376,7 @@ public class ErrorHandlingTests
             if true then
                 var a = 1
                 Data.x = a
-            else if true then
+            elseif true then
                 var b = 2
                 Data.y = b
             else

@@ -58,6 +58,12 @@ public sealed class RestApiOptions
     public int MaxRedirects { get; set; } = 10;
 
     /// <summary>
+    /// Gets or sets the maximum delay in milliseconds that scripts can request between API calls.
+    /// Default is 10000ms (10 seconds). Set to 0 to disable the rate limiting parameter.
+    /// </summary>
+    public int MaxRequestDelayMs { get; set; } = 10_000; // 10 seconds
+
+    /// <summary>
     /// Gets or sets the list of allowed HTTP methods.
     /// If empty, all methods are allowed. Default allows GET, POST, PUT, PATCH, DELETE.
     /// </summary>

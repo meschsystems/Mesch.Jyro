@@ -63,7 +63,7 @@ public class ControlFlowTests
             var x = 50
             if x >= 100 then
                 Data.result = ""high""
-            else if x >= 50 then
+            elseif x >= 50 then
                 Data.result = ""medium""
             else
                 Data.result = ""low""

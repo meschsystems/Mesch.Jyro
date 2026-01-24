@@ -266,7 +266,7 @@ var script = @"
         # Apply volume discount
         if order.quantity >= 10 then
             discount = 0.15
-        else if order.quantity >= 5 then
+        elseif order.quantity >= 5 then
             discount = 0.10
         end
 
@@ -423,6 +423,62 @@ var result = JyroBuilder
     .WithFunction(new SendEmailFunction(emailService))
     .Run();
 ```
+
+#### Per-Execution State with FunctionState
+
+Custom functions may need to maintain state across multiple calls within a single script execution (e.g., caching, counters, sequence generation). The `JyroExecutionContext.FunctionState` dictionary provides tenant-isolated, per-execution state storage. State is isolated to a single script execution, preventing cross-tenant data leakage and eliminating timing side-channels that could occur with shared state. Since Jyro execution is single-threaded per context, no locking is needed when accessing `FunctionState`.
+
+**Example - Caching expensive lookups:**
+
+```csharp
+public class GetUserFunction : JyroFunctionBase
+{
+    private const string CacheKey = "GetUser.Cache";
+    private readonly IUserRepository _repository;
+
+    public GetUserFunction(IUserRepository repository) : base(new JyroFunctionSignature(
+        "GetUser",
+        [new Parameter("userId", ParameterType.String)],
+        ParameterType.Object))
+    {
+        _repository = repository;
+    }
+
+    public override JyroValue Execute(
+        IReadOnlyList<JyroValue> arguments,
+        JyroExecutionContext executionContext)
+    {
+        var userId = GetStringArgument(arguments, 0);
+
+        // Get or create cache dictionary for this execution
+        if (!executionContext.FunctionState.TryGetValue(CacheKey, out var cacheObj))
+        {
+            cacheObj = new Dictionary<string, JyroObject>();
+            executionContext.FunctionState[CacheKey] = cacheObj;
+        }
+        var cache = (Dictionary<string, JyroObject>)cacheObj;
+
+        // Return cached result if available
+        if (cache.TryGetValue(userId, out var cachedUser))
+        {
+            return cachedUser;
+        }
+
+        // Fetch from repository (expensive operation)
+        var user = _repository.GetUser(userId);
+        var result = ConvertToJyroObject(user);
+
+        // Cache for subsequent calls within this execution
+        cache[userId] = result;
+
+        return result;
+    }
+}
+```
+
+This cache is fresh for each script execution — no stale data across requests, no cross-tenant leakage.
+
+**Key prefix convention**: Use `"FunctionName.StateKey"` format to avoid collisions between different functions (e.g., `"GetUser.Cache"`).
 
 ### 4. Plugin Architecture - Loading Functions from DLLs
 
@@ -1296,10 +1352,14 @@ The Jyro standard library provides a [comprehensive set of functions](https://do
 Functions for numeric calculations and mathematical operations.
 
 - [**Abs**](https://docs.mesch.cloud/jyro/functions/stdlib/math/abs/) - Calculate absolute value of a number
+- [**Average**](https://docs.mesch.cloud/jyro/functions/stdlib/math/average/) - Calculate arithmetic mean of multiple numbers
+- [**Clamp**](https://docs.mesch.cloud/jyro/functions/stdlib/math/clamp/) - Constrain a value to be within a specified range
 - [**Max**](https://docs.mesch.cloud/jyro/functions/stdlib/math/max/) - Find maximum value from multiple arguments
+- [**Median**](https://docs.mesch.cloud/jyro/functions/stdlib/math/median/) - Find middle value of sorted numbers
 - [**Min**](https://docs.mesch.cloud/jyro/functions/stdlib/math/min/) - Find minimum value from multiple arguments
+- [**Mode**](https://docs.mesch.cloud/jyro/functions/stdlib/math/mode/) - Find most frequently occurring value
 - [**RandomInt**](https://docs.mesch.cloud/jyro/functions/stdlib/math/randomint/) - Generate cryptographically secure random integer within range
-- [**Round**](https://docs.mesch.cloud/jyro/functions/stdlib/math/round/) - Round number to specified decimal places
+- [**Round**](https://docs.mesch.cloud/jyro/functions/stdlib/math/round/) - Round number to specified decimal places with configurable mode (floor, ceiling, away)
 - [**Sum**](https://docs.mesch.cloud/jyro/functions/stdlib/math/sum/) - Calculate sum of multiple numeric arguments
 
 ### String Manipulation
@@ -1310,10 +1370,14 @@ Functions for processing and transforming text data.
 - [**EndsWith**](https://docs.mesch.cloud/jyro/functions/stdlib/string/endswith/) - Test if string ends with specified suffix
 - [**Join**](https://docs.mesch.cloud/jyro/functions/stdlib/string/join/) - Join array elements into single string with delimiter
 - [**Lower**](https://docs.mesch.cloud/jyro/functions/stdlib/string/lower/) - Convert string to lowercase
+- [**PadLeft**](https://docs.mesch.cloud/jyro/functions/stdlib/string/padleft/) - Pad string on left to specified length
+- [**PadRight**](https://docs.mesch.cloud/jyro/functions/stdlib/string/padright/) - Pad string on right to specified length
+- [**PositionOf**](https://docs.mesch.cloud/jyro/functions/stdlib/string/positionof/) - Find zero-based index of substring within string
 - [**RandomString**](https://docs.mesch.cloud/jyro/functions/stdlib/string/randomstring/) - Generate cryptographically secure random string from character set
 - [**Replace**](https://docs.mesch.cloud/jyro/functions/stdlib/string/replace/) - Replace all occurrences of substring with replacement
 - [**Split**](https://docs.mesch.cloud/jyro/functions/stdlib/string/split/) - Split string into array using delimiter
 - [**StartsWith**](https://docs.mesch.cloud/jyro/functions/stdlib/string/startswith/) - Test if string begins with specified prefix
+- [**Substring**](https://docs.mesch.cloud/jyro/functions/stdlib/string/substring/) - Extract portion of string from start position
 - [**Trim**](https://docs.mesch.cloud/jyro/functions/stdlib/string/trim/) - Remove leading and trailing whitespace
 - [**Upper**](https://docs.mesch.cloud/jyro/functions/stdlib/string/upper/) - Convert string to uppercase
 - [**ToNumber**](https://docs.mesch.cloud/jyro/functions/stdlib/string/tonumber/) - Convert a string to a number
@@ -1325,6 +1389,7 @@ Functions for manipulating and processing array data structures.
 - [**Append**](https://docs.mesch.cloud/jyro/functions/stdlib/array/append/) - Add value to end of array
 - [**Clear**](https://docs.mesch.cloud/jyro/functions/stdlib/array/clear/) - Remove all elements from array
 - [**CountIf**](https://docs.mesch.cloud/jyro/functions/stdlib/array/countif/) - Count elements where field matches value using comparison operator
+- [**Distinct**](https://docs.mesch.cloud/jyro/functions/stdlib/array/distinct/) - Remove duplicate values from array using deep equality
 - [**Filter**](https://docs.mesch.cloud/jyro/functions/stdlib/array/filter/) - Return new array with elements matching field comparison criteria
 - [**First**](https://docs.mesch.cloud/jyro/functions/stdlib/array/first/) - Return first element of array without modifying it
 - [**GroupBy**](https://docs.mesch.cloud/jyro/functions/stdlib/array/groupby/) - Group array of objects by field value into keyed object
@@ -1370,6 +1435,7 @@ Miscellaneous functions for inspecting and testing data types, value generation,
 - [**NewGuid**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/newguid) - Generate a new globally unique identifier (GUID)
 - [**NotEqual**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/notequal/) - Test inequality between two values
 - [**TypeOf**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/typeof/) - Get type name of value as string
+- [**Values**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/values/) - Get array of property values from an object
 
 ### Usage Patterns
 
@@ -1395,7 +1461,7 @@ var isActive = true
 ```jyro
 if age >= 18 then
     Data.status = "adult"
-else if age >= 13 then
+elseif age >= 13 then
     Data.status = "teen"
 else
     Data.status = "child"

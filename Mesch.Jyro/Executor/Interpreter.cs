@@ -197,7 +197,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         }
 
         // Else if clauses
-        var elseIfCount = context.IF().Length - 1;
+        var elseIfCount = context.ELSEIF().Length;
         for (int i = 0; i < elseIfCount; i++)
         {
             var condition = Visit(context.expression(i + 1));
@@ -220,7 +220,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         }
 
         // Else clause
-        if (context.ELSE().Length > elseIfCount)
+        if (context.ELSE() != null)
         {
             _context.Variables.PushScope();
             try
@@ -1309,8 +1309,8 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
             // If we're past THEN, collect statements until we hit ELSE or END
             if (pastThen)
             {
-                // Stop at ELSE or END
-                if (child is ITerminalNode term && (term.Symbol.Type == JyroParser.ELSE || term.Symbol.Type == JyroParser.END))
+                // Stop at ELSEIF, ELSE, or END
+                if (child is ITerminalNode term && (term.Symbol.Type == JyroParser.ELSEIF || term.Symbol.Type == JyroParser.ELSE || term.Symbol.Type == JyroParser.END))
                 {
                     yield break;
                 }
@@ -1331,7 +1331,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
 
     private IEnumerable<JyroParser.StatementContext> GetElseIfStatements(JyroParser.IfStmtContext context, int elseIfIndex)
     {
-        // Walk through children to find statements between the Nth "ELSE IF...THEN" and the next keyword
+        // Walk through children to find statements between the Nth "ELSEIF...THEN" and the next keyword
         var children = context.children;
         int elseIfCount = 0;
         bool inTargetBranch = false;
@@ -1340,22 +1340,18 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         {
             var child = children[i];
 
-            // Check if this is "ELSE" followed by "IF"
-            if (child is ITerminalNode terminal && terminal.Symbol.Type == JyroParser.ELSE)
+            // Check if this is an ELSEIF token
+            if (child is ITerminalNode terminal && terminal.Symbol.Type == JyroParser.ELSEIF)
             {
-                if (i + 1 < children.Count && children[i + 1] is ITerminalNode nextTerminal
-                    && nextTerminal.Symbol.Type == JyroParser.IF)
+                if (elseIfCount == elseIfIndex)
                 {
-                    if (elseIfCount == elseIfIndex)
-                    {
-                        inTargetBranch = true;
-                    }
-                    else if (elseIfCount > elseIfIndex)
-                    {
-                        yield break; // Past our target branch
-                    }
-                    elseIfCount++;
+                    inTargetBranch = true;
                 }
+                else if (elseIfCount > elseIfIndex)
+                {
+                    yield break; // Past our target branch
+                }
+                elseIfCount++;
             }
 
             // If we're in the target branch and hit a THEN, start collecting statements
@@ -1366,8 +1362,8 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
                 {
                     var stmt = children[j];
 
-                    // Stop at the next keyword (ELSE, END)
-                    if (stmt is ITerminalNode term && (term.Symbol.Type == JyroParser.ELSE || term.Symbol.Type == JyroParser.END))
+                    // Stop at the next keyword (ELSEIF, ELSE, END)
+                    if (stmt is ITerminalNode term && (term.Symbol.Type == JyroParser.ELSEIF || term.Symbol.Type == JyroParser.ELSE || term.Symbol.Type == JyroParser.END))
                     {
                         yield break;
                     }
@@ -1383,7 +1379,7 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
 
     private IEnumerable<JyroParser.StatementContext> GetElseStatements(JyroParser.IfStmtContext context)
     {
-        // Find the final ELSE (not followed by IF) and collect statements until END
+        // Find the ELSE token and collect statements until END
         var children = context.children;
         bool inElseBranch = false;
 
@@ -1391,19 +1387,9 @@ public class Interpreter : JyroBaseVisitor<JyroValue>
         {
             var child = children[i];
 
-            // Check if this is "ELSE" NOT followed by "IF"
+            // Check if this is an ELSE token (ELSEIF is a separate token now)
             if (child is ITerminalNode terminal && terminal.Symbol.Type == JyroParser.ELSE)
             {
-                if (i + 1 < children.Count)
-                {
-                    var next = children[i + 1];
-                    if (next is ITerminalNode nextTerminal && nextTerminal.Symbol.Type == JyroParser.IF)
-                    {
-                        continue; // This is ELSE IF, not the final ELSE
-                    }
-                }
-
-                // This is the final ELSE
                 inElseBranch = true;
                 continue;
             }

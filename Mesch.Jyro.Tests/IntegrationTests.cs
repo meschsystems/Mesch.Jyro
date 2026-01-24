@@ -332,7 +332,7 @@ public class IntegrationTests
                 # Apply volume discount
                 if order.quantity >= 10 then
                     discount = 0.15
-                else if order.quantity >= 5 then
+                elseif order.quantity >= 5 then
                     discount = 0.10
                 end
 

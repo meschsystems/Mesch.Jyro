@@ -46,7 +46,7 @@ incDecStmt
 // ---- Control Flow ----
 ifStmt
     : IF expression THEN statement*
-      (ELSE IF expression THEN statement*)*
+      (ELSEIF expression THEN statement*)*
       (ELSE statement*)?
       END
     ;
@@ -158,6 +158,7 @@ propertyName
     | VAR
     | IF
     | THEN
+    | ELSEIF
     | ELSE
     | END
     | SWITCH
@@ -237,6 +238,7 @@ argList
 VAR        : 'var';
 IF         : 'if';
 THEN       : 'then';
+ELSEIF     : 'elseif';
 ELSE       : 'else';
 END        : 'end';
 SWITCH     : 'switch';

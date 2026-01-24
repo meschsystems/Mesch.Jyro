@@ -2461,4 +2461,186 @@ public class StandardLibraryTests
     }
 
     #endregion
+
+    #region New 1.0-target Functions
+
+    [Fact]
+    public void Substring_ExtractsPortionOfString()
+    {
+        var script = "Data.result = Substring(\"Hello World\", 0, 5)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("Hello", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Substring_ExtractsToEnd()
+    {
+        var script = "Data.result = Substring(\"Hello World\", 6)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("World", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void PositionOf_FindsSubstring()
+    {
+        var script = "Data.result = PositionOf(\"Hello World\", \"World\")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(6, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void PositionOf_ReturnsNegativeOneWhenNotFound()
+    {
+        var script = "Data.result = PositionOf(\"Hello\", \"xyz\")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(-1, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Average_CalculatesMean()
+    {
+        var script = "Data.result = Average(10, 20, 30)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(20, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Median_FindsMiddleValue()
+    {
+        var script = "Data.result = Median(1, 3, 5)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Median_AveragesMiddleTwoForEvenCount()
+    {
+        var script = "Data.result = Median(1, 3, 5, 7)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(4, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Mode_FindsMostFrequent()
+    {
+        var script = "Data.result = Mode(1, 2, 2, 3, 3, 3)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Clamp_ConstrainsValueToRange()
+    {
+        var script = "Data.result = Clamp(150, 0, 100)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(100, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Clamp_ReturnsValueWhenInRange()
+    {
+        var script = "Data.result = Clamp(50, 0, 100)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(50, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Distinct_RemovesDuplicates()
+    {
+        var script = "Data.result = Distinct([1, 2, 2, 3, 1])";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var arr = (JyroArray)data.GetProperty("result");
+        Assert.Equal(3, arr.Length);
+        Assert.Equal(1, ((JyroNumber)arr[0]).Value);
+        Assert.Equal(2, ((JyroNumber)arr[1]).Value);
+        Assert.Equal(3, ((JyroNumber)arr[2]).Value);
+    }
+
+    [Fact]
+    public void Values_ReturnsObjectPropertyValues()
+    {
+        var script = @"
+            var obj = {""a"": 1, ""b"": 2}
+            Data.result = Values(obj)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var arr = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, arr.Length);
+    }
+
+    [Fact]
+    public void PadLeft_PadsWithZeros()
+    {
+        var script = "Data.result = PadLeft(\"42\", 5, \"0\")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("00042", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void PadRight_PadsWithSpaces()
+    {
+        var script = "Data.result = PadRight(\"Hi\", 5)";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("Hi   ", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Round_WithFloorMode()
+    {
+        var script = "Data.result = Round(3.7, 0, \"floor\")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Round_WithCeilingMode()
+    {
+        var script = "Data.result = Round(3.2, 0, \"ceiling\")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(4, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Round_WithAwayMode()
+    {
+        var script = "Data.result = Round(2.5, 0, \"away\")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(3, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    #endregion
 }

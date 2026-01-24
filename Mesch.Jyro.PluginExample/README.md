@@ -81,6 +81,48 @@ This example project includes three sample functions:
 - **ReverseString(text)** - Reverses a string
 - **Multiply(a, b)** - Multiplies two numbers
 
+## Per-Execution State
+
+If your function needs to maintain state across multiple calls within a single script execution (e.g., sequence generation, caching), use `executionContext.FunctionState`:
+
+```csharp
+public class NextIdFunction : JyroFunctionBase
+{
+    private const string CounterKey = "NextId.Counter";
+
+    public NextIdFunction() : base(new JyroFunctionSignature(
+        "NextId", [], ParameterType.Number))
+    {
+    }
+
+    public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
+    {
+        // Get current counter value
+        var counter = 0;
+        if (executionContext.FunctionState.TryGetValue(CounterKey, out var stored))
+        {
+            counter = (int)stored;
+        }
+
+        counter++;
+
+        // Store updated counter
+        executionContext.FunctionState[CounterKey] = counter;
+
+        return new JyroNumber(counter);
+    }
+}
+```
+
+```jyro
+# Each call returns the next ID: 1, 2, 3...
+var id1 = NextId()  # 1
+var id2 = NextId()  # 2
+var id3 = NextId()  # 3
+```
+
+This state is isolated per script execution — the counter resets for each new execution, ensuring tenant isolation and preventing cross-execution data leakage.
+
 ## Requirements
 
 - All function classes must have a public parameterless constructor

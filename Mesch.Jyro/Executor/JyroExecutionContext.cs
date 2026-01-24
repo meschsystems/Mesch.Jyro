@@ -63,6 +63,7 @@ public sealed class JyroExecutionContext
         Messages = [];
         ScriptCallStack = [];
         Functions = linkedProgram.Functions;
+        FunctionState = new Dictionary<string, object>();
 
         Variables.Declare(RootIdentifier, initialDataValue ?? JyroNull.Instance);
     }
@@ -154,4 +155,15 @@ public sealed class JyroExecutionContext
     /// is not supported for this execution context.
     /// </value>
     public JyroScriptResolver? Resolver { get; }
+
+    /// <summary>
+    /// Gets a dictionary for storing per-execution state used by library functions.
+    /// This allows functions to maintain state that is isolated to a single script execution,
+    /// preventing cross-tenant data leakage or side-channel attacks.
+    /// </summary>
+    /// <value>
+    /// A dictionary mapping string keys to arbitrary state objects. Each function should use
+    /// a unique key prefix (e.g., "FunctionName.StateKey") to avoid collisions.
+    /// </value>
+    public Dictionary<string, object> FunctionState { get; }
 }

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit.Abstractions;
@@ -262,6 +263,163 @@ public class RestApiTests
             m.Severity == MessageSeverity.Error &&
             (m.ToString() ?? "").Contains("method") &&
             (m.ToString() ?? "").Contains("not allowed"));
+    }
+
+    #endregion
+
+    #region Rate Limiting
+
+    [Fact]
+    public void InvokeRestMethod_WithDelayParameter_AcceptsParameter()
+    {
+        // Test that the delayMs parameter is accepted without error
+        var script = @"
+            var response = InvokeRestMethod(
+                ""https://jsonplaceholder.typicode.com/posts/1"",
+                ""GET"",
+                null,
+                null,
+                100
+            )
+            Data.statusCode = response.statusCode
+        ";
+
+        var result = ExecuteWithRestApi(script);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(200.0, ((JyroNumber)data.GetProperty("statusCode")).Value);
+    }
+
+    [Fact]
+    public void InvokeRestMethod_DelayExceedsMaximum_ThrowsException()
+    {
+        var script = @"
+            var response = InvokeRestMethod(
+                ""https://jsonplaceholder.typicode.com/posts/1"",
+                ""GET"",
+                null,
+                null,
+                20000
+            )
+            Data.result = response
+        ";
+
+        var options = new RestApiOptions
+        {
+            MaxRequestDelayMs = 10_000  // 10 seconds max
+        };
+
+        var result = ExecuteWithRestApi(script, options, expectSuccess: false);
+
+        Assert.False(result.IsSuccessful);
+        Assert.Contains(result.Messages, m =>
+            m.Severity == MessageSeverity.Error &&
+            (m.ToString() ?? "").Contains("delay") &&
+            (m.ToString() ?? "").Contains("exceeds"));
+    }
+
+    [Fact]
+    public void InvokeRestMethod_ZeroDelay_NoError()
+    {
+        // Test that zero delay is accepted (effectively no rate limiting)
+        var script = @"
+            var response = InvokeRestMethod(
+                ""https://jsonplaceholder.typicode.com/posts/1"",
+                ""GET"",
+                null,
+                null,
+                0
+            )
+            Data.statusCode = response.statusCode
+        ";
+
+        var result = ExecuteWithRestApi(script);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(200.0, ((JyroNumber)data.GetProperty("statusCode")).Value);
+    }
+
+    [Fact]
+    public void InvokeRestMethod_MultipleRequestsWithDelay_EnforcesMinimumInterval()
+    {
+        // Test that multiple requests with delay parameter enforce minimum spacing
+        // We use a small delay to keep test fast but still measurable
+        var script = @"
+            var response1 = InvokeRestMethod(
+                ""https://jsonplaceholder.typicode.com/posts/1"",
+                ""GET"",
+                null,
+                null,
+                300
+            )
+
+            var response2 = InvokeRestMethod(
+                ""https://jsonplaceholder.typicode.com/posts/2"",
+                ""GET"",
+                null,
+                null,
+                300
+            )
+
+            Data.response1Status = response1.statusCode
+            Data.response2Status = response2.statusCode
+        ";
+
+        var stopwatch = Stopwatch.StartNew();
+        var result = ExecuteWithRestApi(script);
+        stopwatch.Stop();
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(200.0, ((JyroNumber)data.GetProperty("response1Status")).Value);
+        Assert.Equal(200.0, ((JyroNumber)data.GetProperty("response2Status")).Value);
+
+        // The elapsed time should be at least the delay (300ms) between requests
+        // The first request completes, then we wait up to 300ms before the second starts
+        // We check for >= 250ms to allow for timing variance
+        Assert.True(stopwatch.ElapsedMilliseconds >= 250,
+            $"Expected at least 250ms elapsed, got {stopwatch.ElapsedMilliseconds}ms");
+    }
+
+    [Fact]
+    public void InvokeRestMethod_NullDelay_TreatedAsNoDelay()
+    {
+        // Test that null delay parameter is accepted and treated as no delay
+        var script = @"
+            var response = InvokeRestMethod(
+                ""https://jsonplaceholder.typicode.com/posts/1"",
+                ""GET"",
+                null,
+                null,
+                null
+            )
+            Data.statusCode = response.statusCode
+        ";
+
+        var result = ExecuteWithRestApi(script);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(200.0, ((JyroNumber)data.GetProperty("statusCode")).Value);
+    }
+
+    [Fact]
+    public void InvokeRestMethod_NegativeDelay_TreatedAsNoDelay()
+    {
+        // Negative delay should be treated as no delay (or zero)
+        var script = @"
+            var response = InvokeRestMethod(
+                ""https://jsonplaceholder.typicode.com/posts/1"",
+                ""GET"",
+                null,
+                null,
+                -100
+            )
+            Data.statusCode = response.statusCode
+        ";
+
+        var result = ExecuteWithRestApi(script);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(200.0, ((JyroNumber)data.GetProperty("statusCode")).Value);
     }
 
     #endregion

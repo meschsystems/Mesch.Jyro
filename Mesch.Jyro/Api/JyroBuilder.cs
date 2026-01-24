@@ -145,10 +145,10 @@ public sealed partial class JyroBuilder
     /// <remarks>
     /// The standard library includes the following function categories:
     /// <list type="bullet">
-    /// <item><description>String functions: upper, lower, trim, replace, contains, startsWith, endsWith, split, join, toNumber</description></item>
-    /// <item><description>Array functions: length, append, countIf, filter, first, last, indexOf, insert, pop, removeLast, removeAt, clear, mergeArrays, sort, sortByField, reverse</description></item>
-    /// <item><description>Math functions: min, max, sum, abs, round</description></item>
-    /// <item><description>Utility functions: equal, notEqual, typeOf, exists, isNull, base64Encode, base64Decode, newGuid, callScript</description></item>
+    /// <item><description>String functions: upper, lower, trim, replace, contains, startsWith, endsWith, split, join, toNumber, substring, positionOf, padLeft, padRight</description></item>
+    /// <item><description>Array functions: length, append, countIf, filter, first, last, indexOf, insert, pop, removeLast, removeAt, clear, mergeArrays, sort, sortByField, reverse, distinct</description></item>
+    /// <item><description>Math functions: min, max, sum, abs, round, average, median, mode, clamp</description></item>
+    /// <item><description>Utility functions: equal, notEqual, typeOf, exists, isNull, base64Encode, base64Decode, newGuid, callScript, keys, values</description></item>
     /// <item><description>Date functions: now, today, parseDate, formatDate, dateAdd, dateDiff, datePart</description></item>
     /// </list>
     /// <para>
@@ -170,10 +170,14 @@ public sealed partial class JyroBuilder
             new EndsWithFunction(),
             new JoinFunction(),
             new LowerFunction(),
+            new PadLeftFunction(),
+            new PadRightFunction(),
+            new PositionOfFunction(),
             new RandomStringFunction(),
             new ReplaceFunction(),
             new SplitFunction(),
             new StartsWithFunction(),
+            new SubstringFunction(),
             new ToNumberFunction(),
             new TrimFunction(),
             new UpperFunction(),
@@ -182,6 +186,7 @@ public sealed partial class JyroBuilder
             new AppendFunction(),
             new ClearFunction(),
             new CountIfFunction(),
+            new DistinctFunction(),
             new FilterFunction(),
             new FirstFunction(),
             new GroupByFunction(),
@@ -201,8 +206,12 @@ public sealed partial class JyroBuilder
 
             // Mathematical functions
             new AbsFunction(),
+            new AverageFunction(),
+            new ClampFunction(),
             new MaxFunction(),
+            new MedianFunction(),
             new MinFunction(),
+            new ModeFunction(),
             new RandomIntFunction(),
             new RoundFunction(),
             new SumFunction(),
@@ -219,6 +228,7 @@ public sealed partial class JyroBuilder
             new Base64DecodeFunction(),
             new NotEqualFunction(),
             new TypeOfFunction(),
+            new ValuesFunction(),
 
             // Date and time functions
             new DateAddFunction(),
