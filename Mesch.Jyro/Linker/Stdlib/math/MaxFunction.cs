@@ -11,7 +11,7 @@ public sealed class MaxFunction : JyroFunctionBase
     /// Initializes a new instance of the <see cref="MaxFunction"/> class
     /// with a variadic signature that accepts multiple numeric arguments.
     /// </summary>
-    public MaxFunction() : base(FunctionSignatures.Variadic("Max", ParameterType.Number, ParameterType.Number))
+    public MaxFunction() : base(FunctionSignatures.Variadic("Max", ParameterType.Any, ParameterType.Number, 0))
     {
     }
 

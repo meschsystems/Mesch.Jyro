@@ -7,7 +7,7 @@ Jyro is a secure, sandboxed scripting language for .NET 8+ that lets you safely 
 - **Imperative Programming Model**: Familiar syntax with variables, loops, conditionals, and functions
 - **Secure Sandboxing**: Built-in resource limits (execution time, statement count, stack depth)
 - **Fail-Fast Error Handling**: Runtime errors are caught immediately to prevent data corruption
-- **Rich Standard Library**: String manipulation, array operations, math functions, date/time utilities
+- **Rich Standard Library**: Over 65 standard library functions covering string manipulation, array operations, math functions, date/time and schema validation
 - **Extensible**: Add custom host functions to expose your application's functionality to scripts
 - **ANTLR-Powered**: Fast parsing with clear error messages
 - **Strongly-Typed Runtime**: Type-safe execution with clear error messages
@@ -1372,7 +1372,6 @@ Functions for processing and transforming text data.
 - [**Lower**](https://docs.mesch.cloud/jyro/functions/stdlib/string/lower/) - Convert string to lowercase
 - [**PadLeft**](https://docs.mesch.cloud/jyro/functions/stdlib/string/padleft/) - Pad string on left to specified length
 - [**PadRight**](https://docs.mesch.cloud/jyro/functions/stdlib/string/padright/) - Pad string on right to specified length
-- [**PositionOf**](https://docs.mesch.cloud/jyro/functions/stdlib/string/positionof/) - Find zero-based index of substring within string
 - [**RandomString**](https://docs.mesch.cloud/jyro/functions/stdlib/string/randomstring/) - Generate cryptographically secure random string from character set
 - [**Replace**](https://docs.mesch.cloud/jyro/functions/stdlib/string/replace/) - Replace all occurrences of substring with replacement
 - [**Split**](https://docs.mesch.cloud/jyro/functions/stdlib/string/split/) - Split string into array using delimiter
@@ -1393,7 +1392,7 @@ Functions for manipulating and processing array data structures.
 - [**Filter**](https://docs.mesch.cloud/jyro/functions/stdlib/array/filter/) - Return new array with elements matching field comparison criteria
 - [**First**](https://docs.mesch.cloud/jyro/functions/stdlib/array/first/) - Return first element of array without modifying it
 - [**GroupBy**](https://docs.mesch.cloud/jyro/functions/stdlib/array/groupby/) - Group array of objects by field value into keyed object
-- [**IndexOf**](https://docs.mesch.cloud/jyro/functions/stdlib/array/indexof/) - Find index of element in array using deep equality
+- [**IndexOf**](https://docs.mesch.cloud/jyro/functions/stdlib/array/indexof/) - Find index of substring in string or element in array
 - [**Insert**](https://docs.mesch.cloud/jyro/functions/stdlib/array/insert/) - Insert value at specific array index
 - [**Last**](https://docs.mesch.cloud/jyro/functions/stdlib/array/last/) - Return last element of array without modifying it
 - [**MergeArrays**](https://docs.mesch.cloud/jyro/functions/stdlib/array/mergearrays/) - Combine multiple arrays into single array
@@ -1405,6 +1404,7 @@ Functions for manipulating and processing array data structures.
 - [**Sort**](https://docs.mesch.cloud/jyro/functions/stdlib/array/sort/) - Return new sorted array using type-aware comparison
 - [**SortByField**](https://docs.mesch.cloud/jyro/functions/stdlib/array/sortbyfield/) - Sort array of objects by specified field
 - [**Take**](https://docs.mesch.cloud/jyro/functions/stdlib/array/take/) - Return new array containing first n elements without modifying original
+- [**Length**](https://docs.mesch.cloud/jyro/functions/stdlib/array/length/) - Get length/count of strings, arrays, or objects
 
 ### Date and Time Functions
 
@@ -1431,11 +1431,17 @@ Miscellaneous functions for inspecting and testing data types, value generation,
 - [**InvokeRestMethod**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/invokerestmethod/) - Execute HTTP REST API requests with configurable security options
 - [**IsNull**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/isnull/) - Test if value is null
 - [**Keys**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/keys/) - Get array of property names from an object
-- [**Length**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/length/) - Get length/count of strings, arrays, or objects
 - [**NewGuid**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/newguid) - Generate a new globally unique identifier (GUID)
 - [**NotEqual**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/notequal/) - Test inequality between two values
 - [**TypeOf**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/typeof/) - Get type name of value as string
 - [**Values**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/values/) - Get array of property values from an object
+
+### Schema Validation
+
+Functions for validating data against JSON Schema definitions.
+
+- [**ValidateSchema**](https://docs.mesch.cloud/jyro/functions/stdlib/schema/validateschema/) - Validate data against a JSON Schema and return true/false
+- [**GetSchemaErrors**](https://docs.mesch.cloud/jyro/functions/stdlib/schema/getschemaerrors/) - Validate data and return detailed error information
 
 ### Usage Patterns
 

@@ -14,7 +14,7 @@ public sealed class MedianFunction : JyroFunctionBase
     /// Initializes a new instance of the <see cref="MedianFunction"/> class
     /// with a variadic signature that accepts multiple numeric arguments.
     /// </summary>
-    public MedianFunction() : base(FunctionSignatures.Variadic("Median", ParameterType.Number, ParameterType.Number))
+    public MedianFunction() : base(FunctionSignatures.Variadic("Median", ParameterType.Any, ParameterType.Number, 0))
     {
     }
 

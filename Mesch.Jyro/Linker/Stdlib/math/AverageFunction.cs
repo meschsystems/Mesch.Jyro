@@ -12,7 +12,7 @@ public sealed class AverageFunction : JyroFunctionBase
     /// Initializes a new instance of the <see cref="AverageFunction"/> class
     /// with a variadic signature that accepts multiple numeric arguments.
     /// </summary>
-    public AverageFunction() : base(FunctionSignatures.Variadic("Average", ParameterType.Number, ParameterType.Number))
+    public AverageFunction() : base(FunctionSignatures.Variadic("Average", ParameterType.Any, ParameterType.Number, 0))
     {
     }
 

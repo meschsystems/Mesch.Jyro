@@ -12,7 +12,7 @@ public sealed class SumFunction : JyroFunctionBase
     /// Initializes a new instance of the <see cref="SumFunction"/> class
     /// with a variadic signature that accepts multiple numeric arguments.
     /// </summary>
-    public SumFunction() : base(FunctionSignatures.Variadic("Sum", ParameterType.Number, ParameterType.Number))
+    public SumFunction() : base(FunctionSignatures.Variadic("Sum", ParameterType.Any, ParameterType.Number, 0))
     {
     }
 

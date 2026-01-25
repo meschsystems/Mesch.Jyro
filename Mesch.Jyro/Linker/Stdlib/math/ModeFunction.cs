@@ -13,7 +13,7 @@ public sealed class ModeFunction : JyroFunctionBase
     /// Initializes a new instance of the <see cref="ModeFunction"/> class
     /// with a variadic signature that accepts multiple numeric arguments.
     /// </summary>
-    public ModeFunction() : base(FunctionSignatures.Variadic("Mode", ParameterType.Number, ParameterType.Number))
+    public ModeFunction() : base(FunctionSignatures.Variadic("Mode", ParameterType.Any, ParameterType.Number, 0))
     {
     }
 

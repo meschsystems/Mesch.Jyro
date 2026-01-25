@@ -11,7 +11,7 @@ public sealed class MinFunction : JyroFunctionBase
     /// Initializes a new instance of the <see cref="MinFunction"/> class
     /// with a variadic signature that accepts multiple numeric arguments.
     /// </summary>
-    public MinFunction() : base(FunctionSignatures.Variadic("Min", ParameterType.Number, ParameterType.Number))
+    public MinFunction() : base(FunctionSignatures.Variadic("Min", ParameterType.Any, ParameterType.Number, 0))
     {
     }
 
