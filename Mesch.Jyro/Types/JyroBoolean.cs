@@ -61,8 +61,8 @@ public sealed class JyroBoolean : JyroValue
     /// <summary>
     /// Converts this boolean value to its string representation.
     /// </summary>
-    /// <returns>The string "True" or "False".</returns>
-    public override string ToStringValue() => Value.ToString();
+    /// <returns>The string "true" or "false" (lowercase, JSON-aligned).</returns>
+    public override string ToStringValue() => Value ? "true" : "false";
 
     /// <summary>
     /// Returns the hash code for this boolean value.

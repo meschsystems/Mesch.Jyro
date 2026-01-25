@@ -6,7 +6,7 @@ namespace Mesch.Jyro;
 /// Selects a random element from an array using cryptographically secure random generation.
 /// Uses System.Security.Cryptography.RandomNumberGenerator to ensure unpredictable selection
 /// suitable for security-sensitive scenarios. Each element has an equal probability of being
-/// selected. Throws an error if the array is empty rather than returning null.
+/// selected. Returns null if the array is empty.
 /// </summary>
 public sealed class RandomChoiceFunction : JyroFunctionBase
 {
@@ -29,18 +29,15 @@ public sealed class RandomChoiceFunction : JyroFunctionBase
     /// <returns>
     /// A randomly selected element from the array. The type matches the type of elements
     /// in the array (can be JyroNumber, JyroString, JyroObject, JyroArray, etc.).
+    /// Returns null if the array is empty.
     /// </returns>
-    /// <exception cref="JyroRuntimeException">
-    /// Thrown when the array is empty. Use conditional logic to check array length
-    /// if empty arrays are possible.
-    /// </exception>
     public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var array = GetArrayArgument(arguments, 0);
 
         if (array.Length == 0)
         {
-            throw new JyroRuntimeException("RandomChoice() cannot select from an empty array");
+            return JyroNull.Instance;
         }
 
         // Use cryptographically secure random index generation

@@ -2,7 +2,7 @@ namespace Mesch.Jyro;
 
 /// <summary>
 /// Returns the maximum numeric value from a variable number of arguments.
-/// Accepts multiple numeric values and determines the largest value among them.
+/// Accepts multiple numeric values or a single array and determines the largest value among them.
 /// Non-numeric arguments are ignored during the comparison process.
 /// </summary>
 public sealed class MaxFunction : JyroFunctionBase
@@ -19,7 +19,7 @@ public sealed class MaxFunction : JyroFunctionBase
     /// Executes the maximum value calculation across all provided numeric arguments.
     /// </summary>
     /// <param name="arguments">
-    /// The function arguments containing numeric values to compare.
+    /// The function arguments containing numeric values to compare, or a single array of numeric values.
     /// Non-numeric arguments are ignored during processing.
     /// </param>
     /// <param name="executionContext">The execution context.</param>
@@ -29,10 +29,17 @@ public sealed class MaxFunction : JyroFunctionBase
     /// </returns>
     public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
+        // If a single array argument is passed, unpack it
+        IEnumerable<JyroValue> valuesToProcess = arguments;
+        if (arguments.Count == 1 && arguments[0] is JyroArray singleArray)
+        {
+            valuesToProcess = singleArray;
+        }
+
         var maximumValue = double.MinValue;
         var foundNumericValue = false;
 
-        foreach (var argumentValue in arguments)
+        foreach (var argumentValue in valuesToProcess)
         {
             if (argumentValue is JyroNumber numericArgument)
             {

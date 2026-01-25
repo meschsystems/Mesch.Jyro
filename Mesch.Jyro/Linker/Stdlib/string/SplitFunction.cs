@@ -9,9 +9,15 @@ public sealed class SplitFunction : JyroFunctionBase
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="SplitFunction"/> class
-    /// with a signature that accepts a source string and delimiter, returning an array.
+    /// with a signature that accepts a text string and delimiter, returning an array.
     /// </summary>
-    public SplitFunction() : base(FunctionSignatures.Binary("Split", ParameterType.String, ParameterType.String, ParameterType.Array))
+    public SplitFunction() : base(new JyroFunctionSignature(
+        "Split",
+        new[] {
+            new Parameter("text", ParameterType.String),
+            new Parameter("delimiter", ParameterType.String)
+        },
+        ParameterType.Array))
     {
     }
 
@@ -20,7 +26,7 @@ public sealed class SplitFunction : JyroFunctionBase
     /// </summary>
     /// <param name="arguments">
     /// The function arguments where:
-    /// - arguments[0]: The source string to split (JyroString)
+    /// - arguments[0]: The text string to split (JyroString)
     /// - arguments[1]: The delimiter string used for splitting (JyroString)
     /// </param>
     /// <param name="executionContext">The execution context.</param>
@@ -31,10 +37,10 @@ public sealed class SplitFunction : JyroFunctionBase
     /// </returns>
     public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
-        var sourceString = GetArgument<JyroString>(arguments, 0);
+        var textString = GetArgument<JyroString>(arguments, 0);
         var delimiterString = GetArgument<JyroString>(arguments, 1);
 
-        var splitParts = sourceString.Value.Split(delimiterString.Value, StringSplitOptions.None);
+        var splitParts = textString.Value.Split(delimiterString.Value, StringSplitOptions.None);
         var resultArray = new JyroArray();
 
         foreach (var stringPart in splitParts)

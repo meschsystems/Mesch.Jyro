@@ -11,7 +11,13 @@ public sealed class ContainsFunction : JyroFunctionBase
     /// Initializes a new instance of the <see cref="ContainsFunction"/> class
     /// with a signature that accepts any two values and returns a boolean result.
     /// </summary>
-    public ContainsFunction() : base(FunctionSignatures.Binary("Contains", ParameterType.Any, ParameterType.Any, ParameterType.Boolean))
+    public ContainsFunction() : base(new JyroFunctionSignature(
+        "Contains",
+        new[] {
+            new Parameter("text", ParameterType.Any),
+            new Parameter("search", ParameterType.Any)
+        },
+        ParameterType.Boolean))
     {
     }
 
@@ -20,7 +26,7 @@ public sealed class ContainsFunction : JyroFunctionBase
     /// </summary>
     /// <param name="arguments">
     /// The function arguments where:
-    /// - arguments[0]: The source value to search within (JyroString or JyroArray)
+    /// - arguments[0]: The text or array to search within (JyroString or JyroArray)
     /// - arguments[1]: The value to search for (any JyroValue type)
     /// </param>
     /// <param name="executionContext">The execution context.</param>

@@ -11,7 +11,13 @@ public sealed class StartsWithFunction : JyroFunctionBase
     /// Initializes a new instance of the <see cref="StartsWithFunction"/> class
     /// with a signature that accepts two strings and returns a boolean result.
     /// </summary>
-    public StartsWithFunction() : base(FunctionSignatures.Binary("StartsWith", ParameterType.String, ParameterType.String, ParameterType.Boolean))
+    public StartsWithFunction() : base(new JyroFunctionSignature(
+        "StartsWith",
+        new[] {
+            new Parameter("text", ParameterType.String),
+            new Parameter("prefix", ParameterType.String)
+        },
+        ParameterType.Boolean))
     {
     }
 
@@ -20,7 +26,7 @@ public sealed class StartsWithFunction : JyroFunctionBase
     /// </summary>
     /// <param name="arguments">
     /// The function arguments where:
-    /// - arguments[0]: The source string to test (JyroString)
+    /// - arguments[0]: The text string to test (JyroString)
     /// - arguments[1]: The prefix to search for (JyroString)
     /// </param>
     /// <param name="executionContext">The execution context.</param>
@@ -30,10 +36,10 @@ public sealed class StartsWithFunction : JyroFunctionBase
     /// </returns>
     public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
-        var sourceString = GetArgument<JyroString>(arguments, 0);
+        var textString = GetArgument<JyroString>(arguments, 0);
         var prefixString = GetArgument<JyroString>(arguments, 1);
 
-        var startsWithPrefix = sourceString.Value.StartsWith(prefixString.Value);
+        var startsWithPrefix = textString.Value.StartsWith(prefixString.Value);
         return JyroBoolean.FromBoolean(startsWithPrefix);
     }
 }

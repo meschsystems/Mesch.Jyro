@@ -10,7 +10,13 @@ public sealed class EndsWithFunction : JyroFunctionBase
     /// Initializes a new instance of the <see cref="EndsWithFunction"/> class
     /// with a signature that accepts two strings and returns a boolean result.
     /// </summary>
-    public EndsWithFunction() : base(FunctionSignatures.Binary("EndsWith", ParameterType.String, ParameterType.String, ParameterType.Boolean))
+    public EndsWithFunction() : base(new JyroFunctionSignature(
+        "EndsWith",
+        new[] {
+            new Parameter("text", ParameterType.String),
+            new Parameter("suffix", ParameterType.String)
+        },
+        ParameterType.Boolean))
     {
     }
 
@@ -19,7 +25,7 @@ public sealed class EndsWithFunction : JyroFunctionBase
     /// </summary>
     /// <param name="arguments">
     /// The function arguments where:
-    /// - arguments[0]: The source string to test (JyroString)
+    /// - arguments[0]: The text string to test (JyroString)
     /// - arguments[1]: The suffix to search for (JyroString)
     /// </param>
     /// <param name="executionContext">The execution context.</param>
@@ -29,10 +35,10 @@ public sealed class EndsWithFunction : JyroFunctionBase
     /// </returns>
     public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
-        var sourceString = GetArgument<JyroString>(arguments, 0);
+        var textString = GetArgument<JyroString>(arguments, 0);
         var suffixString = GetArgument<JyroString>(arguments, 1);
 
-        var endsWithSuffix = sourceString.Value.EndsWith(suffixString.Value);
+        var endsWithSuffix = textString.Value.EndsWith(suffixString.Value);
         return JyroBoolean.FromBoolean(endsWithSuffix);
     }
 }

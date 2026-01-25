@@ -728,9 +728,9 @@ public class StandardLibraryTests
         var data = (JyroObject)result.Data;
         var grouped = (JyroObject)data.GetProperty("result");
 
-        // Booleans are converted to string keys "True" and "False" (C# casing)
-        var doneGroup = (JyroArray)grouped.GetProperty("True");
-        var notDoneGroup = (JyroArray)grouped.GetProperty("False");
+        // Booleans are converted to string keys "true" and "false" (lowercase, JSON-aligned)
+        var doneGroup = (JyroArray)grouped.GetProperty("true");
+        var notDoneGroup = (JyroArray)grouped.GetProperty("false");
 
         Assert.Equal(2, doneGroup.Length);
         Assert.Equal(1, notDoneGroup.Length);
@@ -1905,7 +1905,7 @@ public class StandardLibraryTests
     [Fact]
     public void DateAdd_AddsDays()
     {
-        var script = @"Data.result = DateAdd(""2024-01-15"", ""days"", 10)";
+        var script = @"Data.result = DateAdd(""2024-01-15"", 10, ""days"")";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
         var data = (JyroObject)result.Data;
@@ -1916,7 +1916,7 @@ public class StandardLibraryTests
     [Fact]
     public void DateAdd_SubtractsDays()
     {
-        var script = @"Data.result = DateAdd(""2024-01-15"", ""days"", -5)";
+        var script = @"Data.result = DateAdd(""2024-01-15"", -5, ""days"")";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
         var data = (JyroObject)result.Data;
@@ -1927,7 +1927,7 @@ public class StandardLibraryTests
     [Fact]
     public void DateAdd_AddsWeeks()
     {
-        var script = @"Data.result = DateAdd(""2024-01-01"", ""weeks"", 2)";
+        var script = @"Data.result = DateAdd(""2024-01-01"", 2, ""weeks"")";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
         var data = (JyroObject)result.Data;
@@ -1938,7 +1938,7 @@ public class StandardLibraryTests
     [Fact]
     public void DateAdd_AddsMonths()
     {
-        var script = @"Data.result = DateAdd(""2024-01-31"", ""months"", 1)";
+        var script = @"Data.result = DateAdd(""2024-01-31"", 1, ""months"")";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
         var data = (JyroObject)result.Data;
@@ -1949,7 +1949,7 @@ public class StandardLibraryTests
     [Fact]
     public void DateAdd_AddsYears()
     {
-        var script = @"Data.result = DateAdd(""2024-06-15"", ""years"", 5)";
+        var script = @"Data.result = DateAdd(""2024-06-15"", 5, ""years"")";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
         var data = (JyroObject)result.Data;
@@ -1960,7 +1960,7 @@ public class StandardLibraryTests
     [Fact]
     public void DateAdd_AddsHours()
     {
-        var script = @"Data.result = DateAdd(""2024-01-15T10:00:00"", ""hours"", 5)";
+        var script = @"Data.result = DateAdd(""2024-01-15T10:00:00"", 5, ""hours"")";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
         var data = (JyroObject)result.Data;
@@ -1971,7 +1971,7 @@ public class StandardLibraryTests
     [Fact]
     public void DateAdd_AddsMinutes()
     {
-        var script = @"Data.result = DateAdd(""2024-01-15T10:00:00"", ""minutes"", 30)";
+        var script = @"Data.result = DateAdd(""2024-01-15T10:00:00"", 30, ""minutes"")";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
         var data = (JyroObject)result.Data;
@@ -1982,7 +1982,7 @@ public class StandardLibraryTests
     [Fact]
     public void DateAdd_SupportsSingularUnit()
     {
-        var script = @"Data.result = DateAdd(""2024-01-15"", ""day"", 1)";
+        var script = @"Data.result = DateAdd(""2024-01-15"", 1, ""day"")";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
         var data = (JyroObject)result.Data;
@@ -2483,9 +2483,9 @@ public class StandardLibraryTests
     }
 
     [Fact]
-    public void PositionOf_FindsSubstring()
+    public void IndexOf_String_FindsSubstring()
     {
-        var script = "Data.result = PositionOf(\"Hello World\", \"World\")";
+        var script = "Data.result = IndexOf(\"Hello World\", \"World\")";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
         var data = (JyroObject)result.Data;
@@ -2493,9 +2493,9 @@ public class StandardLibraryTests
     }
 
     [Fact]
-    public void PositionOf_ReturnsNegativeOneWhenNotFound()
+    public void IndexOf_String_ReturnsNegativeOneWhenNotFound()
     {
-        var script = "Data.result = PositionOf(\"Hello\", \"xyz\")";
+        var script = "Data.result = IndexOf(\"Hello\", \"xyz\")";
         var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
 
         var data = (JyroObject)result.Data;

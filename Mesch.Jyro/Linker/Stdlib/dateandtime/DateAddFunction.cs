@@ -9,14 +9,14 @@ public sealed class DateAddFunction : JyroFunctionBase
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="DateAddFunction"/> class
-    /// with a signature that accepts a date string, time unit, and amount.
+    /// with a signature that accepts a date string, amount, and time unit.
     /// </summary>
     public DateAddFunction() : base(new JyroFunctionSignature(
         "DateAdd",
         new[] {
             new Parameter("date", ParameterType.String),
-            new Parameter("unit", ParameterType.String),
-            new Parameter("amount", ParameterType.Number)
+            new Parameter("amount", ParameterType.Number),
+            new Parameter("unit", ParameterType.String)
         },
         ParameterType.String))
     {
@@ -28,8 +28,8 @@ public sealed class DateAddFunction : JyroFunctionBase
     /// <param name="arguments">
     /// The function arguments where:
     /// - arguments[0]: The base date string to modify (JyroString)
-    /// - arguments[1]: The time unit for the addition (JyroString)
-    /// - arguments[2]: The amount to add (JyroNumber, must be integer)
+    /// - arguments[1]: The amount to add (JyroNumber, must be integer)
+    /// - arguments[2]: The time unit for the addition (JyroString)
     /// </param>
     /// <param name="executionContext">The execution context.</param>
     /// <returns>
@@ -43,8 +43,8 @@ public sealed class DateAddFunction : JyroFunctionBase
     public override JyroValue Execute(IReadOnlyList<JyroValue> arguments, JyroExecutionContext executionContext)
     {
         var dateStringArgument = GetArgument<JyroString>(arguments, 0);
-        var timeUnitArgument = GetArgument<JyroString>(arguments, 1);
-        var amountArgument = GetArgument<JyroNumber>(arguments, 2);
+        var amountArgument = GetArgument<JyroNumber>(arguments, 1);
+        var timeUnitArgument = GetArgument<JyroString>(arguments, 2);
 
         if (!DateTime.TryParse(dateStringArgument.Value, out var baseDate))
         {
