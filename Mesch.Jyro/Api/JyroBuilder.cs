@@ -139,7 +139,7 @@ public sealed partial class JyroBuilder
 
     /// <summary>
     /// Configures the script environment with a comprehensive standard library of commonly used functions.
-    /// This includes string manipulation, array operations, mathematical functions, utilities, and date/time operations.
+    /// This includes string manipulation, array operations, mathematical functions, utilities, date/time operations, and schema validation.
     /// </summary>
     /// <returns>This builder instance for method chaining.</returns>
     /// <remarks>
@@ -150,6 +150,7 @@ public sealed partial class JyroBuilder
     /// <item><description>Math functions: min, max, sum, abs, round, average, median, mode, clamp</description></item>
     /// <item><description>Utility functions: equal, notEqual, typeOf, exists, isNull, base64Encode, base64Decode, newGuid, callScript, keys, values</description></item>
     /// <item><description>Date functions: now, today, parseDate, formatDate, dateAdd, dateDiff, datePart</description></item>
+    /// <item><description>Schema functions: validateSchema, getSchemaErrors</description></item>
     /// </list>
     /// <para>
     /// API Design Principles:
@@ -237,7 +238,11 @@ public sealed partial class JyroBuilder
             new FormatDateFunction(),
             new NowFunction(),
             new ParseDateFunction(),
-            new TodayFunction()
+            new TodayFunction(),
+
+            // Schema validation functions
+            new ValidateSchemaFunction(),
+            new GetSchemaErrorsFunction()
         };
 
         foreach (var function in standardFunctions)

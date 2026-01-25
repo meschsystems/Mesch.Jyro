@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using Xunit.Abstractions;
 
 namespace Mesch.Jyro.Tests;
 

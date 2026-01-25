@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Xunit.Abstractions;
 
 namespace Mesch.Jyro.Tests;
 

@@ -8,7 +8,7 @@
 		<!-- Package Information -->
 		<PackageId>Mesch.Jyro</PackageId>
 		<RootNamespace>Mesch.Jyro</RootNamespace>
-		<Version>0.7.5</Version>
+		<Version>0.7.6</Version>
 		<Authors>Mesch Systems</Authors>
 		<Company>Mesch Systems</Company>
 		<Summary>A .NET runtime for the Jyro language.</Summary>
@@ -18,7 +18,7 @@
 		<RepositoryUrl>https://github.com/meschsystems/Mesch.Jyro</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Copyright>Copyright © 2025 Mesch Systems.</Copyright>
-		<PackageTags>jyro;scripting;json;language;sandbox;runtime;engine;execution;host</PackageTags>
+		<PackageTags>jyro;scripting;json;language;runtime;sandbox;isolated;secure</PackageTags>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -41,8 +41,8 @@
 		<AssemblyCompany>Mesch Systems</AssemblyCompany>
 		<AssemblyProduct>Jyro</AssemblyProduct>
 		<AssemblyCopyright>Copyright © 2025 Mesch Systems.</AssemblyCopyright>
-		<AssemblyVersion>0.7.5.0</AssemblyVersion>
-		<FileVersion>0.7.5.0</FileVersion>
+		<AssemblyVersion>0.7.6.0</AssemblyVersion>
+		<FileVersion>0.7.6.0</FileVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -58,7 +58,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\README.md" Pack="true" PackagePath="\"/>
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<PropertyGroup>
@@ -66,9 +66,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Antlr4BuildTasks" Version="12.8.0" />
+		<PackageReference Include="Antlr4BuildTasks" Version="12.14.0" />
 		<PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
+		<PackageReference Include="JsonSchema.Net" Version="8.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
