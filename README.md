@@ -7,7 +7,7 @@ Jyro is a secure, sandboxed scripting language for .NET 8+ that lets you safely 
 - **Imperative Programming Model**: Familiar syntax with variables, loops, conditionals, and functions
 - **Secure Sandboxing**: Built-in resource limits (execution time, statement count, stack depth)
 - **Fail-Fast Error Handling**: Runtime errors are caught immediately to prevent data corruption
-- **Rich Standard Library**: Over 65 standard library functions covering string manipulation, array operations, math functions, date/time and schema validation
+- **Rich Standard Library**: Nearly 80 standard library functions covering string manipulation, array operations, math functions, date/time and schema validation
 - **Extensible**: Add custom host functions to expose your application's functionality to scripts
 - **ANTLR-Powered**: Fast parsing with clear error messages
 - **Strongly-Typed Runtime**: Type-safe execution with clear error messages
@@ -1389,11 +1389,14 @@ Functions for processing and transforming text data.
 
 Functions for manipulating and processing array data structures.
 
+- [**All**](https://docs.mesch.cloud/jyro/functions/stdlib/array/all/) - Check if all elements match a condition (short-circuits on first non-match)
+- [**Any**](https://docs.mesch.cloud/jyro/functions/stdlib/array/any/) - Check if any element matches a condition (short-circuits on first match)
 - [**Append**](https://docs.mesch.cloud/jyro/functions/stdlib/array/append/) - Add value to end of array
 - [**Clear**](https://docs.mesch.cloud/jyro/functions/stdlib/array/clear/) - Remove all elements from array
 - [**CountIf**](https://docs.mesch.cloud/jyro/functions/stdlib/array/countif/) - Count elements where field matches value using comparison operator
 - [**Distinct**](https://docs.mesch.cloud/jyro/functions/stdlib/array/distinct/) - Remove duplicate values from array using deep equality
 - [**Filter**](https://docs.mesch.cloud/jyro/functions/stdlib/array/filter/) - Return new array with elements matching field comparison criteria
+- [**Find**](https://docs.mesch.cloud/jyro/functions/stdlib/array/find/) - Find first matching element (short-circuits, returns null if not found)
 - [**First**](https://docs.mesch.cloud/jyro/functions/stdlib/array/first/) - Return first element of array without modifying it
 - [**GroupBy**](https://docs.mesch.cloud/jyro/functions/stdlib/array/groupby/) - Group array of objects by field value into keyed object
 - [**IndexOf**](https://docs.mesch.cloud/jyro/functions/stdlib/array/indexof/) - Find index of substring in string or element in array
@@ -1438,6 +1441,7 @@ Miscellaneous functions for inspecting and testing data types, value generation,
 - [**InvokeRestMethod**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/invokerestmethod/) - Execute HTTP REST API requests with configurable security options
 - [**IsNull**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/isnull/) - Test if value is null
 - [**Keys**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/keys/) - Get array of property names from an object
+- [**Merge**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/merge/) - Combine multiple objects into one (later args override earlier)
 - [**NewGuid**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/newguid) - Generate a new globally unique identifier (GUID)
 - [**NotEqual**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/notequal/) - Test inequality between two values
 - [**TypeOf**](https://docs.mesch.cloud/jyro/functions/stdlib/utility/typeof/) - Get type name of value as string
@@ -1481,6 +1485,34 @@ else
 end
 ```
 
+#### Ternary Operator
+
+Use the ternary operator for inline conditional expressions:
+
+```jyro
+var status = age >= 18 ? "adult" : "minor"
+Data.discount = isMember ? 0.20 : 0.05
+```
+
+#### Switch Statement
+
+Use `switch` for matching a value against multiple cases:
+
+```jyro
+switch Data.status do
+    case "pending" then
+        Data.message = "Awaiting processing"
+    case "approved" then
+        Data.message = "Request approved"
+    case "rejected" then
+        Data.message = "Request denied"
+    default then
+        Data.message = "Unknown status"
+end
+```
+
+Note: Unlike C-style switch statements, Jyro's switch does not fall through to subsequent cases. Only the matching case (or default) is executed. Use `break` to exit a case block early if needed.
+
 ### Loops
 ```jyro
 # While loop
@@ -1507,6 +1539,48 @@ foreach key in obj do
         "value": obj[key]
     })
 end
+```
+
+#### Loop Control: break and continue
+
+Use `break` to exit a loop early, and `continue` to skip to the next iteration:
+
+```jyro
+# Find the first negative number and stop
+var firstNegative = null
+
+foreach num in Data.numbers do
+    if num < 0 then
+        firstNegative = num
+        break
+    end
+end
+
+# Sum only positive numbers
+var positiveSum = 0
+
+foreach num in Data.numbers do
+    if num < 0 then
+        continue
+    end
+    positiveSum = positiveSum + num
+end
+```
+
+#### Increment and Decrement
+
+Use `++` and `--` as shorthand for adding or subtracting 1:
+
+```jyro
+var count = 0
+
+while count < 10 do
+    count++
+end
+
+# Works with Data properties too
+Data.counter = 100
+Data.counter--
 ```
 
 ### Objects and Arrays

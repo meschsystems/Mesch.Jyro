@@ -3163,4 +3163,500 @@ public class StandardLibraryTests
     }
 
     #endregion
+
+    #region Any Function Tests
+
+    [Fact]
+    public void Any_EqualsOperator_ReturnsTrueWhenAnyMatch()
+    {
+        var script = @"
+            var items = [
+                {""status"": ""inactive"", ""name"": ""A""},
+                {""status"": ""active"", ""name"": ""B""},
+                {""status"": ""inactive"", ""name"": ""C""}
+            ]
+            Data.result = Any(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Any_ReturnsFalseWhenNoMatch()
+    {
+        var script = @"
+            var items = [
+                {""status"": ""inactive"", ""name"": ""A""},
+                {""status"": ""pending"", ""name"": ""B""}
+            ]
+            Data.result = Any(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Any_EmptyArray_ReturnsFalse()
+    {
+        var script = @"
+            var items = []
+            Data.result = Any(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Any_GreaterThanOperator()
+    {
+        var script = @"
+            var items = [
+                {""price"": 10},
+                {""price"": 150},
+                {""price"": 50}
+            ]
+            Data.result = Any(items, ""price"", "">"", 100)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Any_NestedFieldPath()
+    {
+        var script = @"
+            var items = [
+                {""address"": {""city"": ""Boston""}},
+                {""address"": {""city"": ""New York""}},
+                {""address"": {""city"": ""Chicago""}}
+            ]
+            Data.result = Any(items, ""address.city"", ""=="", ""New York"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Any_SkipsNonObjectElements()
+    {
+        var script = @"
+            var items = [
+                ""string"",
+                null,
+                {""status"": ""active""}
+            ]
+            Data.result = Any(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Any_MissingField_ReturnsFalse()
+    {
+        var script = @"
+            var items = [
+                {""other"": ""value""},
+                {""another"": ""field""}
+            ]
+            Data.result = Any(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Any_NotEqualsWithNull()
+    {
+        var script = @"
+            var items = [
+                {""status"": null},
+                {""other"": ""field""}
+            ]
+            Data.result = Any(items, ""status"", ""!="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    #endregion
+
+    #region All Function Tests
+
+    [Fact]
+    public void All_EqualsOperator_ReturnsTrueWhenAllMatch()
+    {
+        var script = @"
+            var items = [
+                {""status"": ""active"", ""name"": ""A""},
+                {""status"": ""active"", ""name"": ""B""},
+                {""status"": ""active"", ""name"": ""C""}
+            ]
+            Data.result = All(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void All_ReturnsFalseWhenAnyDoesNotMatch()
+    {
+        var script = @"
+            var items = [
+                {""status"": ""active"", ""name"": ""A""},
+                {""status"": ""inactive"", ""name"": ""B""},
+                {""status"": ""active"", ""name"": ""C""}
+            ]
+            Data.result = All(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void All_EmptyArray_ReturnsTrue()
+    {
+        var script = @"
+            var items = []
+            Data.result = All(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void All_GreaterThanOrEqualOperator()
+    {
+        var script = @"
+            var items = [
+                {""score"": 80},
+                {""score"": 90},
+                {""score"": 75}
+            ]
+            Data.result = All(items, ""score"", "">="", 70)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void All_NestedFieldPath()
+    {
+        var script = @"
+            var items = [
+                {""user"": {""verified"": true}},
+                {""user"": {""verified"": true}}
+            ]
+            Data.result = All(items, ""user.verified"", ""=="", true)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void All_NonObjectElement_ReturnsFalse()
+    {
+        var script = @"
+            var items = [
+                {""status"": ""active""},
+                ""string"",
+                {""status"": ""active""}
+            ]
+            Data.result = All(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void All_MissingField_ReturnsFalse()
+    {
+        var script = @"
+            var items = [
+                {""status"": ""active""},
+                {""other"": ""field""}
+            ]
+            Data.result = All(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    #endregion
+
+    #region Find Function Tests
+
+    [Fact]
+    public void Find_ReturnsFirstMatchingElement()
+    {
+        var script = @"
+            var items = [
+                {""id"": 1, ""status"": ""inactive""},
+                {""id"": 2, ""status"": ""active""},
+                {""id"": 3, ""status"": ""active""}
+            ]
+            Data.result = Find(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var found = (JyroObject)data.GetProperty("result");
+        Assert.Equal(2, ((JyroNumber)found.GetProperty("id")).Value);
+    }
+
+    [Fact]
+    public void Find_ReturnsNullWhenNoMatch()
+    {
+        var script = @"
+            var items = [
+                {""status"": ""inactive""},
+                {""status"": ""pending""}
+            ]
+            Data.result = Find(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(data.GetProperty("result").IsNull);
+    }
+
+    [Fact]
+    public void Find_EmptyArray_ReturnsNull()
+    {
+        var script = @"
+            var items = []
+            Data.result = Find(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(data.GetProperty("result").IsNull);
+    }
+
+    [Fact]
+    public void Find_GreaterThanOperator()
+    {
+        var script = @"
+            var items = [
+                {""id"": 1, ""price"": 50},
+                {""id"": 2, ""price"": 150},
+                {""id"": 3, ""price"": 200}
+            ]
+            Data.result = Find(items, ""price"", "">"", 100)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var found = (JyroObject)data.GetProperty("result");
+        Assert.Equal(2, ((JyroNumber)found.GetProperty("id")).Value);
+    }
+
+    [Fact]
+    public void Find_NestedFieldPath()
+    {
+        var script = @"
+            var items = [
+                {""id"": 1, ""address"": {""city"": ""Boston""}},
+                {""id"": 2, ""address"": {""city"": ""New York""}},
+                {""id"": 3, ""address"": {""city"": ""Chicago""}}
+            ]
+            Data.result = Find(items, ""address.city"", ""=="", ""New York"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var found = (JyroObject)data.GetProperty("result");
+        Assert.Equal(2, ((JyroNumber)found.GetProperty("id")).Value);
+    }
+
+    [Fact]
+    public void Find_SkipsNonObjectElements()
+    {
+        var script = @"
+            var items = [
+                ""string"",
+                null,
+                {""id"": 1, ""status"": ""active""}
+            ]
+            Data.result = Find(items, ""status"", ""=="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var found = (JyroObject)data.GetProperty("result");
+        Assert.Equal(1, ((JyroNumber)found.GetProperty("id")).Value);
+    }
+
+    [Fact]
+    public void Find_NotEqualsOperator()
+    {
+        var script = @"
+            var items = [
+                {""id"": 1, ""status"": ""active""},
+                {""id"": 2, ""status"": ""inactive""},
+                {""id"": 3, ""status"": ""active""}
+            ]
+            Data.result = Find(items, ""status"", ""!="", ""active"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var found = (JyroObject)data.GetProperty("result");
+        Assert.Equal(2, ((JyroNumber)found.GetProperty("id")).Value);
+    }
+
+    #endregion
+
+    #region Merge Function Tests
+
+    [Fact]
+    public void Merge_TwoObjects_CombinesProperties()
+    {
+        var script = @"
+            var obj1 = {""a"": 1, ""b"": 2}
+            var obj2 = {""c"": 3, ""d"": 4}
+            Data.result = Merge(obj1, obj2)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var merged = (JyroObject)data.GetProperty("result");
+        Assert.Equal(4, merged.Count);
+        Assert.Equal(1, ((JyroNumber)merged.GetProperty("a")).Value);
+        Assert.Equal(2, ((JyroNumber)merged.GetProperty("b")).Value);
+        Assert.Equal(3, ((JyroNumber)merged.GetProperty("c")).Value);
+        Assert.Equal(4, ((JyroNumber)merged.GetProperty("d")).Value);
+    }
+
+    [Fact]
+    public void Merge_OverlappingKeys_LaterOverridesEarlier()
+    {
+        var script = @"
+            var defaults = {""theme"": ""light"", ""language"": ""en""}
+            var userPrefs = {""theme"": ""dark""}
+            Data.result = Merge(defaults, userPrefs)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var merged = (JyroObject)data.GetProperty("result");
+        Assert.Equal(2, merged.Count);
+        Assert.Equal("dark", ((JyroString)merged.GetProperty("theme")).Value);
+        Assert.Equal("en", ((JyroString)merged.GetProperty("language")).Value);
+    }
+
+    [Fact]
+    public void Merge_MultipleObjects_Variadic()
+    {
+        var script = @"
+            var obj1 = {""a"": 1}
+            var obj2 = {""b"": 2}
+            var obj3 = {""c"": 3}
+            Data.result = Merge(obj1, obj2, obj3)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var merged = (JyroObject)data.GetProperty("result");
+        Assert.Equal(3, merged.Count);
+        Assert.Equal(1, ((JyroNumber)merged.GetProperty("a")).Value);
+        Assert.Equal(2, ((JyroNumber)merged.GetProperty("b")).Value);
+        Assert.Equal(3, ((JyroNumber)merged.GetProperty("c")).Value);
+    }
+
+    [Fact]
+    public void Merge_NonObjectArguments_AreSkipped()
+    {
+        var script = @"
+            var obj1 = {""a"": 1}
+            var obj2 = {""b"": 2}
+            Data.result = Merge(obj1, ""string"", null, obj2)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var merged = (JyroObject)data.GetProperty("result");
+        Assert.Equal(2, merged.Count);
+        Assert.Equal(1, ((JyroNumber)merged.GetProperty("a")).Value);
+        Assert.Equal(2, ((JyroNumber)merged.GetProperty("b")).Value);
+    }
+
+    [Fact]
+    public void Merge_NoArguments_ReturnsEmptyObject()
+    {
+        var script = @"
+            Data.result = Merge()
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var merged = (JyroObject)data.GetProperty("result");
+        Assert.Equal(0, merged.Count);
+    }
+
+    [Fact]
+    public void Merge_SingleObject_ReturnsCopy()
+    {
+        var script = @"
+            var obj = {""a"": 1, ""b"": 2}
+            Data.result = Merge(obj)
+            obj.c = 3
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var merged = (JyroObject)data.GetProperty("result");
+        Assert.Equal(2, merged.Count);
+        Assert.True(merged.GetProperty("c").IsNull);
+    }
+
+    [Fact]
+    public void Merge_NestedObjects_ShallowCopy()
+    {
+        var script = @"
+            var obj1 = {""nested"": {""a"": 1}}
+            var obj2 = {""nested"": {""b"": 2}}
+            Data.result = Merge(obj1, obj2)
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var merged = (JyroObject)data.GetProperty("result");
+        var nested = (JyroObject)merged.GetProperty("nested");
+        // Shallow merge means obj2's nested replaces obj1's nested entirely
+        Assert.Equal(2, ((JyroNumber)nested.GetProperty("b")).Value);
+        Assert.True(nested.GetProperty("a").IsNull);
+    }
+
+    #endregion
 }

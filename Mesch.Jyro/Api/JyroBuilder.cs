@@ -187,11 +187,14 @@ public sealed partial class JyroBuilder
             new RegexMatchDetailFunction(),
 
             // Array manipulation functions
+            new AllFunction(),
+            new AnyFunction(),
             new AppendFunction(),
             new ClearFunction(),
             new CountIfFunction(),
             new DistinctFunction(),
             new FilterFunction(),
+            new FindFunction(),
             new FirstFunction(),
             new GroupByFunction(),
             new IndexOfFunction(),
@@ -230,6 +233,7 @@ public sealed partial class JyroBuilder
             new ExistsFunction(),
             new IsNullFunction(),
             new KeysFunction(),
+            new MergeFunction(),
             new NewGuidFunction(),
             new Base64EncodeFunction(),
             new Base64DecodeFunction(),
