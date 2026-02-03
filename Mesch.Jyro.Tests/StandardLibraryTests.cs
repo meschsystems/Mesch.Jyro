@@ -108,6 +108,133 @@ public class StandardLibraryTests
         Assert.Equal("a-b-c", ((JyroString)data.GetProperty("result")).Value);
     }
 
+    [Fact]
+    public void RegexMatch_ReturnsFirstMatch()
+    {
+        var script = @"Data.result = RegexMatch(""Contact: john@example.com"", ""[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+[.][a-zA-Z]{2,}"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("john@example.com", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void RegexMatch_ReturnsNullWhenNoMatch()
+    {
+        var script = @"Data.result = RegexMatch(""Hello World"", ""[0-9]+"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(data.GetProperty("result").IsNull);
+    }
+
+    [Fact]
+    public void RegexMatch_ChainsWithStringFunctions()
+    {
+        var script = @"Data.result = Upper(RegexMatch(""email: test@example.com"", ""[a-z]+@[a-z]+[.][a-z]+""))";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal("TEST@EXAMPLE.COM", ((JyroString)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void RegexMatchAll_ReturnsAllMatches()
+    {
+        var script = @"Data.result = RegexMatchAll(""john@a.com and jane@b.org"", ""[a-z]+@[a-z]+[.][a-z]+"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var arr = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, arr.Length);
+        Assert.Equal("john@a.com", ((JyroString)arr[0]).Value);
+        Assert.Equal("jane@b.org", ((JyroString)arr[1]).Value);
+    }
+
+    [Fact]
+    public void RegexMatchAll_ReturnsEmptyArrayWhenNoMatch()
+    {
+        var script = @"Data.result = RegexMatchAll(""Hello World"", ""[0-9]+"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var arr = (JyroArray)data.GetProperty("result");
+        Assert.Equal(0, arr.Length);
+    }
+
+    [Fact]
+    public void RegexMatchAll_ChainsWithArrayFunctions()
+    {
+        var script = @"Data.result = Length(RegexMatchAll(""a1 b2 c3 d4"", ""[0-9]""))";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(4, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void RegexTest_ReturnsTrueWhenPatternMatches()
+    {
+        var script = @"Data.result = RegexTest(""Contact: john@example.com"", ""[a-zA-Z]+@[a-zA-Z]+[.][a-zA-Z]+"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void RegexTest_ReturnsFalseWhenNoMatch()
+    {
+        var script = @"Data.result = RegexTest(""Hello World"", ""[0-9]+"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.False(((JyroBoolean)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void RegexMatchDetail_ReturnsMatchObject()
+    {
+        var script = @"Data.result = RegexMatchDetail(""Contact: john@example.com"", ""([a-zA-Z]+)@([a-zA-Z]+)[.]([a-zA-Z]+)"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var matchResult = (JyroObject)data.GetProperty("result");
+
+        Assert.Equal("john@example.com", ((JyroString)matchResult.GetProperty("match")).Value);
+        Assert.Equal(9, ((JyroNumber)matchResult.GetProperty("index")).Value);
+
+        var groups = (JyroArray)matchResult.GetProperty("groups");
+        Assert.Equal(3, groups.Length);
+        Assert.Equal("john", ((JyroString)groups[0]).Value);
+        Assert.Equal("example", ((JyroString)groups[1]).Value);
+        Assert.Equal("com", ((JyroString)groups[2]).Value);
+    }
+
+    [Fact]
+    public void RegexMatchDetail_ReturnsNullWhenNoMatch()
+    {
+        var script = @"Data.result = RegexMatchDetail(""Hello World"", ""[0-9]+"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.True(data.GetProperty("result").IsNull);
+    }
+
+    [Fact]
+    public void RegexMatchDetail_ReturnsEmptyGroupsWhenNoCaptureGroups()
+    {
+        var script = @"Data.result = RegexMatchDetail(""test123"", ""[0-9]+"")";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var matchResult = (JyroObject)data.GetProperty("result");
+
+        Assert.Equal("123", ((JyroString)matchResult.GetProperty("match")).Value);
+        var groups = (JyroArray)matchResult.GetProperty("groups");
+        Assert.Equal(0, groups.Length);
+    }
+
     #endregion
 
     #region Array Functions

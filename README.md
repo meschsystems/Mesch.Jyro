@@ -1380,6 +1380,10 @@ Functions for processing and transforming text data.
 - [**Trim**](https://docs.mesch.cloud/jyro/functions/stdlib/string/trim/) - Remove leading and trailing whitespace
 - [**Upper**](https://docs.mesch.cloud/jyro/functions/stdlib/string/upper/) - Convert string to uppercase
 - [**ToNumber**](https://docs.mesch.cloud/jyro/functions/stdlib/string/tonumber/) - Convert a string to a number
+- [**RegexMatch**](https://docs.mesch.cloud/jyro/functions/stdlib/string/regexmatch/) - Extract first regex match as string
+- [**RegexMatchAll**](https://docs.mesch.cloud/jyro/functions/stdlib/string/regexmatchall/) - Extract all regex matches as array of strings
+- [**RegexMatchDetail**](https://docs.mesch.cloud/jyro/functions/stdlib/string/regexmatchdetail/) - Extract first match with metadata (index, capture groups)
+- [**RegexTest**](https://docs.mesch.cloud/jyro/functions/stdlib/string/regextest/) - Test if pattern matches anywhere in text
 
 ### Array Operations
 

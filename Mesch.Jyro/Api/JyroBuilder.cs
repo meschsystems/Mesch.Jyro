@@ -181,6 +181,10 @@ public sealed partial class JyroBuilder
             new ToNumberFunction(),
             new TrimFunction(),
             new UpperFunction(),
+            new RegexMatchFunction(),
+            new RegexMatchAllFunction(),
+            new RegexTestFunction(),
+            new RegexMatchDetailFunction(),
 
             // Array manipulation functions
             new AppendFunction(),
