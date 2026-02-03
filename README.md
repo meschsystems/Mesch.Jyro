@@ -1401,10 +1401,13 @@ Functions for manipulating and processing array data structures.
 - [**Last**](https://docs.mesch.cloud/jyro/functions/stdlib/array/last/) - Return last element of array without modifying it
 - [**MergeArrays**](https://docs.mesch.cloud/jyro/functions/stdlib/array/mergearrays/) - Combine multiple arrays into single array
 - [**Pop**](https://docs.mesch.cloud/jyro/functions/stdlib/array/pop/) - Remove and return last array element
+- [**Project**](https://docs.mesch.cloud/jyro/functions/stdlib/array/project/) - Extract multiple fields from each object into new objects
 - [**RandomChoice**](https://docs.mesch.cloud/jyro/functions/stdlib/array/randomchoice/) - Select random element from array using cryptographically secure randomization
 - [**RemoveAt**](https://docs.mesch.cloud/jyro/functions/stdlib/array/removeat/) - Remove element at specific index and return modified array
 - [**RemoveLast**](https://docs.mesch.cloud/jyro/functions/stdlib/array/removelast/) - Remove last element and return modified array
 - [**Reverse**](https://docs.mesch.cloud/jyro/functions/stdlib/array/reverse/) - Return new array with elements in reversed order
+- [**Select**](https://docs.mesch.cloud/jyro/functions/stdlib/array/select/) - Extract a single field from each object in an array
+- [**SelectMany**](https://docs.mesch.cloud/jyro/functions/stdlib/array/selectmany/) - Extract array fields and flatten into a single array
 - [**Sort**](https://docs.mesch.cloud/jyro/functions/stdlib/array/sort/) - Return new sorted array using type-aware comparison
 - [**SortByField**](https://docs.mesch.cloud/jyro/functions/stdlib/array/sortbyfield/) - Sort array of objects by specified field
 - [**Take**](https://docs.mesch.cloud/jyro/functions/stdlib/array/take/) - Return new array containing first n elements without modifying original

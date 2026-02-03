@@ -2768,4 +2768,399 @@ public class StandardLibraryTests
     }
 
     #endregion
+
+    #region Select Function
+
+    [Fact]
+    public void Select_ExtractsSingleField()
+    {
+        var script = @"
+            var items = [
+                {""id"": 1, ""name"": ""A""},
+                {""id"": 2, ""name"": ""B""},
+                {""id"": 3, ""name"": ""C""}
+            ]
+            Data.result = Select(items, ""name"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var selected = (JyroArray)data.GetProperty("result");
+        Assert.Equal(3, selected.Length);
+        Assert.Equal("A", ((JyroString)selected[0]).Value);
+        Assert.Equal("B", ((JyroString)selected[1]).Value);
+        Assert.Equal("C", ((JyroString)selected[2]).Value);
+    }
+
+    [Fact]
+    public void Select_ExtractsNumericField()
+    {
+        var script = @"
+            var orders = [
+                {""amount"": 100},
+                {""amount"": 200},
+                {""amount"": 150}
+            ]
+            Data.result = Select(orders, ""amount"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var selected = (JyroArray)data.GetProperty("result");
+        Assert.Equal(3, selected.Length);
+        Assert.Equal(100, ((JyroNumber)selected[0]).Value);
+        Assert.Equal(200, ((JyroNumber)selected[1]).Value);
+        Assert.Equal(150, ((JyroNumber)selected[2]).Value);
+    }
+
+    [Fact]
+    public void Select_SupportsNestedFields()
+    {
+        var script = @"
+            var items = [
+                {""user"": {""name"": ""Alice""}},
+                {""user"": {""name"": ""Bob""}}
+            ]
+            Data.result = Select(items, ""user.name"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var selected = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, selected.Length);
+        Assert.Equal("Alice", ((JyroString)selected[0]).Value);
+        Assert.Equal("Bob", ((JyroString)selected[1]).Value);
+    }
+
+    [Fact]
+    public void Select_ReturnsNullForMissingFields()
+    {
+        var script = @"
+            var items = [{""a"": 1}, {""b"": 2}]
+            Data.result = Select(items, ""a"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var selected = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, selected.Length);
+        Assert.Equal(1, ((JyroNumber)selected[0]).Value);
+        Assert.True(selected[1].IsNull);
+    }
+
+    [Fact]
+    public void Select_ReturnsNullForNonObjectElements()
+    {
+        var script = @"
+            var items = [{""x"": 1}, ""string"", 42, null]
+            Data.result = Select(items, ""x"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var selected = (JyroArray)data.GetProperty("result");
+        Assert.Equal(4, selected.Length);
+        Assert.Equal(1, ((JyroNumber)selected[0]).Value);
+        Assert.True(selected[1].IsNull);
+        Assert.True(selected[2].IsNull);
+        Assert.True(selected[3].IsNull);
+    }
+
+    [Fact]
+    public void Select_EmptyArray_ReturnsEmptyArray()
+    {
+        var script = @"
+            var items = []
+            Data.result = Select(items, ""name"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var selected = (JyroArray)data.GetProperty("result");
+        Assert.Equal(0, selected.Length);
+    }
+
+    [Fact]
+    public void Select_ChainsWithSum()
+    {
+        var script = @"
+            var orders = [{""amount"": 100}, {""amount"": 200}, {""amount"": 150}]
+            Data.result = Sum(Select(orders, ""amount""))
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(450, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Select_ChainsWithMax()
+    {
+        var script = @"
+            var products = [{""price"": 10}, {""price"": 50}, {""price"": 25}]
+            Data.result = Max(Select(products, ""price""))
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        Assert.Equal(50, ((JyroNumber)data.GetProperty("result")).Value);
+    }
+
+    [Fact]
+    public void Select_ChainsWithDistinct()
+    {
+        var script = @"
+            var items = [
+                {""category"": ""A""},
+                {""category"": ""B""},
+                {""category"": ""A""},
+                {""category"": ""C""},
+                {""category"": ""B""}
+            ]
+            Data.result = Distinct(Select(items, ""category""))
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var distinct = (JyroArray)data.GetProperty("result");
+        Assert.Equal(3, distinct.Length);
+    }
+
+    #endregion
+
+    #region SelectMany Function
+
+    [Fact]
+    public void SelectMany_FlattensArrayFields()
+    {
+        var script = @"
+            var orders = [
+                {""id"": 1, ""items"": [""a"", ""b""]},
+                {""id"": 2, ""items"": [""c""]},
+                {""id"": 3, ""items"": [""d"", ""e"", ""f""]}
+            ]
+            Data.result = SelectMany(orders, ""items"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var flattened = (JyroArray)data.GetProperty("result");
+        Assert.Equal(6, flattened.Length);
+        Assert.Equal("a", ((JyroString)flattened[0]).Value);
+        Assert.Equal("b", ((JyroString)flattened[1]).Value);
+        Assert.Equal("c", ((JyroString)flattened[2]).Value);
+        Assert.Equal("d", ((JyroString)flattened[3]).Value);
+        Assert.Equal("e", ((JyroString)flattened[4]).Value);
+        Assert.Equal("f", ((JyroString)flattened[5]).Value);
+    }
+
+    [Fact]
+    public void SelectMany_SupportsNestedFields()
+    {
+        var script = @"
+            var data = [
+                {""meta"": {""tags"": [""x"", ""y""]}},
+                {""meta"": {""tags"": [""z""]}}
+            ]
+            Data.result = SelectMany(data, ""meta.tags"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var dataObj = (JyroObject)result.Data;
+        var flattened = (JyroArray)dataObj.GetProperty("result");
+        Assert.Equal(3, flattened.Length);
+    }
+
+    [Fact]
+    public void SelectMany_SkipsNonArrayFields()
+    {
+        var script = @"
+            var items = [
+                {""values"": [1, 2]},
+                {""values"": ""not an array""},
+                {""values"": [3]}
+            ]
+            Data.result = SelectMany(items, ""values"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var flattened = (JyroArray)data.GetProperty("result");
+        Assert.Equal(3, flattened.Length);
+    }
+
+    [Fact]
+    public void SelectMany_SkipsNonObjectElements()
+    {
+        var script = @"
+            var items = [
+                {""arr"": [1, 2]},
+                ""string"",
+                null,
+                {""arr"": [3]}
+            ]
+            Data.result = SelectMany(items, ""arr"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var flattened = (JyroArray)data.GetProperty("result");
+        Assert.Equal(3, flattened.Length);
+    }
+
+    [Fact]
+    public void SelectMany_EmptyArray_ReturnsEmptyArray()
+    {
+        var script = @"
+            var items = []
+            Data.result = SelectMany(items, ""tags"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var flattened = (JyroArray)data.GetProperty("result");
+        Assert.Equal(0, flattened.Length);
+    }
+
+    [Fact]
+    public void SelectMany_MissingFields_ReturnsEmptyArray()
+    {
+        var script = @"
+            var items = [
+                {""a"": 1},
+                {""b"": 2}
+            ]
+            Data.result = SelectMany(items, ""tags"")
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var flattened = (JyroArray)data.GetProperty("result");
+        Assert.Equal(0, flattened.Length);
+    }
+
+    #endregion
+
+    #region Project Function
+
+    [Fact]
+    public void Project_ExtractsMultipleFields()
+    {
+        var script = @"
+            var employees = [
+                {""id"": 1, ""name"": ""Alice"", ""salary"": 50000, ""ssn"": ""123""},
+                {""id"": 2, ""name"": ""Bob"", ""salary"": 60000, ""ssn"": ""456""}
+            ]
+            Data.result = Project(employees, [""id"", ""name""])
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var projected = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, projected.Length);
+
+        var first = (JyroObject)projected[0];
+        Assert.Equal(1, ((JyroNumber)first.GetProperty("id")).Value);
+        Assert.Equal("Alice", ((JyroString)first.GetProperty("name")).Value);
+        Assert.True(first.GetProperty("salary").IsNull);
+        Assert.True(first.GetProperty("ssn").IsNull);
+    }
+
+    [Fact]
+    public void Project_SupportsNestedFields()
+    {
+        var script = @"
+            var items = [
+                {""id"": 1, ""address"": {""city"": ""NYC"", ""zip"": ""10001""}},
+                {""id"": 2, ""address"": {""city"": ""LA"", ""zip"": ""90001""}}
+            ]
+            Data.result = Project(items, [""id"", ""address.city""])
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var projected = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, projected.Length);
+
+        var first = (JyroObject)projected[0];
+        Assert.Equal(1, ((JyroNumber)first.GetProperty("id")).Value);
+        Assert.Equal("NYC", ((JyroString)first.GetProperty("city")).Value);
+    }
+
+    [Fact]
+    public void Project_MissingFieldsAreNull()
+    {
+        var script = @"
+            var items = [
+                {""a"": 1},
+                {""b"": 2}
+            ]
+            Data.result = Project(items, [""a"", ""b""])
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var projected = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, projected.Length);
+
+        var first = (JyroObject)projected[0];
+        Assert.Equal(1, ((JyroNumber)first.GetProperty("a")).Value);
+        Assert.True(first.GetProperty("b").IsNull);
+
+        var second = (JyroObject)projected[1];
+        Assert.True(second.GetProperty("a").IsNull);
+        Assert.Equal(2, ((JyroNumber)second.GetProperty("b")).Value);
+    }
+
+    [Fact]
+    public void Project_SkipsNonObjectElements()
+    {
+        var script = @"
+            var items = [
+                {""x"": 1, ""y"": 2},
+                ""string"",
+                null,
+                {""x"": 3, ""y"": 4}
+            ]
+            Data.result = Project(items, [""x""])
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var projected = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, projected.Length);
+    }
+
+    [Fact]
+    public void Project_EmptyArray_ReturnsEmptyArray()
+    {
+        var script = @"
+            var items = []
+            Data.result = Project(items, [""name""])
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var projected = (JyroArray)data.GetProperty("result");
+        Assert.Equal(0, projected.Length);
+    }
+
+    [Fact]
+    public void Project_EmptyFieldList_ReturnsEmptyObjects()
+    {
+        var script = @"
+            var items = [{""a"": 1}, {""b"": 2}]
+            Data.result = Project(items, [])
+        ";
+        var result = TestHelpers.ExecuteSuccessfully(script, output: _output);
+
+        var data = (JyroObject)result.Data;
+        var projected = (JyroArray)data.GetProperty("result");
+        Assert.Equal(2, projected.Length);
+
+        var first = (JyroObject)projected[0];
+        Assert.Equal(0, first.Count);
+    }
+
+    #endregion
 }
