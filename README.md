@@ -242,6 +242,36 @@ var data = JyroValue.FromJson("""{ "x": 10 }""");
 var result = data.ExecuteJyro("return data.x * 2");
 ```
 
+## IL Trimming
+
+Jyro compiles scripts to LINQ Expression Trees, which requires runtime reflection to resolve methods such as `GetProperty`, `EvaluateBinary`, and `ToBooleanTruthiness`. When a project is published with IL trimming enabled, the trimmer may remove these members because they are not referenced through direct calls.
+
+Trimming is enabled by default in Blazor WebAssembly and .NET MAUI projects, and can be opted into by any project via `<PublishTrimmed>true</PublishTrimmed>`. Standard ASP.NET, console, and desktop applications are not affected unless trimming is explicitly enabled.
+
+| Deployment | Trimming by default? | Affected? |
+|---|---|---|
+| Blazor WebAssembly (publish) | Yes | Yes |
+| Azure Static Web Apps (Blazor WASM) | Yes | Yes |
+| .NET MAUI / mobile | Yes | Yes |
+| Console/desktop with `PublishTrimmed` | Yes | Yes |
+| ASP.NET server-side / Blazor Server | No | No |
+| Standard console/desktop app | No | No |
+| Docker container (without trimming) | No | No |
+
+To prevent the trimmer from removing Jyro members, add `TrimmerRootAssembly` entries for the Jyro assemblies in the consuming project's `.csproj`:
+
+```xml
+<ItemGroup>
+    <TrimmerRootAssembly Include="Jyro.Core" />
+    <TrimmerRootAssembly Include="Jyro.Compiler" />
+    <TrimmerRootAssembly Include="Jyro.Stdlib" />
+    <TrimmerRootAssembly Include="Jyro.Api" />
+    <TrimmerRootAssembly Include="Jyro.Parser" />
+</ItemGroup>
+```
+
+Without these entries, scripts that use lambda functions (`Map`, `Where`, `SortBy`, etc.) will fail at runtime with a `NullReferenceException`.
+
 ## F# Helper Functions
 
 When used from F#, the `JyroBuilderFactory` module (which is `AutoOpen`) provides shorthand functions:

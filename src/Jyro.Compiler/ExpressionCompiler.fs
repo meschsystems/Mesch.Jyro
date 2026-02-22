@@ -230,12 +230,17 @@ module ExpressionCompiler =
         let lambdaExpr = Expression.Lambda<Func<IReadOnlyList<JyroValue>, JyroValue>>(
             blockBody, argsParam)
 
-        // Wrap in JyroFunction via static factory method: JyroFunction.Create(delegate, paramCount)
-        // Uses Expression.Call instead of Expression.New to avoid Mono WASM interpreter issues
-        // with nested Expression.Lambda inside Expression.New
-        let createMethod = typeof<JyroFunction>.GetMethod("Create",
-            [| typeof<Func<IReadOnlyList<JyroValue>, JyroValue>>; typeof<int> |])
-        Expression.Call(createMethod, lambdaExpr, Expression.Constant(params'.Length)) :> Expression
+        // Pre-compile the inner lambda at tree-build time and embed as a constant.
+        // This avoids nested LambdaExpression compilation issues in Mono WASM's LightCompiler.
+        try
+            let compiled = lambdaExpr.Compile()
+            let jyroFunc = JyroFunction(compiled, params'.Length) :> JyroValue
+            Expression.Constant(jyroFunc, typeof<JyroValue>) :> Expression
+        with :? InvalidOperationException ->
+            // Lambda captures outer scope variables — must embed in tree for runtime compilation
+            let createMethod = typeof<JyroFunction>.GetMethod("Create",
+                [| typeof<Func<IReadOnlyList<JyroValue>, JyroValue>>; typeof<int> |])
+            Expression.Call(createMethod, lambdaExpr, Expression.Constant(params'.Length)) :> Expression
 
     /// Compile an increment/decrement expression (++x, x++, --x, x--)
     and private compileIncrementDecrement (ctx: CompilationContext) (expr: Expr) (isIncrement: bool) (isPrefix: bool) : Expression =
