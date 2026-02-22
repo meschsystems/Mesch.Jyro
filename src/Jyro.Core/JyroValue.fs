@@ -607,6 +607,12 @@ and [<Sealed>] JyroFunction(invoke: Func<IReadOnlyList<JyroValue>, JyroValue>, p
     member _.ParamCount = paramCount
     member _.Invoke(args: IReadOnlyList<JyroValue>) = invoke.Invoke(args)
 
+    /// Static factory method for creating JyroFunction values from expression trees.
+    /// Using Expression.Call with a static method avoids Mono WASM interpreter issues
+    /// with nested Expression.Lambda inside Expression.New.
+    static member Create(invoke: Func<IReadOnlyList<JyroValue>, JyroValue>, paramCount: int) : JyroValue =
+        JyroFunction(invoke, paramCount) :> JyroValue
+
     override _.ValueType = JyroValueType.Function
     override _.ToObjectValue() = box "<function>"
     override _.ToStringValue() = "<function>"

@@ -9,7 +9,10 @@ module LambdaFunctions =
     let private getCallback (args: IReadOnlyList<JyroValue>) (index: int) (funcName: string) : JyroFunction =
         if index >= args.Count then
             JyroError.raiseRuntime MessageCode.ArgumentNotProvided [| box index |]
-        match args.[index] with
+        let arg = args.[index]
+        if isNull (box arg) then
+            JyroError.raiseRuntime MessageCode.CallbackExpected [| box funcName; box "null" |]
+        match arg with
         | :? JyroFunction as f -> f
         | other -> JyroError.raiseRuntime MessageCode.CallbackExpected [| box funcName; box other.ValueType |]
 

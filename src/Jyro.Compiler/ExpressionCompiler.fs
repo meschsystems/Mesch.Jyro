@@ -230,10 +230,12 @@ module ExpressionCompiler =
         let lambdaExpr = Expression.Lambda<Func<IReadOnlyList<JyroValue>, JyroValue>>(
             blockBody, argsParam)
 
-        // Wrap in JyroFunction constructor: new JyroFunction(delegate, paramCount)
-        let ctor = typeof<JyroFunction>.GetConstructor(
+        // Wrap in JyroFunction via static factory method: JyroFunction.Create(delegate, paramCount)
+        // Uses Expression.Call instead of Expression.New to avoid Mono WASM interpreter issues
+        // with nested Expression.Lambda inside Expression.New
+        let createMethod = typeof<JyroFunction>.GetMethod("Create",
             [| typeof<Func<IReadOnlyList<JyroValue>, JyroValue>>; typeof<int> |])
-        Expression.New(ctor, lambdaExpr, Expression.Constant(params'.Length)) :> Expression
+        Expression.Call(createMethod, lambdaExpr, Expression.Constant(params'.Length)) :> Expression
 
     /// Compile an increment/decrement expression (++x, x++, --x, x--)
     and private compileIncrementDecrement (ctx: CompilationContext) (expr: Expr) (isIncrement: bool) (isPrefix: bool) : Expression =
