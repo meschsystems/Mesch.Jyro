@@ -1,0 +1,28 @@
+# Test variable shadowing in nested scopes
+
+# Test 1: Inner var declaration shadows outer variable
+var x = 10
+if true then
+    var x = 20
+    Data.inner = x
+end
+Data.outer = x
+
+# Test 2: Shadowing does not affect outer variable after block exits
+var total = 0
+foreach i in [1, 2, 3] do
+    var total = i * 10
+end
+Data.outerTotal = total
+
+# Test 3: Multi-level shadowing
+var a = "outer"
+if true then
+    var a = "middle"
+    if true then
+        var a = "inner"
+        Data.level3 = a
+    end
+    Data.level2 = a
+end
+Data.level1 = a

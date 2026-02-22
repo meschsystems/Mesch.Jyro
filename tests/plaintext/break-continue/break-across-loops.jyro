@@ -1,0 +1,31 @@
+# Test break works in all loop types
+
+# Test 1: Break in while
+var wCount = 0
+while true do
+    wCount += 1
+    if wCount == 3 then
+        break
+    end
+end
+Data.whileBreak = wCount
+
+# Test 2: Break in foreach
+var fResult: array = []
+foreach n in [10, 20, 30, 40, 50] do
+    if n == 30 then
+        break
+    end
+    fResult = Append(fResult, n)
+end
+Data.foreachBreak = fResult
+
+# Test 3: Break in for
+var forResult = []
+for i in 0 to 100 do
+    if i == 4 then
+        break
+    end
+    forResult = Append(forResult, i)
+end
+Data.forBreak = forResult

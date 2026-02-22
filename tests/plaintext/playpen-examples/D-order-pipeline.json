@@ -1,0 +1,33 @@
+{
+  "orders": [
+    {
+      "id": "ORD-001",
+      "customer": {"name": "Alice", "email": "alice@example.com", "tier": "gold"},
+      "items": [
+        {"sku": "WIDGET-A", "name": "Widget Alpha", "price": 30, "qty": 2},
+        {"sku": "GADGET-B", "name": "Gadget Beta",  "price": 60, "qty": 1}
+      ],
+      "coupon": "SAVE10"
+    },
+    {
+      "id": "ORD-002",
+      "customer": {"name": "Bob", "email": "bob@example.com", "tier": "silver"},
+      "items": [
+        {"sku": "WIDGET-A", "name": "Widget Alpha", "price": 30, "qty": 4}
+      ],
+      "coupon": null
+    },
+    {
+      "id": "ORD-003",
+      "customer": {"name": "Charlie", "email": "charlie@example.com", "tier": "gold"},
+      "items": [
+        {"sku": "GADGET-B", "name": "Gadget Beta",  "price": 60, "qty": 2},
+        {"sku": "GIZMO-C",  "name": "Gizmo Gamma",  "price": 90, "qty": 1},
+        {"sku": "WIDGET-A", "name": "Widget Alpha", "price": 30, "qty": 1}
+      ],
+      "coupon": "SAVE10"
+    }
+  ],
+  "discounts": {"SAVE10": 0.10, "VIP20": 0.20},
+  "tierMultipliers": {"gold": 1.5, "silver": 1.2, "bronze": 1.0}
+}

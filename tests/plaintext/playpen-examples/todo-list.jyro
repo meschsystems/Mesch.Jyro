@@ -1,0 +1,45 @@
+# Build and manipulate a to-do list
+
+# Create tasks as objects in an array
+var tasks = []
+tasks = Append(tasks, {title: "Buy groceries",  done: true,  priority: 2})
+tasks = Append(tasks, {title: "Write report",   done: false, priority: 1})
+tasks = Append(tasks, {title: "Call dentist",    done: false, priority: 3})
+tasks = Append(tasks, {title: "Update resume",   done: false, priority: 1})
+tasks = Append(tasks, {title: "Clean kitchen",   done: true,  priority: 2})
+
+Data.totalTasks = Length(tasks)
+
+# Count completed tasks using a loop
+var doneCount = 0
+foreach task in tasks do
+    if task.done then
+        doneCount += 1
+    end
+end
+Data.completedCount = doneCount
+
+# Filter pending tasks with Where + Map
+var pending = Where(tasks, t => not t.done)
+Data.pendingTitles = Map(pending, t => t.title)
+
+# Sort pending by priority (lower = more urgent)
+var sorted = SortBy(pending, t => t.priority)
+Data.mostUrgent = sorted[0].title
+
+# Build a formatted display using for loop and ternary
+var lines = []
+for i in 0 to Length(tasks) do
+    var task = tasks[i]
+    var status = task.done ? "[x]" : "[ ]"
+    lines = Append(lines, status + " " + task.title)
+end
+Data.display = Join(lines, ", ")
+
+# Summary object
+Data.stats = {
+    total: Length(tasks),
+    done: doneCount,
+    pending: Length(pending),
+    allDone: doneCount == Length(tasks)
+}

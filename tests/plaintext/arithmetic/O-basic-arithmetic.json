@@ -1,0 +1,12 @@
+{
+  "add": 15,
+  "sub": 7,
+  "mul": 42,
+  "div": 3.75,
+  "intDiv": 5,
+  "negAdd": -2,
+  "negMul": -12,
+  "mulZero": 0,
+  "addZero": 42,
+  "chain": 14
+}

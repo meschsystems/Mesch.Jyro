@@ -1,0 +1,29 @@
+# Test basic variable declarations
+
+# Test 1: Number variable
+var x = 42
+Data.num = x
+
+# Test 2: String variable
+var s = "hello"
+Data.str = s
+
+# Test 3: Boolean variable
+var b = true
+Data.bool = b
+
+# Test 4: Null variable
+var n = null
+Data.nul = n
+
+# Test 5: Array variable
+var arr = [1, 2, 3]
+Data.arr = arr
+
+# Test 6: Object variable
+var obj = {key: "val"}
+Data.obj = obj
+
+# Test 7: Variable from expression
+var sum = 10 + 20
+Data.sum = sum

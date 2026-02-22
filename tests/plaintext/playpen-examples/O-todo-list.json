@@ -1,0 +1,13 @@
+{
+  "totalTasks": 5,
+  "completedCount": 2,
+  "pendingTitles": ["Write report", "Call dentist", "Update resume"],
+  "mostUrgent": "Write report",
+  "display": "[x] Buy groceries, [ ] Write report, [ ] Call dentist, [ ] Update resume, [x] Clean kitchen",
+  "stats": {
+    "total": 5,
+    "done": 2,
+    "pending": 3,
+    "allDone": false
+  }
+}

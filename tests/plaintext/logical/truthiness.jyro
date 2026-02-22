@@ -1,0 +1,19 @@
+# Test truthiness rules for all types
+
+# Test 1: Falsy values (use ternary to capture bool result)
+Data.nullFalsy = null ? "truthy" : "falsy"
+Data.falseFalsy = false ? "truthy" : "falsy"
+Data.zeroFalsy = 0 ? "truthy" : "falsy"
+Data.emptyStrFalsy = "" ? "truthy" : "falsy"
+
+# Test 2: Truthy values
+Data.trueTruthy = true ? "truthy" : "falsy"
+Data.numTruthy = 42 ? "truthy" : "falsy"
+Data.negTruthy = -1 ? "truthy" : "falsy"
+Data.strTruthy = "hello" ? "truthy" : "falsy"
+
+# Test 3: Collections are ALWAYS truthy (even empty!)
+Data.emptyArrTruthy = [] ? "truthy" : "falsy"
+Data.emptyObjTruthy = {} ? "truthy" : "falsy"
+Data.arrTruthy = [1, 2] ? "truthy" : "falsy"
+Data.objTruthy = {a: 1} ? "truthy" : "falsy"

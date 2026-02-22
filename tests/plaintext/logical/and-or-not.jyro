@@ -1,0 +1,33 @@
+# Test basic logical operators
+
+# Test 1: and - both true
+Data.andTT = true and true
+
+# Test 2: and - first false
+Data.andFT = false and true
+
+# Test 3: and - second false
+Data.andTF = true and false
+
+# Test 4: and - both false
+Data.andFF = false and false
+
+# Test 5: or - both true
+Data.orTT = true or true
+
+# Test 6: or - first false
+Data.orFT = false or true
+
+# Test 7: or - second false
+Data.orTF = true or false
+
+# Test 8: or - both false
+Data.orFF = false or false
+
+# Test 9: not
+Data.notT = not true
+Data.notF = not false
+
+# Test 10: Combined
+Data.combined = (true and false) or true
+Data.combined2 = not (true and false)

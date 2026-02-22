@@ -1,0 +1,84 @@
+# Test truthiness of Data properties (guard pattern)
+
+# Test 1: Present property with empty array is truthy
+if Data.items then
+    Data.emptyArrayGuard = "entered"
+end
+
+# Test 2: Present property with populated array is truthy
+if Data.names then
+    Data.arrayGuard = "entered"
+end
+
+# Test 3: Missing property is falsy (null)
+if Data.missing then
+    Data.missingGuard = "entered"
+end
+Data.missingSkipped = true
+
+# Test 4: Present property with empty object is truthy
+if Data.config then
+    Data.emptyObjGuard = "entered"
+end
+
+# Test 5: Present property with null value is falsy
+if Data.nothing then
+    Data.nullGuard = "entered"
+end
+Data.nullSkipped = true
+
+# Test 6: Present property with zero is falsy
+if Data.count then
+    Data.zeroGuard = "entered"
+end
+Data.zeroSkipped = true
+
+# Test 7: Present property with non-zero number is truthy
+if Data.total then
+    Data.numberGuard = "entered"
+end
+
+# Test 8: Guard on missing property of a variable
+var order = { status: "shipped", amount: 99 }
+if order.tracking then
+    Data.varMissingGuard = "entered"
+end
+Data.varMissingSkipped = true
+
+# Test 9: Guard on present property of a variable
+if order.status then
+    Data.varPresentGuard = "entered"
+end
+
+# Test 10: Guard on missing nested path
+var user = { profile: { name: "Alice" } }
+if user.profile.email then
+    Data.nestedMissingGuard = "entered"
+end
+Data.nestedMissingSkipped = true
+
+# Test 11: Guard on present nested path
+if user.profile.name then
+    Data.nestedPresentGuard = "entered"
+end
+
+# Test 12: Chained null-guard — user present with profile
+if Data.user is not null and Data.user.profile is not null then
+    Data.userName = Data.user.profile.name
+else
+    Data.userName = "Guest"
+end
+
+# Test 13: Chained null-guard — user missing entirely
+if Data.noUser is not null and Data.noUser.profile is not null then
+    Data.missingUserName = Data.noUser.profile.name
+else
+    Data.missingUserName = "Guest"
+end
+
+# Test 14: Chained null-guard — user present but profile missing
+if Data.partial is not null and Data.partial.profile is not null then
+    Data.partialName = Data.partial.profile.name
+else
+    Data.partialName = "Guest"
+end

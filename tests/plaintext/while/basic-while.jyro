@@ -1,0 +1,33 @@
+# Test basic while loop
+
+# Test 1: Counter loop
+var i = 0
+while i < 5 do
+    i += 1
+end
+Data.counter = i
+
+# Test 2: Accumulate sum
+var sum = 0
+var j = 1
+while j <= 10 do
+    sum += j
+    j += 1
+end
+Data.sum = sum
+
+# Test 3: Build array
+var arr = []
+var k = 0
+while k < 4 do
+    arr = Append(arr, k * 10)
+    k += 1
+end
+Data.built = arr
+
+# Test 4: Zero iterations (condition false initially)
+var count = 0
+while false do
+    count += 1
+end
+Data.zeroIter = count

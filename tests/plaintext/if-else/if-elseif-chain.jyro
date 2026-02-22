@@ -1,0 +1,47 @@
+# Test if-elseif-else chain
+
+# Test 1: First condition matches
+var val = 1
+if val == 1 then
+    Data.chain1 = "first"
+elseif val == 2 then
+    Data.chain1 = "second"
+else
+    Data.chain1 = "other"
+end
+
+# Test 2: Second condition matches
+var val2 = 2
+if val2 == 1 then
+    Data.chain2 = "first"
+elseif val2 == 2 then
+    Data.chain2 = "second"
+else
+    Data.chain2 = "other"
+end
+
+# Test 3: No condition matches, else
+var val3 = 99
+if val3 == 1 then
+    Data.chain3 = "first"
+elseif val3 == 2 then
+    Data.chain3 = "second"
+elseif val3 == 3 then
+    Data.chain3 = "third"
+else
+    Data.chain3 = "other"
+end
+
+# Test 4: Multiple elseif, middle matches
+var val4 = 3
+if val4 == 1 then
+    Data.chain4 = "first"
+elseif val4 == 2 then
+    Data.chain4 = "second"
+elseif val4 == 3 then
+    Data.chain4 = "third"
+elseif val4 == 4 then
+    Data.chain4 = "fourth"
+else
+    Data.chain4 = "other"
+end

@@ -1,0 +1,46 @@
+# Test nested if statements
+
+# Test 1: Nested true-true
+var a = true
+var b = true
+Data.nested1 = "none"
+if a then
+    if b then
+        Data.nested1 = "both"
+    end
+end
+
+# Test 2: Nested true-false
+var c = true
+var d = false
+Data.nested2 = "none"
+if c then
+    if d then
+        Data.nested2 = "both"
+    else
+        Data.nested2 = "outer-only"
+    end
+end
+
+# Test 3: Three levels deep
+var x = 10
+Data.nested3 = "none"
+if x > 0 then
+    if x > 5 then
+        if x > 8 then
+            Data.nested3 = "deep"
+        end
+    end
+end
+
+# Test 4: If inside else
+var y = 3
+if y > 10 then
+    Data.nested4 = "big"
+else
+    if y > 1 then
+        Data.nested4 = "medium"
+    else
+        Data.nested4 = "small"
+    end
+end

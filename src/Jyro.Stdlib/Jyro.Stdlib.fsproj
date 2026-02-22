@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>.net8.0</TargetFramework>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<RootNamespace>Mesch.Jyro</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="FunctionSignatures.fs" />
+		<Compile Include="StringFunctions.fs" />
+		<Compile Include="ArrayFunctions.fs" />
+		<Compile Include="MathFunctions.fs" />
+		<Compile Include="DateTimeFunctions.fs" />
+		<Compile Include="UtilityFunctions.fs" />
+		<Compile Include="SchemaFunctions.fs" />
+		<Compile Include="QueryFunctions.fs" />
+		<Compile Include="LambdaFunctions.fs" />
+		<Compile Include="StdlibRegistry.fs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Jyro.Core\Jyro.Core.fsproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="JsonSchema.Net" Version="9.0.0" />
+	</ItemGroup>
+
+</Project>

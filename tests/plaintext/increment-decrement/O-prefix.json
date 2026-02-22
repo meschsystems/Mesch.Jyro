@@ -1,0 +1,9 @@
+{
+  "incVar": 11,
+  "decVar": 9,
+  "counter": 11,
+  "afterPostfix": 11,
+  "exprCounter": 11,
+  "postfixReturn": 10,
+  "afterExpr": 11
+}

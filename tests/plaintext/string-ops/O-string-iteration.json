@@ -1,0 +1,6 @@
+{
+  "chars": ["h", "e", "l", "l", "o"],
+  "count": 5,
+  "reversed": "cba",
+  "emptyCount": 0
+}

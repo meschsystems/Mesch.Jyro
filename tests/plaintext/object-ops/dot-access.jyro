@@ -1,0 +1,16 @@
+# Test object dot access
+
+# Test 1: Read property
+Data.readName = Data.person.name
+Data.readAge = Data.person.age
+
+# Test 2: Write property
+Data.person.email = "alice@example.com"
+
+# Test 3: Modify existing property
+Data.person.age = 31
+
+# Test 4: Create new nested object
+Data.settings = {}
+Data.settings.theme = "dark"
+Data.settings.fontSize = 14

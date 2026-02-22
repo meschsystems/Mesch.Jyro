@@ -1,0 +1,12 @@
+# Test that negative step with ascending loop causes a runtime error (infinite loop)
+# for i in 0 to 10 by -1 → update is i = i + (-1), goes wrong direction
+
+Data.before = true
+
+var result = []
+for i in 0 to 10 by -1 do
+    result = Append(result, i)
+end
+
+# Should never reach here
+Data.after = true

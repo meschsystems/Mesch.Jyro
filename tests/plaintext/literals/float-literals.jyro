@@ -1,0 +1,16 @@
+# Test floating-point literals
+
+# Test 1: Simple decimal
+Data.simple = 3.14
+
+# Test 2: Negative decimal
+Data.negDec = -2.5
+
+# Test 3: Small fraction
+Data.small = 0.001
+
+# Test 4: Trailing zeros
+Data.trailing = 1.50
+
+# Test 5: Addition of decimals
+Data.sum = 1.1 + 2.2

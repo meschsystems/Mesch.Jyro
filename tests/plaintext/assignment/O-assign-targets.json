@@ -1,0 +1,17 @@
+{
+  "obj": {
+    "a": 99,
+    "b": 12
+  },
+  "arr": [
+    10,
+    200,
+    30
+  ],
+  "newProp": "added",
+  "deep": {
+    "level1": {
+      "level2": "bottom"
+    }
+  }
+}

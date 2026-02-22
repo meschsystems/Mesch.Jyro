@@ -1,0 +1,38 @@
+# Test compound assignment operators
+
+# Test 1: Add-assign
+var a = 10
+a += 5
+Data.addAssign = a
+
+# Test 2: Subtract-assign
+var b = 20
+b -= 8
+Data.subAssign = b
+
+# Test 3: Multiply-assign
+var c = 6
+c *= 7
+Data.mulAssign = c
+
+# Test 4: Divide-assign
+var d = 100
+d /= 4
+Data.divAssign = d
+
+# Test 5: Modulo-assign
+var e = 17
+e %= 5
+Data.modAssign = e
+
+# Test 6: String concatenation via +=
+var s = "hello"
+s += " world"
+Data.strConcat = s
+
+# Test 7: Chained compound
+var f = 1
+f += 2
+f *= 3
+f -= 1
+Data.chained = f

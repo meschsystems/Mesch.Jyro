@@ -1,0 +1,11 @@
+# Test that step by 0 causes a runtime error (infinite loop)
+
+Data.before = true
+
+var result = []
+for i in 0 to 5 by 0 do
+    result = Append(result, i)
+end
+
+# Should never reach here
+Data.after = true

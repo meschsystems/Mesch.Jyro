@@ -1,0 +1,10 @@
+{
+  "tab": "a\tb",
+  "newline": "line1\nline2",
+  "cr": "a\rb",
+  "backslash": "path\\file",
+  "dquote": "say \"hi\"",
+  "squote": "it's",
+  "nullCharLen": 3,
+  "unicode": "ABC"
+}

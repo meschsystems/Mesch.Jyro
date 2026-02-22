@@ -1,0 +1,10 @@
+{
+  "items": [],
+  "names": ["Alice", "Bob"],
+  "config": {},
+  "nothing": null,
+  "count": 0,
+  "total": 42,
+  "user": { "profile": { "name": "Alice" } },
+  "partial": { "status": "active" }
+}

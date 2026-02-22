@@ -1,0 +1,85 @@
+# Order processing pipeline
+# Demonstrates a real-world data transformation workflow
+
+# Step 1: Calculate line totals for each order
+var processed = []
+foreach order in Data.orders do
+    var lineItems = []
+    var subtotal = 0
+
+    foreach item in order.items do
+        var lineTotal = item.price * item.qty
+        lineItems = Append(lineItems, Merge([item, {total: lineTotal}]))
+        subtotal += lineTotal
+    end
+
+    # Step 2: Apply coupon discount
+    var discount = 0
+    var couponCode = order.coupon ?? "NONE"
+    if order.coupon != null and HasProperty(Data.discounts, order.coupon) then
+        discount = subtotal * Data.discounts[order.coupon]
+    end
+    var finalTotal = subtotal - discount
+
+    # Step 3: Calculate loyalty points (tier multiplier)
+    var multiplier = Data.tierMultipliers[order.customer.tier] ?? 1.0
+    var points = Floor(finalTotal * multiplier)
+
+    processed = Append(processed, {
+        id: order.id,
+        customer: order.customer.name,
+        itemCount: Length(order.items),
+        subtotal: subtotal,
+        coupon: couponCode,
+        discount: discount,
+        total: finalTotal,
+        loyaltyPoints: points
+    })
+end
+Data.processed = processed
+
+# Step 4: Summary statistics
+var allTotals = Map(processed, p => p.total)
+Data.summary = {
+    orderCount: Length(processed),
+    revenue: Sum(allTotals),
+    averageOrder: Average(allTotals),
+    largestOrder: Max(allTotals),
+    totalPoints: Sum(Map(processed, p => p.loyaltyPoints))
+}
+
+# Step 5: Find gold-tier orders
+Data.goldOrders = Map(
+    Where(Data.orders, o => o.customer.tier == "gold"),
+    o => o.id
+)
+
+# Step 6: Most popular product across all orders
+var allItems = []
+foreach order in Data.orders do
+    foreach item in order.items do
+        allItems = Append(allItems, item)
+    end
+end
+
+# Sum quantities by SKU
+var skuTotals = {}
+foreach item in allItems do
+    if HasProperty(skuTotals, item.sku) then
+        skuTotals[item.sku] += item.qty
+    else
+        skuTotals[item.sku] = item.qty
+    end
+end
+Data.skuTotals = skuTotals
+
+# Find the SKU with highest total quantity
+var bestSku = ""
+var bestQty = 0
+foreach sku in Keys(skuTotals) do
+    if skuTotals[sku] > bestQty then
+        bestSku = sku
+        bestQty = skuTotals[sku]
+    end
+end
+Data.bestSeller = {sku: bestSku, totalQty: bestQty}

@@ -1,0 +1,22 @@
+# Test foreach with empty collections
+
+# Test 1: Empty array - zero iterations
+var count = 0
+foreach x in [] do
+    count += 1
+end
+Data.emptyArr = count
+
+# Test 2: Empty string - zero iterations
+var strCount = 0
+foreach ch in "" do
+    strCount += 1
+end
+Data.emptyStr = strCount
+
+# Test 3: Code after empty foreach runs
+Data.afterEmpty = "ran"
+foreach x in [] do
+    Data.afterEmpty = "should not happen"
+end
+Data.afterCheck = Data.afterEmpty

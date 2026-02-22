@@ -1,0 +1,32 @@
+# Test switch with default case
+
+# Test 1: Match found, default skipped
+var day = "Monday"
+switch day do
+    case "Monday" then
+        Data.result1 = "start of week"
+    case "Friday" then
+        Data.result1 = "end of week"
+    default then
+        Data.result1 = "midweek"
+end
+
+# Test 2: No match, default taken
+var day2 = "Wednesday"
+switch day2 do
+    case "Monday" then
+        Data.result2 = "start of week"
+    case "Friday" then
+        Data.result2 = "end of week"
+    default then
+        Data.result2 = "midweek"
+end
+
+# Test 3: Default with logic
+var status = "unknown"
+switch status do
+    case "active" then
+        Data.result3 = true
+    default then
+        Data.result3 = false
+end

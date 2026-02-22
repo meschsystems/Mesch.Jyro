@@ -1,0 +1,43 @@
+# Test equality and inequality operators
+
+# Test 1: Number equality
+Data.numEq = 42 == 42
+Data.numNeq = 42 != 43
+
+# Test 2: String equality
+Data.strEq = "hello" == "hello"
+Data.strNeq = "hello" != "world"
+
+# Test 3: Boolean equality
+Data.boolEq = true == true
+Data.boolNeq = true != false
+
+# Test 4: Null equality
+Data.nullEq = null == null
+Data.nullNeq = null != null
+
+# Test 5: Cross-type always false
+Data.numStr = 0 == "0"
+Data.numBool = 0 == false
+Data.numNull = 0 == null
+Data.strNull = "" == null
+
+# Test 6: Inequality is negation of equality
+Data.ineqNum = 42 != 42
+Data.ineqStr = "a" != "a"
+
+# Test 7: Array deep equality
+Data.arrEq = [1, 2, 3] == [1, 2, 3]
+Data.arrNeq = [1, 2] != [1, 3]
+Data.arrEmpty = [] == []
+Data.arrDiffLen = [1] != [1, 2]
+
+# Test 8: Object deep equality
+Data.objEq = {name: "Alice", age: 30} == {name: "Alice", age: 30}
+Data.objNeq = {x: 1} != {x: 2}
+Data.objEmpty = {} == {}
+Data.objDiffKeys = {a: 1} != {b: 1}
+
+# Test 9: Nested deep equality
+Data.nestedArr = [[1, 2], [3]] == [[1, 2], [3]]
+Data.nestedObj = {a: {b: 1}} == {a: {b: 1}}

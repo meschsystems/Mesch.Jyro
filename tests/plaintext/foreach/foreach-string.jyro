@@ -1,0 +1,24 @@
+# Test foreach over string characters
+
+# Test 1: Collect chars
+var chars = []
+foreach ch in "abc" do
+    chars = Append(chars, ch)
+end
+Data.chars = chars
+
+# Test 2: Count vowels
+var vowels = 0
+foreach ch in "hello world" do
+    if ch == "e" or ch == "o" then
+        vowels += 1
+    end
+end
+Data.vowels = vowels
+
+# Test 3: Each character is a single-char string
+var lengths = []
+foreach ch in "xyz" do
+    lengths = Append(lengths, Length(ch))
+end
+Data.lengths = lengths

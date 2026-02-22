@@ -1,0 +1,19 @@
+{
+  "empty": {},
+  "simple": {
+    "name": "Alice",
+    "age": 30
+  },
+  "nested": {
+    "outer": {
+      "inner": "value"
+    }
+  },
+  "withArr": {
+    "items": [1, 2, 3]
+  },
+  "quoted": {
+    "first-name": "Bob",
+    "last name": "Smith"
+  }
+}

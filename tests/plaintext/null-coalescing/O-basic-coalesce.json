@@ -1,0 +1,8 @@
+{
+  "nullCoal": "default",
+  "nonNull": "exists",
+  "numCoal": 42,
+  "falseCoal": false,
+  "zeroCoal": 0,
+  "emptyCoal": ""
+}

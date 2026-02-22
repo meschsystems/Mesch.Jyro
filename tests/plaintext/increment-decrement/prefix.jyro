@@ -1,0 +1,22 @@
+# Test pre-increment equivalent using += 1
+# Note: prefix ++x is not supported; use x += 1 instead
+
+# Test 1: Increment via += 1 on variable
+var a = 10
+a += 1
+Data.incVar = a
+
+# Test 2: Decrement via -= 1 on variable
+var b = 10
+b -= 1
+Data.decVar = b
+
+# Test 3: Postfix on Data property
+Data.counter = 10
+Data.counter++
+Data.afterPostfix = Data.counter
+
+# Test 4: Postfix returns old value in expression
+Data.exprCounter = 10
+Data.postfixReturn = Data.exprCounter++
+Data.afterExpr = Data.exprCounter

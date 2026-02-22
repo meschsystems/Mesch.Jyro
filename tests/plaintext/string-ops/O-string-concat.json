@@ -1,0 +1,11 @@
+{
+  "basic": "hello world",
+  "numStr": "42 items",
+  "strNum": "count: 10",
+  "boolStr": "true value",
+  "strBool": "is: false",
+  "emptyLeft": "right",
+  "emptyRight": "left",
+  "emptyBoth": "",
+  "multi": "abcd"
+}

@@ -1,0 +1,23 @@
+# Test variable reassignment
+
+# Test 1: Reassign same type
+var x = 10
+x = 20
+Data.reassigned = x
+
+# Test 2: Reassign different type (untyped)
+var y = "hello"
+y = 42
+Data.changedType = y
+
+# Test 3: Reassign multiple times
+var z = 1
+z = 2
+z = 3
+z = 4
+Data.multi = z
+
+# Test 4: Assign from expression
+var a = 10
+a = a + 5
+Data.fromExpr = a

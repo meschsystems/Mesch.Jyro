@@ -1,0 +1,30 @@
+# Test if-else statement
+
+# Test 1: True takes if branch
+if true then
+    Data.branch1 = "if"
+else
+    Data.branch1 = "else"
+end
+
+# Test 2: False takes else branch
+if false then
+    Data.branch2 = "if"
+else
+    Data.branch2 = "else"
+end
+
+# Test 3: Expression condition
+var x = 42
+if x > 50 then
+    Data.branch3 = "big"
+else
+    Data.branch3 = "small"
+end
+
+# Test 4: String condition (non-empty is truthy)
+if "hello" then
+    Data.branch4 = "truthy"
+else
+    Data.branch4 = "falsy"
+end

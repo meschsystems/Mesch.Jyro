@@ -1,0 +1,13 @@
+{
+  "person": {
+    "name": "Alice",
+    "age": 31,
+    "email": "alice@example.com"
+  },
+  "readName": "Alice",
+  "readAge": 30,
+  "settings": {
+    "theme": "dark",
+    "fontSize": 14
+  }
+}

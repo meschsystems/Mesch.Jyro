@@ -1,0 +1,18 @@
+{
+  "lt": true,
+  "ltFalse": false,
+  "ltEqual": false,
+  "lte": true,
+  "lteEqual": true,
+  "lteFalse": false,
+  "gt": true,
+  "gtFalse": false,
+  "gtEqual": false,
+  "gte": true,
+  "gteEqual": true,
+  "gteFalse": false,
+  "negLt": true,
+  "negGt": true,
+  "decLt": true,
+  "decGte": true
+}

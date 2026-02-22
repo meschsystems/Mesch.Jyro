@@ -1,0 +1,8 @@
+{
+  "trueCase": "yes",
+  "falseCase": "no",
+  "exprCond": "greater",
+  "numResult": 42,
+  "nullResult": null,
+  "assign": "big"
+}

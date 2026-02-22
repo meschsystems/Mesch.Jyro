@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>.net8.0</TargetFramework>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<RootNamespace>Mesch.Jyro</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="Validator.fs" />
+		<Compile Include="Linker.fs" />
+		<Compile Include="ExpressionCompiler.fs" />
+		<Compile Include="StatementCompiler.fs" />
+		<Compile Include="BinaryFormat.fs" />
+		<Compile Include="CompiledProgram.fs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Jyro.Core\Jyro.Core.fsproj" />
+		<ProjectReference Include="..\Jyro.Parser\Jyro.Parser.fsproj" />
+		<ProjectReference Include="..\Jyro.Stdlib\Jyro.Stdlib.fsproj" />
+	</ItemGroup>
+
+</Project>

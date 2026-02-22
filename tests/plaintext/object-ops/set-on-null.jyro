@@ -1,0 +1,6 @@
+# Test that setting a property on null throws a runtime error
+# Data.nonexistent is null, so .child = ... should fail
+
+Data.before = true
+Data.nonexistent.child = "x"
+Data.after = true

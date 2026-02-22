@@ -1,0 +1,20 @@
+# Test basic assignment
+
+# Test 1: Assign to variable
+var x = 10
+Data.varAssign = x
+
+# Test 2: Assign to Data property
+Data.directProp = 42
+
+# Test 3: Assign to nested Data property
+Data.nested = {}
+Data.nested.inner = "deep"
+
+# Test 4: Reassign variable
+var y = 1
+y = 2
+Data.reassign = y
+
+# Test 5: Assign expression result
+Data.expr = 10 + 20 * 3

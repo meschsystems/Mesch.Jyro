@@ -1,0 +1,19 @@
+# Test floating-point precision edge cases
+
+# Test 1: Classic 0.1 + 0.2 (should be ~0.3)
+Data.classic = 0.1 + 0.2
+
+# Test 2: Subtraction precision
+Data.subPrec = 1.0 - 0.9
+
+# Test 3: Large number arithmetic
+Data.large = 1000000 * 1000000
+
+# Test 4: Negative times negative
+Data.negNeg = -5 * -3
+
+# Test 5: Small decimal multiplication
+Data.smallMul = 0.1 * 0.1
+
+# Test 6: Mixed integer and decimal
+Data.mixAdd = 10 + 0.5

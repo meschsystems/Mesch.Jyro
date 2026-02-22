@@ -1,0 +1,5 @@
+# Test that building intermediates before deep assignment works
+Data.deep = {}
+Data.deep.nested = {}
+Data.deep.nested.value = "x"
+Data.result = Data.deep.nested.value

@@ -1,0 +1,22 @@
+{
+  "students": [
+    {"name": "Alice",   "scores": [92, 88, 95, 91]},
+    {"name": "Bob",     "scores": [78, 65, 72, 80]},
+    {"name": "Charlie", "scores": [95, 98, 100, 97]},
+    {"name": "Diana",   "scores": [60, 55, 48, 63]},
+    {"name": "Eve",     "scores": [85, 88, 82, 90]}
+  ],
+  "reports": [
+    {"name": "Alice",   "average": 91.5,  "grade": "A", "highest": 95,  "lowest": 88,  "passed": true},
+    {"name": "Bob",     "average": 73.75, "grade": "C", "highest": 80,  "lowest": 65,  "passed": true},
+    {"name": "Charlie", "average": 97.5,  "grade": "A", "highest": 100, "lowest": 95,  "passed": true},
+    {"name": "Diana",   "average": 56.5,  "grade": "F", "highest": 63,  "lowest": 48,  "passed": false},
+    {"name": "Eve",     "average": 86.25, "grade": "B", "highest": 90,  "lowest": 82,  "passed": true}
+  ],
+  "classAverage": 81.1,
+  "highestAverage": 97.5,
+  "lowestAverage": 56.5,
+  "honorRoll": ["Alice", "Charlie"],
+  "gradeCounts": {"A": 2, "B": 1, "C": 1, "D": 0, "F": 1},
+  "passRate": "4 of 5"
+}

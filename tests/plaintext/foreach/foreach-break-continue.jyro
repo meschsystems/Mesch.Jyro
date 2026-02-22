@@ -1,0 +1,31 @@
+# Test break and continue in foreach
+
+# Test 1: Break on condition
+var result = []
+foreach n in [1, 2, 3, 4, 5, 6, 7] do
+    if n == 4 then
+        break
+    end
+    result = Append(result, n)
+end
+Data.breakResult = result
+
+# Test 2: Continue to skip
+var evens = []
+foreach n in [1, 2, 3, 4, 5, 6] do
+    if n % 2 != 0 then
+        continue
+    end
+    evens = Append(evens, n)
+end
+Data.evens = evens
+
+# Test 3: Find first match
+var found = null
+foreach item in ["apple", "banana", "cherry", "date"] do
+    if StartsWith(item, "c") then
+        found = item
+        break
+    end
+end
+Data.found = found

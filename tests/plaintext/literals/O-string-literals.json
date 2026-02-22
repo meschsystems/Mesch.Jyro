@@ -1,0 +1,7 @@
+{
+  "double": "hello world",
+  "single": "hello world",
+  "empty": "",
+  "withNums": "abc123",
+  "spaced": "  spaces  "
+}

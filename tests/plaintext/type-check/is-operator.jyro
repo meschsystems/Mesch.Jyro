@@ -1,0 +1,27 @@
+# Test type checking with is operator
+
+# Test 1: Number
+Data.numIsNum = 42 is number
+Data.numIsStr = 42 is string
+Data.numIsBool = 42 is boolean
+
+# Test 2: String
+Data.strIsStr = "hello" is string
+Data.strIsNum = "hello" is number
+
+# Test 3: Boolean
+Data.boolIsBool = true is boolean
+Data.boolIsStr = true is string
+
+# Test 4: Null
+Data.nullIsNull = null is null
+Data.nullIsNum = null is number
+Data.nullIsStr = null is string
+
+# Test 5: Array
+Data.arrIsArr = [1, 2] is array
+Data.arrIsObj = [1, 2] is object
+
+# Test 6: Object
+Data.objIsObj = {a: 1} is object
+Data.objIsArr = {a: 1} is array

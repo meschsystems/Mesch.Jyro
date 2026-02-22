@@ -1,0 +1,20 @@
+# Test short-circuit evaluation of and/or
+
+# Test 1: false and X - X not evaluated
+# Use a function call to prove short-circuit (side-effect free approach)
+var x = 0
+var dummy = false and 99
+Data.scAnd = dummy
+Data.scAndX = x
+
+# Test 2: true or X - X not evaluated
+var y = 0
+var dummy2 = true or 99
+Data.scOr = dummy2
+Data.scOrY = y
+
+# Test 3: true and X - X IS evaluated (returns X)
+Data.evalAnd = true and 42
+
+# Test 4: false or X - X IS evaluated (returns X)
+Data.evalOr = false or 42

@@ -1,0 +1,18 @@
+# Test various assignment targets
+
+# Test 1: Assign to Data dot property
+Data.newProp = "added"
+
+# Test 2: Modify nested object property
+Data.obj.a = 99
+
+# Test 3: Assign to array index
+Data.arr[1] = 200
+
+# Test 4: Compound assign to Data property
+Data.obj.b += 10
+
+# Test 5: Build nested path
+Data.deep = {}
+Data.deep.level1 = {}
+Data.deep.level1.level2 = "bottom"

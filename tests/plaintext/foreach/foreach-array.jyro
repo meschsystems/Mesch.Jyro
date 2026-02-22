@@ -1,0 +1,29 @@
+# Test foreach over arrays
+
+# Test 1: Iterate numbers
+var sum = 0
+foreach n in [1, 2, 3, 4, 5] do
+    sum += n
+end
+Data.sum = sum
+
+# Test 2: Iterate strings
+var result = ""
+foreach s in ["a", "b", "c"] do
+    result += s
+end
+Data.joined = result
+
+# Test 3: Iterate mixed types
+var types = []
+foreach item in [42, "hello", true, null] do
+    types = Append(types, TypeOf(item))
+end
+Data.types = types
+
+# Test 4: Iterate objects in array
+var names = []
+foreach person in [{name: "Alice"}, {name: "Bob"}, {name: "Charlie"}] do
+    names = Append(names, person.name)
+end
+Data.names = names

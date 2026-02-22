@@ -1,0 +1,9 @@
+{
+  "varAssign": 10,
+  "directProp": 42,
+  "nested": {
+    "inner": "deep"
+  },
+  "reassign": 2,
+  "expr": 70
+}

@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="src/Jyro.Api/Jyro.Api.fsproj" />
+  <Project Path="src/Jyro.Compiler/Jyro.Compiler.fsproj" />
+  <Project Path="src/Jyro.Core/Jyro.Core.fsproj" />
+  <Project Path="src/Jyro.Parser/Jyro.Parser.fsproj" />
+  <Project Path="src/Jyro.Stdlib/Jyro.Stdlib.fsproj" />
+  <Project Path="src/Jyro.Benchmark/Jyro.Benchmark.csproj" />
+</Solution>

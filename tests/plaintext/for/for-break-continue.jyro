@@ -1,0 +1,29 @@
+# Test break and continue in for loops
+
+# Test 1: Break out early
+var result = []
+for i in 0 to 100 do
+    if i == 5 then
+        break
+    end
+    result = Append(result, i)
+end
+Data.breakResult = result
+
+# Test 2: Continue to skip
+var noThrees = []
+for i in 0 to 10 do
+    if i % 3 == 0 then
+        continue
+    end
+    noThrees = Append(noThrees, i)
+end
+Data.noThrees = noThrees
+
+# Test 3: Array traversal with index
+var items = ["a", "b", "c", "d", "e"]
+var picked = []
+for i in 0 to Length(items) by 2 do
+    picked = Append(picked, items[i])
+end
+Data.picked = picked

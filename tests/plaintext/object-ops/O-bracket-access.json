@@ -1,0 +1,18 @@
+{
+  "readBracket": "Bob",
+  "obj": {
+    "name": "Bob",
+    "age": 25,
+    "city": "NYC"
+  },
+  "dynamic": {
+    "color": "blue"
+  },
+  "special": {
+    "first-name": "Jane",
+    "last name": "Doe"
+  },
+  "dotRead": 10,
+  "bracketRead": 10,
+  "equiv": true
+}

@@ -1,0 +1,6 @@
+{
+  "nested1": "both",
+  "nested2": "outer-only",
+  "nested3": "deep",
+  "nested4": "medium"
+}

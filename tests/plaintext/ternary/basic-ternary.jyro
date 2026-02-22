@@ -1,0 +1,20 @@
+# Test basic ternary operator
+
+# Test 1: True condition
+Data.trueCase = true ? "yes" : "no"
+
+# Test 2: False condition
+Data.falseCase = false ? "yes" : "no"
+
+# Test 3: Expression condition
+Data.exprCond = (10 > 5) ? "greater" : "less"
+
+# Test 4: Numeric values
+Data.numResult = true ? 42 : 0
+
+# Test 5: Null result
+Data.nullResult = false ? "value" : null
+
+# Test 6: Ternary in assignment
+var x = 100
+Data.assign = x > 50 ? "big" : "small"

@@ -1,0 +1,8 @@
+{
+  "classic": 0.3,
+  "subPrec": 0.1,
+  "large": 1000000000000,
+  "negNeg": 15,
+  "smallMul": 0.01,
+  "mixAdd": 10.5
+}

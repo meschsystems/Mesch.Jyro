@@ -1,0 +1,33 @@
+{
+  "root": {
+    "level1": {
+      "level2": {
+        "level3": "deep",
+        "newProp": "added"
+      }
+    }
+  },
+  "deep": "deep",
+  "missing": null,
+  "built": {
+    "a": {
+      "b": {
+        "c": "bottom"
+      }
+    }
+  },
+  "complex": {
+    "items": [
+      {
+        "id": 1,
+        "name": "first"
+      },
+      {
+        "id": 2,
+        "name": "second"
+      }
+    ]
+  },
+  "firstItem": "first",
+  "secondId": 2
+}

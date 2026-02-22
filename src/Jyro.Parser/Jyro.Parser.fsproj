@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>.net8.0</TargetFramework>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<RootNamespace>Mesch.Jyro</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="Position.fs" />
+		<Compile Include="Lexer.fs" />
+		<Compile Include="ExpressionParser.fs" />
+		<Compile Include="StatementParser.fs" />
+		<Compile Include="Parser.fs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FParsec" Version="1.1.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Jyro.Core\Jyro.Core.fsproj" />
+	</ItemGroup>
+
+</Project>

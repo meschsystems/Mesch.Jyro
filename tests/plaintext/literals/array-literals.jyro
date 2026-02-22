@@ -1,0 +1,19 @@
+# Test array literal syntax
+
+# Test 1: Empty array
+Data.empty = []
+
+# Test 2: Number array
+Data.nums = [1, 2, 3]
+
+# Test 3: String array
+Data.strs = ["a", "b", "c"]
+
+# Test 4: Mixed types
+Data.mixed = [1, "two", true, null]
+
+# Test 5: Nested arrays
+Data.nested = [[1, 2], [3, 4]]
+
+# Test 6: Single element
+Data.single = [42]

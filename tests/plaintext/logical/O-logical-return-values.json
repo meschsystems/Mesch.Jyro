@@ -1,0 +1,12 @@
+{
+  "strAnd": "world",
+  "numAnd": 2,
+  "nullAnd": null,
+  "zeroAnd": 0,
+  "strOr": "hello",
+  "nullOr": "fallback",
+  "zeroOr": "default",
+  "falseOr": false,
+  "chain": "found",
+  "chainAll": false
+}

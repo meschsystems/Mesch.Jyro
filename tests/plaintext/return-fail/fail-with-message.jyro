@@ -1,0 +1,6 @@
+# Test fail with message stops execution
+
+Data.step1 = "done"
+Data.step2 = "done"
+fail "validation error"
+Data.step3 = "should not run"

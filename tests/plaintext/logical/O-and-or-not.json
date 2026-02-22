@@ -1,0 +1,14 @@
+{
+  "andTT": true,
+  "andFT": false,
+  "andTF": false,
+  "andFF": false,
+  "orTT": true,
+  "orFT": true,
+  "orTF": true,
+  "orFF": false,
+  "notT": false,
+  "notF": true,
+  "combined": true,
+  "combined2": true
+}

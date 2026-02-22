@@ -1,0 +1,24 @@
+# Test for loop with custom step
+
+# Test 1: Step by 2
+var evens = []
+for i in 0 to 10 by 2 do
+    evens = Append(evens, i)
+end
+Data.evens = evens
+
+# Test 2: Step by 3
+var threes = []
+for i in 0 to 15 by 3 do
+    threes = Append(threes, i)
+end
+Data.threes = threes
+
+# Test 3: Doubling (uses while — multiplicative step not expressible with for)
+var powers = []
+var i = 1
+while i <= 64 do
+    powers = Append(powers, i)
+    i *= 2
+end
+Data.powers = powers

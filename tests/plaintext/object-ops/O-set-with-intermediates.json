@@ -1,0 +1,8 @@
+{
+  "deep": {
+    "nested": {
+      "value": "x"
+    }
+  },
+  "result": "x"
+}

@@ -1,0 +1,9 @@
+# Test that fail does not execute when condition is false
+
+Data.validated = false
+var input = 42
+if input is not number then
+    fail "input must be a number"
+end
+Data.validated = true
+Data.doubled = input * 2

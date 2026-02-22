@@ -1,0 +1,6 @@
+{
+  "sum": 15,
+  "joined": "abc",
+  "types": ["number", "string", "boolean", "null"],
+  "names": ["Alice", "Bob", "Charlie"]
+}

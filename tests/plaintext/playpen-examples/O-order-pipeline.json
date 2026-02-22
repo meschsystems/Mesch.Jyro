@@ -1,0 +1,79 @@
+{
+  "orders": [
+    {
+      "id": "ORD-001",
+      "customer": {"name": "Alice", "email": "alice@example.com", "tier": "gold"},
+      "items": [
+        {"sku": "WIDGET-A", "name": "Widget Alpha", "price": 30, "qty": 2},
+        {"sku": "GADGET-B", "name": "Gadget Beta",  "price": 60, "qty": 1}
+      ],
+      "coupon": "SAVE10"
+    },
+    {
+      "id": "ORD-002",
+      "customer": {"name": "Bob", "email": "bob@example.com", "tier": "silver"},
+      "items": [
+        {"sku": "WIDGET-A", "name": "Widget Alpha", "price": 30, "qty": 4}
+      ],
+      "coupon": null
+    },
+    {
+      "id": "ORD-003",
+      "customer": {"name": "Charlie", "email": "charlie@example.com", "tier": "gold"},
+      "items": [
+        {"sku": "GADGET-B", "name": "Gadget Beta",  "price": 60, "qty": 2},
+        {"sku": "GIZMO-C",  "name": "Gizmo Gamma",  "price": 90, "qty": 1},
+        {"sku": "WIDGET-A", "name": "Widget Alpha", "price": 30, "qty": 1}
+      ],
+      "coupon": "SAVE10"
+    }
+  ],
+  "discounts": {"SAVE10": 0.10, "VIP20": 0.20},
+  "tierMultipliers": {"gold": 1.5, "silver": 1.2, "bronze": 1.0},
+  "processed": [
+    {
+      "id": "ORD-001",
+      "customer": "Alice",
+      "itemCount": 2,
+      "subtotal": 120,
+      "coupon": "SAVE10",
+      "discount": 12,
+      "total": 108,
+      "loyaltyPoints": 162
+    },
+    {
+      "id": "ORD-002",
+      "customer": "Bob",
+      "itemCount": 1,
+      "subtotal": 120,
+      "coupon": "NONE",
+      "discount": 0,
+      "total": 120,
+      "loyaltyPoints": 144
+    },
+    {
+      "id": "ORD-003",
+      "customer": "Charlie",
+      "itemCount": 3,
+      "subtotal": 240,
+      "coupon": "SAVE10",
+      "discount": 24,
+      "total": 216,
+      "loyaltyPoints": 324
+    }
+  ],
+  "summary": {
+    "orderCount": 3,
+    "revenue": 444,
+    "averageOrder": 148,
+    "largestOrder": 216,
+    "totalPoints": 630
+  },
+  "goldOrders": ["ORD-001", "ORD-003"],
+  "skuTotals": {
+    "WIDGET-A": 7,
+    "GADGET-B": 3,
+    "GIZMO-C": 1
+  },
+  "bestSeller": {"sku": "WIDGET-A", "totalQty": 7}
+}

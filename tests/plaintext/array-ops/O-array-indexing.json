@@ -1,0 +1,10 @@
+{
+  "first": 10,
+  "last": 50,
+  "mid": 30,
+  "oob": null,
+  "neg": null,
+  "varIdx": 40,
+  "nestedAccess": 3,
+  "nestedDeep": 6
+}

@@ -1,0 +1,7 @@
+# Test bare return stops execution
+
+Data.before = "set"
+Data.marker = 1
+return
+Data.after = "should not be set"
+Data.marker = 2

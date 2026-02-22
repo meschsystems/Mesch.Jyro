@@ -1,0 +1,5 @@
+{
+  "whileBreak": 3,
+  "foreachBreak": [10, 20],
+  "forBreak": [0, 1, 2, 3]
+}

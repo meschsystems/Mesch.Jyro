@@ -1,0 +1,21 @@
+# Test type coercion via type hints
+
+# Test 1: String to number
+var x: number = "42"
+Data.strToNum = x
+
+# Test 2: Boolean true to number (1)
+var y: number = true
+Data.boolToNum = y
+
+# Test 3: Boolean false to number (0)
+var z: number = false
+Data.falseToNum = z
+
+# Test 4: Number to string
+var s: string = 42
+Data.numToStr = s
+
+# Test 5: Boolean to string
+var bs: string = true
+Data.boolToStr = bs

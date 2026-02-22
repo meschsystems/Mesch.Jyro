@@ -1,0 +1,29 @@
+# Test iterating over string characters with foreach
+
+# Test 1: Collect characters into array
+var chars = []
+foreach ch in "hello" do
+    chars = Append(chars, ch)
+end
+Data.chars = chars
+
+# Test 2: Count characters manually
+var count = 0
+foreach ch in "abcde" do
+    count += 1
+end
+Data.count = count
+
+# Test 3: Build reversed string
+var rev = ""
+foreach ch in "abc" do
+    rev = ch + rev
+end
+Data.reversed = rev
+
+# Test 4: Empty string iteration (zero iterations)
+var empty = 0
+foreach ch in "" do
+    empty += 1
+end
+Data.emptyCount = empty

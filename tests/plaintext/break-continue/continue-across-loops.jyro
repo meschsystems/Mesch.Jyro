@@ -1,0 +1,33 @@
+# Test continue works in all loop types
+
+# Test 1: Continue in while
+var wResult = []
+var w = 0
+while w < 6 do
+    w += 1
+    if w % 2 == 0 then
+        continue
+    end
+    wResult = Append(wResult, w)
+end
+Data.whileContinue = wResult
+
+# Test 2: Continue in foreach
+var fResult = []
+foreach n in [1, 2, 3, 4, 5, 6] do
+    if n % 2 == 0 then
+        continue
+    end
+    fResult = Append(fResult, n)
+end
+Data.foreachContinue = fResult
+
+# Test 3: Continue in for
+var forResult = []
+for i in 0 to 10 do
+    if i % 3 == 0 then
+        continue
+    end
+    forResult = Append(forResult, i)
+end
+Data.forContinue = forResult

@@ -1,0 +1,11 @@
+# Test that typed variables reject incompatible reassignment
+
+# Set data before the error to prove execution reached this point
+var count: number = 42
+Data.before = count
+
+# This should cause a runtime error — "foo" cannot be coerced to number
+count = "foo"
+
+# Should never reach here
+Data.after = count

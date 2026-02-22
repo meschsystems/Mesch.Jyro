@@ -1,0 +1,40 @@
+# Test break in while loop
+
+# Test 1: Break on condition
+var i = 0
+while true do
+    if i == 5 then
+        break
+    end
+    i += 1
+end
+Data.breakAt = i
+
+# Test 2: Search pattern - find first even > 10
+var nums = [3, 7, 11, 12, 15, 18]
+var idx = 0
+var found = -1
+while idx < Length(nums) do
+    if nums[idx] > 10 and nums[idx] % 2 == 0 then
+        found = nums[idx]
+        break
+    end
+    idx += 1
+end
+Data.found = found
+
+# Test 3: Break exits only innermost (tested via count)
+var total = 0
+var outer = 0
+while outer < 3 do
+    var inner = 0
+    while true do
+        if inner == 2 then
+            break
+        end
+        total += 1
+        inner += 1
+    end
+    outer += 1
+end
+Data.total = total

@@ -1,0 +1,16 @@
+# Test for loop counting down
+
+# Test 1: Count down
+var result = []
+for i in 5 downto 0 do
+    result = Append(result, i)
+end
+Data.countDown = result
+
+# Test 2: Reverse array
+var src = ["a", "b", "c", "d"]
+var rev = []
+for i in Length(src) - 1 downto -1 do
+    rev = Append(rev, src[i])
+end
+Data.reversed = rev

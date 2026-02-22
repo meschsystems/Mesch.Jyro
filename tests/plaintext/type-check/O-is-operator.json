@@ -1,0 +1,16 @@
+{
+  "numIsNum": true,
+  "numIsStr": false,
+  "numIsBool": false,
+  "strIsStr": true,
+  "strIsNum": false,
+  "boolIsBool": true,
+  "boolIsStr": false,
+  "nullIsNull": true,
+  "nullIsNum": false,
+  "nullIsStr": false,
+  "arrIsArr": true,
+  "arrIsObj": false,
+  "objIsObj": true,
+  "objIsArr": false
+}

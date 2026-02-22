@@ -1,0 +1,18 @@
+# Test postfix increment and decrement
+
+# Test 1: Postfix increment returns old value
+var a = 10
+Data.postInc = a++
+Data.afterInc = a
+
+# Test 2: Postfix decrement returns old value
+var b = 10
+Data.postDec = b--
+Data.afterDec = b
+
+# Test 3: Multiple postfix operations
+var c = 5
+c++
+c++
+c++
+Data.multiInc = c

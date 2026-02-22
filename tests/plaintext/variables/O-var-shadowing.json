@@ -1,0 +1,8 @@
+{
+  "inner": 20,
+  "outer": 10,
+  "outerTotal": 0,
+  "level3": "inner",
+  "level2": "middle",
+  "level1": "outer"
+}

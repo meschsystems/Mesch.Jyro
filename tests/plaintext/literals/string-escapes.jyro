@@ -1,0 +1,26 @@
+# Test string escape sequences
+
+# Test 1: Tab
+Data.tab = "a\tb"
+
+# Test 2: Newline
+Data.newline = "line1\nline2"
+
+# Test 3: Carriage return
+Data.cr = "a\rb"
+
+# Test 4: Backslash
+Data.backslash = "path\\file"
+
+# Test 5: Escaped double quote
+Data.dquote = "say \"hi\""
+
+# Test 6: Escaped single quote in single-quoted string
+Data.squote = 'it\'s'
+
+# Test 7: Null char (just test Length is 3)
+var s = "a\0b"
+Data.nullCharLen = Length(s)
+
+# Test 8: Unicode escape
+Data.unicode = "\u0041\u0042\u0043"

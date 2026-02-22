@@ -1,0 +1,14 @@
+{
+  "nullFalsy": "falsy",
+  "falseFalsy": "falsy",
+  "zeroFalsy": "falsy",
+  "emptyStrFalsy": "falsy",
+  "trueTruthy": "truthy",
+  "numTruthy": "truthy",
+  "negTruthy": "truthy",
+  "strTruthy": "truthy",
+  "emptyArrTruthy": "truthy",
+  "emptyObjTruthy": "truthy",
+  "arrTruthy": "truthy",
+  "objTruthy": "truthy"
+}

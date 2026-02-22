@@ -1,0 +1,22 @@
+# Test string comparison operators
+
+# Test 1: Equality
+Data.eq = "hello" == "hello"
+Data.neq = "hello" != "world"
+
+# Test 2: Less than (alphabetical)
+Data.lt = "apple" < "banana"
+Data.ltFalse = "banana" < "apple"
+
+# Test 3: Greater than
+Data.gt = "banana" > "apple"
+
+# Test 4: Case sensitivity
+Data.caseLt = "A" < "a"
+
+# Test 5: Empty string comparisons
+Data.emptyLt = "" < "a"
+Data.emptyEq = "" == ""
+
+# Test 6: Same prefix
+Data.prefixLt = "app" < "apple"

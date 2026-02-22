@@ -1,0 +1,26 @@
+# Test array indexing
+
+# Test 1: First element
+var arr = [10, 20, 30, 40, 50]
+Data.first = arr[0]
+
+# Test 2: Last element
+Data.last = arr[4]
+
+# Test 3: Middle element
+Data.mid = arr[2]
+
+# Test 4: Out of bounds returns null
+Data.oob = arr[99]
+
+# Test 5: Negative index returns null
+Data.neg = arr[-1]
+
+# Test 6: Index via variable
+var i = 3
+Data.varIdx = arr[i]
+
+# Test 7: Nested array access
+var nested = [[1, 2], [3, 4], [5, 6]]
+Data.nestedAccess = nested[1][0]
+Data.nestedDeep = nested[2][1]

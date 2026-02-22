@@ -1,0 +1,20 @@
+# Test modulo operator
+
+# Test 1: Basic modulo
+Data.basic = 10 % 3
+
+# Test 2: No remainder
+Data.noRem = 12 % 4
+
+# Test 3: Mod by 1
+Data.modOne = 42 % 1
+
+# Test 4: Smaller dividend
+Data.smaller = 3 % 10
+
+# Test 5: Negative dividend
+Data.negDiv = -7 % 3
+
+# Test 6: Even/odd check
+Data.even = 8 % 2
+Data.odd = 7 % 2

@@ -1,0 +1,12 @@
+{
+  "aBeforeB": true,
+  "bAfterA": true,
+  "caseUpper": true,
+  "caseLower": true,
+  "eqLte": true,
+  "eqGte": true,
+  "eqLt": false,
+  "prefix": true,
+  "emptyLt": true,
+  "emptyEq": true
+}

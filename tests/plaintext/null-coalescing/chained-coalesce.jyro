@@ -1,0 +1,19 @@
+# Test chained null coalescing
+
+# Test 1: First non-null wins
+Data.chain1 = null ?? null ?? "found"
+
+# Test 2: First value is non-null
+Data.chain2 = "first" ?? "second" ?? "third"
+
+# Test 3: Middle value
+Data.chain3 = null ?? "middle" ?? "last"
+
+# Test 4: All null
+Data.allNull = null ?? null ?? null
+
+# Test 5: With variables
+var a = null
+var b = null
+var c = "fallback"
+Data.vars = a ?? b ?? c

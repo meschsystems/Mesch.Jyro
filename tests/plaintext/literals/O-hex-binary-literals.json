@@ -1,0 +1,10 @@
+{
+  "hexFF": 255,
+  "hexLower": 255,
+  "hexZero": 0,
+  "hex10": 16,
+  "bin1010": 10,
+  "binZero": 0,
+  "bin255": 255,
+  "hexExpr": 256
+}

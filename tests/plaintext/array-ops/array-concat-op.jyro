@@ -1,0 +1,26 @@
+# Test array concatenation via + operator
+
+# Test 1: Basic concatenation
+var a = [1, 2, 3]
+var b = [4, 5, 6]
+Data.concat = a + b
+
+# Test 2: Empty + non-empty
+Data.emptyLeft = [] + [1, 2]
+
+# Test 3: Non-empty + empty
+Data.emptyRight = [1, 2] + []
+
+# Test 4: Both empty
+Data.bothEmpty = [] + []
+
+# Test 5: Mixed types
+Data.mixed = [1, "two"] + [true, null]
+
+# Test 6: Original arrays unchanged
+var x = [1, 2]
+var y = [3, 4]
+var z = x + y
+Data.result = z
+Data.origX = x
+Data.origY = y

@@ -1,0 +1,17 @@
+{
+  "default": "fallback value",
+  "for": "loop data",
+  "while": "while data",
+  "if": "branch data",
+  "return": "return data",
+  "var": "var data",
+  "switch": "switch data",
+  "varKeywords": { "for": 1, "while": 2, "if": 3 },
+  "bracketDefault": "fallback value",
+  "break": "break data",
+  "literalKeywords": { "for": "each", "while": true, "return": 42 },
+  "number": 100,
+  "string": "text",
+  "boolean": true,
+  "array": [1, 2]
+}

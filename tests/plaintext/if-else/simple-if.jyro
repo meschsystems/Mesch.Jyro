@@ -1,0 +1,25 @@
+# Test simple if statement
+
+# Test 1: True condition executes body
+Data.result1 = "before"
+if true then
+    Data.result1 = "inside"
+end
+
+# Test 2: False condition skips body
+Data.result2 = "before"
+if false then
+    Data.result2 = "inside"
+end
+
+# Test 3: Expression condition
+Data.result3 = "none"
+if 10 > 5 then
+    Data.result3 = "matched"
+end
+
+# Test 4: Falsy number condition
+Data.result4 = "default"
+if 0 then
+    Data.result4 = "never"
+end

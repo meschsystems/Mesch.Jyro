@@ -1,0 +1,62 @@
+# Process student grades and generate a report
+
+# Calculate each student's average and assign a letter grade
+var reports = []
+foreach student in Data.students do
+    var avg = Average(student.scores)
+
+    # Assign letter grade
+    var letter = ""
+    if avg >= 90 then
+        letter = "A"
+    elseif avg >= 80 then
+        letter = "B"
+    elseif avg >= 70 then
+        letter = "C"
+    elseif avg >= 60 then
+        letter = "D"
+    else
+        letter = "F"
+    end
+
+    reports = Append(reports, {
+        name: student.name,
+        average: avg,
+        grade: letter,
+        highest: Max(student.scores),
+        lowest: Min(student.scores),
+        passed: avg >= 60
+    })
+end
+Data.reports = reports
+
+# Class-wide statistics
+var allAverages = Map(reports, r => r.average)
+Data.classAverage = Average(allAverages)
+Data.highestAverage = Max(allAverages)
+Data.lowestAverage = Min(allAverages)
+
+# Honor roll: students with A grade
+Data.honorRoll = Map(Where(reports, r => r.grade == "A"), r => r.name)
+
+# Count by grade
+var gradeCounts = {A: 0, B: 0, C: 0, D: 0, F: 0}
+foreach r in reports do
+    switch r.grade do
+        case "A" then
+            gradeCounts.A += 1
+        case "B" then
+            gradeCounts.B += 1
+        case "C" then
+            gradeCounts.C += 1
+        case "D" then
+            gradeCounts.D += 1
+        case "F" then
+            gradeCounts.F += 1
+    end
+end
+Data.gradeCounts = gradeCounts
+
+# Pass rate
+var passCount = Length(Where(reports, r => r.passed))
+Data.passRate = passCount + " of " + Length(reports)

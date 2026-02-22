@@ -1,0 +1,24 @@
+# Test array element assignment
+
+# Test 1: Overwrite existing element
+var arr = [10, 20, 30]
+arr[1] = 200
+Data.overwrite = arr
+
+# Test 2: Assign to Data array
+Data.nums = [1, 2, 3]
+Data.nums[0] = 100
+Data.nums[2] = 300
+
+# Test 3: Build array with Push
+var built = []
+built = Append(built, "a")
+built = Append(built, "b")
+built = Append(built, "c")
+Data.built = built
+
+# Test 4: Modify nested array
+var grid = [[0, 0], [0, 0]]
+grid[0][1] = 5
+grid[1][0] = 7
+Data.grid = grid

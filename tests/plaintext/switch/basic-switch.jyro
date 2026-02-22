@@ -1,0 +1,33 @@
+# Test basic switch statement
+
+# Test 1: String match
+var color = "red"
+switch color do
+    case "red" then
+        Data.match1 = "stop"
+    case "green" then
+        Data.match1 = "go"
+    case "yellow" then
+        Data.match1 = "caution"
+end
+
+# Test 2: Number match
+var code = 200
+switch code do
+    case 200 then
+        Data.match2 = "OK"
+    case 404 then
+        Data.match2 = "Not Found"
+    case 500 then
+        Data.match2 = "Error"
+end
+
+# Test 3: No match (no default)
+var x = 99
+Data.match3 = "unchanged"
+switch x do
+    case 1 then
+        Data.match3 = "one"
+    case 2 then
+        Data.match3 = "two"
+end

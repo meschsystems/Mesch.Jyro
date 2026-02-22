@@ -1,0 +1,6 @@
+# Test that foreach over a non-iterable literal is a compile error
+Data.before = true
+foreach x in 42 do
+    Data.inside = x
+end
+Data.after = true

@@ -1,0 +1,7 @@
+{
+  "strToNum": 42,
+  "boolToNum": 1,
+  "falseToNum": 0,
+  "numToStr": "42",
+  "boolToStr": "true"
+}

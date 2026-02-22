@@ -1,0 +1,10 @@
+{
+  "concat": [1, 2, 3, 4, 5, 6],
+  "emptyLeft": [1, 2],
+  "emptyRight": [1, 2],
+  "bothEmpty": [],
+  "mixed": [1, "two", true, null],
+  "result": [1, 2, 3, 4],
+  "origX": [1, 2],
+  "origY": [3, 4]
+}

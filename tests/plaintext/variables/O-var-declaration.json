@@ -1,0 +1,9 @@
+{
+  "num": 42,
+  "str": "hello",
+  "bool": true,
+  "nul": null,
+  "arr": [1, 2, 3],
+  "obj": {"key": "val"},
+  "sum": 30
+}

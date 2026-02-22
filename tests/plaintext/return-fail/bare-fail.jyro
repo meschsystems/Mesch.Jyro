@@ -1,0 +1,5 @@
+# Test that fail stops execution
+
+Data.before = true
+fail
+Data.after = true

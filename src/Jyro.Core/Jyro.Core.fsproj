@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>.net8.0</TargetFramework>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<RootNamespace>Mesch.Jyro</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="Diagnostics.fs" />
+		<Compile Include="JyroRuntimeException.fs" />
+		<Compile Include="Operators.fs" />
+		<Compile Include="JyroValue.fs" />
+		<Compile Include="Ast.fs" />
+		<Compile Include="JyroExecutionOptions.fs" />
+		<Compile Include="JyroResourceLimiter.fs" />
+		<Compile Include="JyroPipelineStats.fs" />
+		<Compile Include="IJyroFunction.fs" />
+		<Compile Include="JyroFunctionBase.fs" />
+	</ItemGroup>
+
+</Project>

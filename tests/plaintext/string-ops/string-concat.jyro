@@ -1,0 +1,24 @@
+# Test string concatenation via + operator
+
+# Test 1: String + string
+Data.basic = "hello" + " " + "world"
+
+# Test 2: Number + string
+Data.numStr = 42 + " items"
+
+# Test 3: String + number
+Data.strNum = "count: " + 10
+
+# Test 4: Boolean + string
+Data.boolStr = true + " value"
+
+# Test 5: String + boolean
+Data.strBool = "is: " + false
+
+# Test 6: Empty string concatenation
+Data.emptyLeft = "" + "right"
+Data.emptyRight = "left" + ""
+Data.emptyBoth = "" + ""
+
+# Test 7: Multiple concatenation
+Data.multi = "a" + "b" + "c" + "d"

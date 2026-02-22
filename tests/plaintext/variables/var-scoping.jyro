@@ -1,0 +1,25 @@
+# Test variable scoping
+
+# Test 1: Variable declared outside block, modified inside
+var x = 10
+if true then
+    x = 20
+end
+Data.outerModified = x
+
+# Test 2: Nested blocks can modify outer variables
+var z = 1
+if true then
+    z = 2
+    if true then
+        z = 3
+    end
+end
+Data.nested = z
+
+# Test 3: Variable declared before loop, modified in loop
+var sum = 0
+foreach n in [1, 2, 3] do
+    sum += n
+end
+Data.loopModified = sum

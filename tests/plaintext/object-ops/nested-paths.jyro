@@ -1,0 +1,21 @@
+# Test deep nested property traversal
+
+# Test 1: Deep read
+Data.deep = Data.root.level1.level2.level3
+
+# Test 2: Deep write
+Data.root.level1.level2.newProp = "added"
+
+# Test 3: Read from missing intermediate (returns null)
+Data.missing = Data.root.nonexistent.child
+
+# Test 4: Build deep structure
+Data.built = {}
+Data.built.a = {}
+Data.built.a.b = {}
+Data.built.a.b.c = "bottom"
+
+# Test 5: Mix of object and array nesting
+Data.complex = {items: [{id: 1, name: "first"}, {id: 2, name: "second"}]}
+Data.firstItem = Data.complex.items[0].name
+Data.secondId = Data.complex.items[1].id

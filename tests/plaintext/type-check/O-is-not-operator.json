@@ -1,0 +1,9 @@
+{
+  "numNotStr": true,
+  "numNotNum": false,
+  "strNotNum": true,
+  "strNotStr": false,
+  "nullNotNum": true,
+  "nullNotNull": false,
+  "guarded": "not a number"
+}

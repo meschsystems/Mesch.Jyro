@@ -1,0 +1,16 @@
+# Test boolean literals
+
+# Test 1: True
+Data.t = true
+
+# Test 2: False
+Data.f = false
+
+# Test 3: Boolean in expression
+Data.andResult = true and true
+
+# Test 4: Boolean negation
+Data.notTrue = not true
+
+# Test 5: Boolean comparison
+Data.eq = true == true

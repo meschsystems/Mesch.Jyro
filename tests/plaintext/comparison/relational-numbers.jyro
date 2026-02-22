@@ -1,0 +1,29 @@
+# Test relational operators with numbers
+
+# Test 1: Less than
+Data.lt = 3 < 5
+Data.ltFalse = 5 < 3
+Data.ltEqual = 3 < 3
+
+# Test 2: Less than or equal
+Data.lte = 3 <= 5
+Data.lteEqual = 3 <= 3
+Data.lteFalse = 5 <= 3
+
+# Test 3: Greater than
+Data.gt = 5 > 3
+Data.gtFalse = 3 > 5
+Data.gtEqual = 3 > 3
+
+# Test 4: Greater than or equal
+Data.gte = 5 >= 3
+Data.gteEqual = 3 >= 3
+Data.gteFalse = 3 >= 5
+
+# Test 5: Negative numbers
+Data.negLt = -5 < -3
+Data.negGt = -3 > -5
+
+# Test 6: Decimals
+Data.decLt = 3.14 < 3.15
+Data.decGte = 3.14 >= 3.14

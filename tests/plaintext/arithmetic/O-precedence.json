@@ -1,0 +1,9 @@
+{
+  "mulFirst": 14,
+  "divFirst": 7,
+  "parens": 20,
+  "nested": 15,
+  "mixed": 26,
+  "modPrec": 11,
+  "leftAssoc": 10
+}

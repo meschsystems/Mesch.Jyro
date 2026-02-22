@@ -1,0 +1,17 @@
+# Test nested ternary expressions
+
+# Test 1: Nested in false branch (if-elseif-else pattern)
+var score = 75
+Data.grade = score >= 90 ? "A" : score >= 80 ? "B" : score >= 70 ? "C" : "F"
+
+# Test 2: Different score
+var score2 = 95
+Data.grade2 = score2 >= 90 ? "A" : score2 >= 80 ? "B" : "C"
+
+# Test 3: Low score
+var score3 = 50
+Data.grade3 = score3 >= 90 ? "A" : score3 >= 80 ? "B" : score3 >= 70 ? "C" : "F"
+
+# Test 4: Ternary with function calls
+var s = "HELLO"
+Data.formatted = Length(s) > 3 ? ToLower(s) : ToUpper(s)

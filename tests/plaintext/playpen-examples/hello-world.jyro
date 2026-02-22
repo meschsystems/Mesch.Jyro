@@ -1,0 +1,10 @@
+# Welcome to Jyro!
+# Results are stored on the Data object.
+
+# Variables hold values
+var greeting = "Hello"
+var subject = "World"
+
+# String concatenation with +
+var message = greeting + ", " + subject + "!"
+Data.message = message

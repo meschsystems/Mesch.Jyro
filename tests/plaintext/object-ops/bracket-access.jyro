@@ -1,0 +1,26 @@
+# Test object bracket access
+
+# Test 1: Read with bracket notation
+var obj = {name: "Bob", age: 25}
+Data.readBracket = obj["name"]
+
+# Test 2: Write with bracket notation
+obj["city"] = "NYC"
+Data.obj = obj
+
+# Test 3: Dynamic key from variable
+var key = "color"
+var palette = {}
+palette[key] = "blue"
+Data.dynamic = palette
+
+# Test 4: Keys with special characters
+Data.special = {}
+Data.special["first-name"] = "Jane"
+Data.special["last name"] = "Doe"
+
+# Test 5: Bracket and dot equivalence
+var test = {x: 10}
+Data.dotRead = test.x
+Data.bracketRead = test["x"]
+Data.equiv = test.x == test["x"]

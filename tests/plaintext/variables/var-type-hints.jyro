@@ -1,0 +1,13 @@
+# Test variable declarations with type hints
+
+# Test 1: Number type hint
+var x: number = 42
+Data.num = x
+
+# Test 2: String type hint
+var s: string = "hello"
+Data.str = s
+
+# Test 3: Boolean type hint
+var b: boolean = true
+Data.bool = b

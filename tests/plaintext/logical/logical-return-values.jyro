@@ -1,0 +1,17 @@
+# Test that and/or return operand values, not just booleans
+
+# Test 1: and returns last truthy operand (or first falsy)
+Data.strAnd = "hello" and "world"
+Data.numAnd = 1 and 2
+Data.nullAnd = null and "skipped"
+Data.zeroAnd = 0 and "skipped"
+
+# Test 2: or returns first truthy operand (or last falsy)
+Data.strOr = "hello" or "world"
+Data.nullOr = null or "fallback"
+Data.zeroOr = 0 or "default"
+Data.falseOr = false or false
+
+# Test 3: Chained
+Data.chain = null or 0 or "" or "found"
+Data.chainAll = null or 0 or "" or false

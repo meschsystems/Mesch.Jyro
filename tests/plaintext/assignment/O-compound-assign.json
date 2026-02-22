@@ -1,0 +1,9 @@
+{
+  "addAssign": 15,
+  "subAssign": 12,
+  "mulAssign": 42,
+  "divAssign": 25,
+  "modAssign": 2,
+  "strConcat": "hello world",
+  "chained": 8
+}

@@ -1,0 +1,22 @@
+# Test operator precedence
+
+# Test 1: Multiplication before addition
+Data.mulFirst = 2 + 3 * 4
+
+# Test 2: Division before subtraction
+Data.divFirst = 10 - 6 / 2
+
+# Test 3: Parentheses override
+Data.parens = (2 + 3) * 4
+
+# Test 4: Nested parentheses
+Data.nested = ((2 + 3) * (4 - 1))
+
+# Test 5: Mixed precedence
+Data.mixed = 2 * 3 + 4 * 5
+
+# Test 6: Modulo precedence (same as mul/div)
+Data.modPrec = 10 + 7 % 3
+
+# Test 7: Left-to-right associativity
+Data.leftAssoc = 20 - 5 - 3 - 2

@@ -1,0 +1,16 @@
+# Test string literals
+
+# Test 1: Double-quoted string
+Data.double = "hello world"
+
+# Test 2: Single-quoted string
+Data.single = 'hello world'
+
+# Test 3: Empty string
+Data.empty = ""
+
+# Test 4: String with numbers
+Data.withNums = "abc123"
+
+# Test 5: String with spaces
+Data.spaced = "  spaces  "

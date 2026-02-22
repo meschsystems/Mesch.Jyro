@@ -1,0 +1,11 @@
+{
+  "eq": true,
+  "neq": true,
+  "lt": true,
+  "ltFalse": false,
+  "gt": true,
+  "caseLt": true,
+  "emptyLt": true,
+  "emptyEq": true,
+  "prefixLt": true
+}

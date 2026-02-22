@@ -1,0 +1,34 @@
+# Test switch with multiple values per case
+
+# Test 1: Multi-value case match
+var fruit = "banana"
+switch fruit do
+    case "apple", "pear" then
+        Data.category1 = "pome"
+    case "banana", "mango" then
+        Data.category1 = "tropical"
+    default then
+        Data.category1 = "other"
+end
+
+# Test 2: First value in multi-case matches
+var num = 1
+switch num do
+    case 1, 2, 3 then
+        Data.range1 = "low"
+    case 4, 5, 6 then
+        Data.range1 = "mid"
+    default then
+        Data.range1 = "high"
+end
+
+# Test 3: Last value in multi-case matches
+var num2 = 6
+switch num2 do
+    case 1, 2, 3 then
+        Data.range2 = "low"
+    case 4, 5, 6 then
+        Data.range2 = "mid"
+    default then
+        Data.range2 = "high"
+end

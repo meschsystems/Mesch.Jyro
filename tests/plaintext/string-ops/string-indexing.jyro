@@ -1,0 +1,24 @@
+# Test string indexing with bracket notation
+
+# Test 1: First character
+Data.first = "hello"[0]
+
+# Test 2: Last character
+Data.last = "hello"[4]
+
+# Test 3: Middle character
+Data.mid = "hello"[2]
+
+# Test 4: Out of bounds returns null
+Data.oob = "hello"[99]
+
+# Test 5: Negative index returns null
+Data.neg = "hello"[-1]
+
+# Test 6: Index via variable
+var s = "abcde"
+var i = 3
+Data.varIdx = s[i]
+
+# Test 7: Length check
+Data.len = Length("hello")

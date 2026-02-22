@@ -1,0 +1,19 @@
+# Test type checking with is not operator
+
+# Test 1: Number is not string
+Data.numNotStr = 42 is not string
+Data.numNotNum = 42 is not number
+
+# Test 2: String is not number
+Data.strNotNum = "hi" is not number
+Data.strNotStr = "hi" is not string
+
+# Test 3: Null is not number
+Data.nullNotNum = null is not number
+Data.nullNotNull = null is not null
+
+# Test 4: In condition
+var x = "hello"
+if x is not number then
+    Data.guarded = "not a number"
+end
